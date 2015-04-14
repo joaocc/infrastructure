@@ -13,7 +13,7 @@ $ make dev
 ## Prerequisites
 
 * Install Terraform
-* Sign up for [Atlas](https://atlas.io) and get invited to the Brandfolder organization.
+* Sign up for [Atlas](https://atlas.hashicorp.com/) and get invited to the Brandfolder organization.
 * Find your Atlas API access key, you will need it next.
 * Run the following command:
   `terraform remote config -backend-config="access_token={{Atlas Access Key}}" -backend-config="name=brandfolder/infrastructure"`
