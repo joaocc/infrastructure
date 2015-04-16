@@ -1,0 +1,8 @@
+[Unit]
+Description=deis-backup-timer
+
+[Timer]
+OnCalendar=hourly
+
+[X-Fleet]
+MachineOf=deis-backup.service

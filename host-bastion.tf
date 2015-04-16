@@ -88,4 +88,14 @@ resource "aws_instance" "bastion" {
         }
     }
 
+    # Copy Units
+    provisioner "file" {
+        source = "conf/bastion/units"
+        destination = "/home/ubuntu"
+        connection {
+            user = "ubuntu"
+            key_file = "private/.ssh/deis"
+        }
+    }
+
 }
