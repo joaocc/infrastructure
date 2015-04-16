@@ -10,12 +10,12 @@ resource "aws_elb" "paas" {
   idle_timeout = 1800
 
   # Listen for inbound HTTPS Connections
-  listener {
-    lb_port = 443
-    lb_protocol = "https"
-    instance_port = 80
-    instance_protocol = "http"
-  }
+  # listener {
+  #  lb_port = 443
+  #  lb_protocol = "https"
+  #  instance_port = 443
+  #  instance_protocol = "https"
+  # }
 
   # Inbound HTTP Connections
   listener {
