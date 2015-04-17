@@ -1,0 +1,14 @@
+[Unit]
+Description=Datadog
+Requires=docker.socket
+After=docker.socket
+
+[Service]
+ExecStartPre=/bin/sh -c "docker history datadog/docker-dd-agent:latest >/dev/null || docker pull datadog/docker-dd-agent:latest"
+ExecStart=/bin/sh -c "docker run --rm --privileged --name dd-agent -h `hostname` -v /var/run/docker.sock:/var/run/docker.sock -v /proc/mounts:/host/proc/mounts:ro -v /sys/fs/cgroup/:/host/sys/fs/cgroup:ro -e API_KEY=`etcdctl get /ddapikey` datadog/docker-dd-agent"
+
+[Install]
+WantedBy=multi-user.target
+
+[X-Fleet]
+Global=true
