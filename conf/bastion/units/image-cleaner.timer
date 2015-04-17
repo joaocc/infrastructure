@@ -1,0 +1,8 @@
+[Unit]
+Description=image-cleaner-timer
+
+[Timer]
+OnCalendar=daily
+
+[X-Fleet]
+MachineOf=image-cleaner.service
