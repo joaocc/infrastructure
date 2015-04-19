@@ -4,7 +4,7 @@ coreos:
   etcd:
     # generate a new token for each unique cluster from https://discovery.etcd.io/new
     # uncomment the following line and replace it with your discovery URL
-    discovery: https://discovery.etcd.io/d79912a97c91776a9eb8ae71c62c79c4
+    discovery: {{discovery_url}}
     addr: $private_ipv4:4001
     peer-addr: $private_ipv4:7001
     data-dir: /media/ephemeral/etcd

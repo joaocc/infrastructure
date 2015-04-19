@@ -4,7 +4,7 @@ variable "aws_secret_key" {}
 
 # Cluster Size
 variable "cluster_size" {
-    default = 6
+    default = 5
 }
 
 # Region
