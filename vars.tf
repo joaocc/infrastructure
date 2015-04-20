@@ -12,6 +12,10 @@ variable "aws_region" {
     default = "us-east-1"
 }
 
+variable "deis_version" {
+    default = "1.5.1"
+}
+
 # Instance Settings
 variable "aws_instance_type" {
     default = "r3.xlarge"
