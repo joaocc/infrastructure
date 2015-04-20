@@ -29,7 +29,7 @@ resource "aws_launch_configuration" "paas-node" {
     # General Config
     image_id = "${lookup(var.aws_coreos_amis, var.aws_region)}"
     instance_type = "${var.aws_instance_type}"
-    user_data = "${replace(file("conf/cluster-node/user-data"), "{{discovery_url}}", file("private/etcd/discovery-url"))}"
+    user_data = "${replace(replace(file("conf/cluster-node/user-data"), "{{discovery_url}}", file("private/etcd/discovery-url")), "{{deis_version}}", "${var.deis_version}")}"
     key_name = "deis"
 
     # Networking
