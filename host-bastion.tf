@@ -80,7 +80,7 @@ resource "aws_instance" "bastion" {
         inline = [
             "mkdir -p $HOME/bin",
             "cd $HOME/bin",
-            "curl -sSL http://deis.io/deisctl/install.sh | sh -s 1.5.1"
+            "curl -sSL http://deis.io/deisctl/install.sh | sh -s ${var.deis_version}"
         ]
         connection {
             user = "ubuntu"

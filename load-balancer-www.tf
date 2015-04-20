@@ -12,9 +12,10 @@ resource "aws_elb" "www" {
   # Listen for inbound HTTPS Connections
   listener {
     lb_port = 443
-    lb_protocol = "tcp"
-    instance_port = 443
-    instance_protocol = "tcp"
+    lb_protocol = "https"
+    instance_port = 80
+    instance_protocol = "http"
+    ssl_certificate_id = "arn:aws:iam::260121740514:server-certificate/STAR_Brandfolder_com"
   }
 
   # Inbound HTTP Connections
