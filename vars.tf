@@ -24,15 +24,15 @@ variable "aws_instance_type" {
 # AMI Table
 variable "aws_coreos_amis" {
     default = {
-      eu-west-1 = "ami-55950a22"
-      eu-central-1 = "ami-0e300d13"
-      ap-northeast-1 = "ami-af28dcaf"
-      ap-southeast-1 = "ami-f80b3aaa"
-      ap-southeast-2 = "ami-b9b5c583"
-      sa-east-1 = "ami-2354ec3e"
-      us-east-1 = "ami-323b195a"
-      us-west-1 = "ami-8dd533c9"
-      us-west-2 = "ami-0789a437"
+      eu-west-1 = "ami-b53252c2"
+      eu-central-1 = "ami-56eed24b"
+      ap-northeast-1 = "ami-aa57adaa"
+      ap-southeast-1 = "ami-9a8bb9c8"
+      ap-southeast-2 = "ami-e70974dd"
+      sa-east-1 = "ami-2b890c36"
+      us-east-1 = "ami-fe724896"
+      us-west-1 = "ami-3500e271"
+      us-west-2 = "ami-45d5ff75"
     }
 }
 
