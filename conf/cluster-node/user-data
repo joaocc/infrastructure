@@ -5,13 +5,13 @@ coreos:
     # generate a new token for each unique cluster from https://discovery.etcd.io/new
     # uncomment the following line and replace it with your discovery URL
     discovery: {{discovery_url}}
-    addr: $private_ipv4:4001
-    peer-addr: $private_ipv4:7001
+    advertise-client-urls: $private_ipv4:4001
+    initial-advertise-peer-urls: $private_ipv4:7001
     data-dir: /media/ephemeral/etcd
     # give etcd more time if it's under heavy load - prevent leader election thrashing
-    peer-election-timeout: 2000
+    election-timeout: 2000
     # heartbeat interval should ideally be 1/4 or 1/5 of peer election timeout
-    peer-heartbeat-interval: 500
+    heartbeat-interval: 500
   fleet:
     # We have to set the public_ip here so this works on Vagrant -- otherwise, Vagrant VMs
     # will all publish the same private IP. This is harmless for cloud providers.
