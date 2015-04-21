@@ -1,10 +1,6 @@
 #cloud-config
 ---
 coreos:
-  update:
-    # Prevent all the hosts from going down simultaniously
-    reboot-strategy: etcd-lock
-    group: 'alpha'
   etcd2:
     # generate a new token for each unique cluster from https://discovery.etcd.io/new?size=5
     # uncomment the following line and replace it with your discovery URL
@@ -22,7 +18,7 @@ coreos:
     data-dir: /media/ephemeral/etcd
     # give etcd more time if it's under heavy load - prevent leader election thrashing
     election-timeout: 2500
-    # heartbeat interval should ideally be 1/4 or 1/5 of peer election timeout
+    # heartbeat interval should ideally be 1/5 of peer election timeout
     heartbeat-interval: 500
   fleet:
     # We have to set the public_ip here so this works on Vagrant -- otherwise, Vagrant VMs
