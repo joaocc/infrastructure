@@ -66,8 +66,8 @@ resource "aws_instance" "bastion" {
     provisioner "remote-exec" {
         inline = [
             "mkdir -p $HOME/bin",
-            "curl -L https://github.com/coreos/fleet/releases/download/v0.9.2/fleet-v0.9.2-linux-amd64.tar.gz | tar zxv",
-            "cp fleet-v0.9.2-linux-amd64/fleetctl $HOME/bin",
+            "curl -L https://github.com/coreos/fleet/releases/download/v0.10.0/fleet-v0.10.0-linux-amd64.tar.gz | tar zxv",
+            "cp fleet-v0.10.0-linux-amd64/fleetctl $HOME/bin",
         ]
         connection {
             user = "ubuntu"
