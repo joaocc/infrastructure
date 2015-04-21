@@ -1,7 +1,3 @@
-# Keys (required)
-variable "aws_access_key" {}
-variable "aws_secret_key" {}
-
 # Cluster Size
 variable "cluster_size" {
     default = 5
