@@ -1,15 +1,24 @@
 #cloud-config
 ---
 coreos:
-  etcd:
-    # generate a new token for each unique cluster from https://discovery.etcd.io/new
+  update:
+    # Prevent all the hosts from going down simultaniously
+    reboot-strategy: etcd-lock
+    group: 'alpha'
+  etcd2:
+    # generate a new token for each unique cluster from https://discovery.etcd.io/new?size=5
     # uncomment the following line and replace it with your discovery URL
     discovery: {{discovery_url}}
-    advertise-client-urls: $private_ipv4:4001
-    initial-advertise-peer-urls: $private_ipv4:7001
+
+    # Etcd Network Configuration
+    listen-peer-urls: "http://$private_ipv4:2380,http://$private_ipv4:7001"
+    listen-client-urls: "http://localhost:2379,http://localhost:4001,http://$private_ipv4:2379,http://$private_ipv4:4001"
+    advertise-client-urls: "http://$private_ipv4:2379,http://$private_ipv4:4001"
+    initial-advertise-peer-urls: "http://$private_ipv4:2380,http://$private_ipv4:7001"
+
     data-dir: /media/ephemeral/etcd
     # give etcd more time if it's under heavy load - prevent leader election thrashing
-    election-timeout: 2000
+    election-timeout: 2500
     # heartbeat interval should ideally be 1/4 or 1/5 of peer election timeout
     heartbeat-interval: 500
   fleet:
@@ -19,32 +28,22 @@ coreos:
     # allow etcd to slow down at times
     etcd_request_timeout: 3.0
   units:
-  - name: etcd.service
+  - name: etcd2.service
     command: start
     content: |
       [Unit]
-      Description=etcd
+      Description=etcd2
       [Service]
       User=etcd
       PermissionsStartOnly=true
-      Environment=ETCD_DATA_DIR=/var/lib/etcd
+      Environment=ETCD_DATA_DIR=/var/lib/etcd2
       Environment=ETCD_NAME=%m
-      ExecStart=/usr/bin/etcd
+      ExecStart=/usr/bin/etcd2
       Restart=always
       RestartSec=10s
       LimitNOFILE=40000
   - name: fleet.service
     command: start
-  - name: stop-update-engine.service
-    command: start
-    content: |
-      [Unit]
-      Description=stop update-engine
-
-      [Service]
-      Type=oneshot
-      ExecStart=/usr/bin/systemctl stop update-engine.service
-      ExecStartPost=/usr/bin/systemctl mask update-engine.service
   - name: install-deisctl.service
     command: start
     content: |
