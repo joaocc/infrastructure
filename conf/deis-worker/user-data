@@ -121,6 +121,7 @@ coreos:
         SyslogIdentifier=robins_etcd_proxy
         ExecStartPre=-/usr/bin/docker kill etcd_proxy
         ExecStartPre=-/usr/bin/docker rm etcd_proxy
+        ExecStartPre=/bin/sh -c "docker history jwaldrip/robins:latest >/dev/null || docker pull jwaldrip/robins:latest"
         ExecStart=/bin/bash -c "/usr/bin/docker run -d --net host --name etcd_proxy jwaldrip/robins {{etcd_lb}} 4001"
 
 write_files:
