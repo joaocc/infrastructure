@@ -35,6 +35,5 @@ resource "aws_db_instance" "default" {
 resource "aws_db_subnet_group" "default" {
     name = "main"
     description = "VPC Subnet groups"
-    subnet_ids = ["${aws_subnet.az-us-east-1a.id}",
-                  "${aws_subnet.az-us-east-1c.id}"]
+    subnet_ids = ["${aws_subnet.subnet.*.id}"]
 }

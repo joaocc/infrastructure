@@ -1,0 +1,265 @@
+#cloud-config
+coreos:
+  fleet:
+    public-ip: $private_ipv4
+    metadata: "type=worker"
+    etcd_request_timeout: 3.0
+
+  units:
+    # Fleet
+    # Distribuited Scheduling Service
+    - name: fleet.service
+      command: start
+
+    # Sysdig
+    # Montitoring Service
+    - name: sysdig.service
+      command: start
+      content: |
+        [Unit]
+        Description=sysdig for the system !
+        Requires=docker.service
+        After=docker.service
+        After=haproxy.service
+        Wants=network-online.target
+        After=network-online.target
+
+        [Service]
+        TimeoutStartSec=0
+        SyslogIdentifier=sysdig_process
+        ExecStartPre=-/usr/bin/docker kill sysdig
+        ExecStartPre=-/usr/bin/docker rm sysdig
+        ExecStart=/bin/bash -c "/usr/bin/docker run -d --name=sysdig --privileged -v /var/run/docker.sock:/host/var/run/docker.sock -v /dev:/host/dev -v /proc:/host/proc:ro sysdig/sysdig /bin/sh -c 'while true; do .; sleep 60; done'"
+
+    # NTP Time Server Configuration
+    - name: ntpdate.service
+      command: start
+    - name: timedate-ntp-synchronization.service
+      command: start
+      content: |
+        [Unit]
+        Description=Synchronize system clock
+        After=ntpdate.service
+
+        [Service]
+        ExecStart=/usr/bin/timedatectl set-timezone UTC
+        ExecStart=/usr/bin/timedatectl set-ntp true
+        ExecStart=/sbin/hwclock --systohc --utc
+        RemainAfterExit=yes
+        Type=oneshot
+
+    # Etcd
+    # Distribuited Key Value store
+    # Masked and handled by the etcd proxy
+    - name: etcd.service
+      mask: true
+
+    # Increase number of connections
+    - name: increase-nf_conntrack-connections.service
+      command: start
+      content: |
+        [Unit]
+        Description=Increase the number of connections in nf_conntrack. default is 65536
+
+        [Service]
+        Type=oneshot
+        ExecStartPre=/usr/sbin/modprobe nf_conntrack
+        ExecStart=/bin/sh -c "sysctl -w net.netfilter.nf_conntrack_max=262144"
+
+    # Format the ephemeral volume
+    - name: format-ephemeral-volume.service
+      command: start
+      content: |
+        [Unit]
+        Description=Formats the ephemeral volume
+        ConditionPathExists=!/etc/ephemeral-volume-formatted
+
+        [Service]
+        Type=oneshot
+        RemainAfterExit=yes
+        ExecStart=/usr/sbin/wipefs -f /dev/xvdb
+        ExecStart=/usr/sbin/mkfs.ext4 -i 4096 -b 4096 /dev/xvdb
+        ExecStart=/bin/touch /etc/ephemeral-volume-formatted
+
+    # Mount the ephemeral volume
+    - name: media-ephemeral.mount
+      command: start
+      content: |
+        [Unit]
+        Description=Formats and mounts the ephemeral drive
+        Requires=format-ephemeral-volume.service
+        After=format-ephemeral-volume.service
+
+        [Mount]
+        What=/dev/xvdb
+        Where=/media/ephemeral
+        Type=ext4
+
+    # Format the docker volume
+    - name: format-docker-volume.service
+      command: start
+      content: |
+        [Unit]
+        Description=Formats the added EBS volume for Docker
+        ConditionPathExists=!/etc/docker-volume-formatted
+
+        [Service]
+        Type=oneshot
+        RemainAfterExit=yes
+        ExecStart=/usr/sbin/wipefs -f /dev/xvdf
+        ExecStart=/usr/sbin/mkfs.ext4 -i 4096 -b 4096 /dev/xvdf
+        ExecStart=/bin/touch /etc/docker-volume-formatted
+
+    # Mount the docker volume
+    - name: var-lib-docker.mount
+      command: start
+      content: |
+        [Unit]
+        Description=Mount Docker volume to /var/lib/docker
+        Requires=format-docker-volume.service
+        After=format-docker-volume.service
+        Before=docker.service
+        [Mount]
+        What=/dev/xvdf
+        Where=/var/lib/docker
+        Type=ext4
+
+    # Robins Etcd Proxy
+    # Provides a local loop back to the etcd services running on the core
+    - name: robins_etcdproxy.service
+      command: start
+      content: |
+        [Unit]
+        Description=proxy for etcd
+        Requires=docker.service
+        After=docker.service
+        Wants=network-online.target
+        After=network-online.target
+
+        [Service]
+        TimeoutStartSec=0
+        SyslogIdentifier=robins_etcd_proxy
+        ExecStartPre=-/usr/bin/docker kill etcd_proxy
+        ExecStartPre=-/usr/bin/docker rm etcd_proxy
+        ExecStart=/bin/bash -c "/usr/bin/docker run -d --net host --name etcd_proxy jwaldrip/robins {{etcd_lb}} 4001"
+
+write_files:
+  # Set the deis release
+  - path: /etc/deis-release
+    content: |
+      DEIS_RELEASE=v{{deis_version}}
+  # Shortcut for exec into containers
+  - path: /etc/profile.d/nse-function.sh
+    permissions: '0755'
+    content: |
+      function nse_bash() {
+        docker exec -it $1 bash
+      }
+  # Set the insecure registry
+  - path: /etc/systemd/system/docker.service.d/50-insecure-registry.conf
+    content: |
+        [Service]
+        EnvironmentFile=/etc/environment_proxy
+        Environment="DOCKER_OPTS=--insecure-registry 10.0.0.0/8 --insecure-registry 172.16.0.0/12 --insecure-registry 192.168.0.0/16 --insecure-registry 100.64.0.0/10"
+
+  # Deis image fetcher
+  - path: /run/deis/bin/get_image
+    permissions: '0755'
+    content: |
+      #!/bin/bash
+      # usage: get_image <component_path>
+      IMAGE=`etcdctl get $1/image 2>/dev/null`
+
+      # if no image was set in etcd, we use the default plus the release string
+      if [ $? -ne 0 ]; then
+        RELEASE=`etcdctl get /deis/platform/version 2>/dev/null`
+
+        # if no release was set in etcd, use the default provisioned with the server
+        if [ $? -ne 0 ]; then
+          source /etc/deis-release
+          RELEASE=$DEIS_RELEASE
+        fi
+
+        IMAGE=$1:$RELEASE
+      fi
+
+      # remove leading slash
+      echo ${IMAGE#/}
+
+  - path: /run/deis/bin/preseed
+    permissions: '0755'
+    content: |
+      #!/bin/bash
+
+      COMPONENTS=(builder cache controller database logger logspout publisher registry router store-daemon store-gateway store-metadata store-monitor )
+      for c in "${COMPONENTS[@]}"; do
+        image=`/run/deis/bin/get_image /deis/$c`
+        docker history $image >/dev/null 2>&1 || docker pull $image
+      done
+
+  - path: /opt/bin/deis-debug-logs
+    permissions: '0755'
+    content: |
+      #!/bin/bash
+
+      echo '--- VERSIONS ---'
+      source /etc/os-release
+      echo $PRETTY_NAME
+      source /etc/deis-release
+      echo "Deis $DEIS_RELEASE"
+      etcd -version
+      fleet -version
+      printf "\n"
+
+      echo '--- SYSTEM STATUS ---'
+      journalctl -n 50 -u etcd --no-pager
+      journalctl -n 50 -u fleet --no-pager
+      printf "\n"
+
+      echo '--- DEIS STATUS ---'
+      deisctl list
+      etcdctl ls --recursive /deis
+      printf "\n"
+
+  - path: /home/core/.toolboxrc
+    owner: core
+    content: |
+      TOOLBOX_DOCKER_IMAGE=ubuntu-debootstrap
+      TOOLBOX_DOCKER_TAG=14.04
+      TOOLBOX_USER=root
+
+  - path: /etc/environment_proxy
+    owner: core
+    content: |
+      HTTP_PROXY=
+      HTTPS_PROXY=
+      ALL_PROXY=
+      NO_PROXY=
+      http_proxy=
+      https_proxy=
+      all_proxy=
+      no_proxy=
+
+  - path: /etc/systemd/coredump.conf
+    content: |
+      [Coredump]
+      Storage=none
+
+  - path: /etc/profile.d/bash-function.sh
+    permissions: '0755'
+    content: |
+      alias l.='ls -d .*'
+      alias ll='ls -al'
+      alias jc='journalctl'
+      alias flu='fleetctl list-units'
+      alias fluf='fleetctl list-unit-files'
+      alias flm='fleetctl list-machines'
+      alias wetcd='watch -n1 etcdtcl ls / --recursive'
+      alias ss='sudo systemctl'
+      alias elr='etcdctl ls --recursive'
+      alias sysdig='docker exec -it sysdig sysdig'
+      alias spectogram='docker exec -it sysdig sysdig -c spectrogram 200'
+      function etcdctl2()
+      {
+        docker exec -it etcd /etcdctl --peers=http://127.0.0.1:2379 "$@";
+      }

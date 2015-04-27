@@ -1,9 +1,9 @@
 # Bastion instance for remote ssh access
 resource "aws_instance" "bastion" {
-    ami = "${lookup(var.aws_ubuntu_amis, var.aws_region)}"
+    ami = "${lookup(var.amis, "ubuntu")}"
     key_name = "deis"
-    instance_type = "t2.micro"
-    subnet_id = "${aws_subnet.az-us-east-1a.id}"
+    instance_type = "${lookup(var.instance_types, "bastion")}"
+    subnet_id = "${aws_subnet.subnet.1.id}"
     associate_public_ip_address = true
     security_groups = ["${aws_security_group.bastion.id}"]
     tags {

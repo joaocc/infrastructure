@@ -18,7 +18,7 @@ resource "aws_route53_record" "deisctl-brandfolder-host" {
    name = "deisctl.brandfolder.host"
    type = "CNAME"
    ttl = "300"
-   records = ["${aws_elb.internal.dns_name}"]
+   records = ["${aws_elb.deis-ctl.dns_name}"]
 }
 
 # Postgres Database

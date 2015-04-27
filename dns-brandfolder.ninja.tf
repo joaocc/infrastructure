@@ -18,13 +18,13 @@ resource "aws_route53_record" "STAR-brandfolder-ninja" {
    name = "*.brandfolder.ninja"
    type = "CNAME"
    ttl = "300"
-   records = ["${aws_elb.paas.dns_name}"]
+   records = ["${aws_elb.deis.dns_name}"]
 }
 
 resource "aws_route53_alias_target" "brandfolder-ninja" {
    zone_id = "${aws_route53_zone.brandfolder-ninja.zone_id}"
    name = "brandfolder.ninja"
    type = "A"
-   target = "${aws_elb.paas.dns_name}"
-   target_zone_id = "${aws_elb.paas.hosted_zone_id}"
+   target = "${aws_elb.deis.dns_name}"
+   target_zone_id = "${aws_elb.deis.hosted_zone_id}"
 }

@@ -5,4 +5,4 @@ Description=deis-backup-timer
 OnCalendar=hourly
 
 [X-Fleet]
-MachineOf=deis-backup.service
+MachineOf=%p.service

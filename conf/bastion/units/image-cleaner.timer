@@ -5,4 +5,4 @@ Description=image-cleaner-timer
 OnCalendar=daily
 
 [X-Fleet]
-MachineOf=image-cleaner.service
+Global=true

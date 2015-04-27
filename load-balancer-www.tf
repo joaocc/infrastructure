@@ -5,8 +5,7 @@ resource "aws_elb" "www" {
   # Network
   cross_zone_load_balancing = true
   security_groups = ["${aws_security_group.www.id}"]
-  subnets = ["${aws_subnet.az-us-east-1a.id}",
-             "${aws_subnet.az-us-east-1c.id}"]
+  subnets = ["${aws_subnet.subnet.*.id}"]
   idle_timeout = 60
 
   # Listen for inbound HTTPS Connections

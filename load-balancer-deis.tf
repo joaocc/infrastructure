@@ -1,12 +1,14 @@
 # Public ELB
-resource "aws_elb" "paas" {
-  name = "PaaS"
+resource "aws_elb" "deis" {
+  name = "Deis"
+
+  # Instances
+  instances = ["${aws_instance.deis-core.*.id}"]
 
   # Network
   cross_zone_load_balancing = true
-  security_groups = ["${aws_security_group.paas-public.id}"]
-  subnets = ["${aws_subnet.az-us-east-1a.id}",
-             "${aws_subnet.az-us-east-1c.id}"]
+  security_groups = ["${aws_security_group.deis-public.id}"]
+  subnets = ["${aws_subnet.subnet.*.id}"]
   idle_timeout = 1800
 
   # Listen for inbound HTTPS Connections

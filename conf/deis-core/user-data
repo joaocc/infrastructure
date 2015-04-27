@@ -1,60 +1,45 @@
 #cloud-config
----
 coreos:
+  fleet:
+    public-ip: $private_ipv4
+    metadata: "type=core"
+    etcd_request_timeout: 3.0
+
   etcd:
-    # generate a new token for each unique cluster from https://discovery.etcd.io/new
-    # uncomment the following line and replace it with your discovery URL
     discovery: {{discovery_url}}
     addr: $private_ipv4:4001
     peer-addr: $private_ipv4:7001
     data-dir: /media/ephemeral/etcd
-    # give etcd more time if it's under heavy load - prevent leader election thrashing
     peer-election-timeout: 2000
-    # heartbeat interval should ideally be 1/4 or 1/5 of peer election timeout
     peer-heartbeat-interval: 500
-  fleet:
-    # We have to set the public_ip here so this works on Vagrant -- otherwise, Vagrant VMs
-    # will all publish the same private IP. This is harmless for cloud providers.
-    public-ip: $private_ipv4
-    # allow etcd to slow down at times
-    etcd_request_timeout: 3.0
+
   units:
-  - name: etcd.service
-    command: start
-    content: |
-      [Unit]
-      Description=etcd
-      [Service]
-      User=etcd
-      PermissionsStartOnly=true
-      Environment=ETCD_DATA_DIR=/var/lib/etcd
-      Environment=ETCD_NAME=%m
-      ExecStart=/usr/bin/etcd
-      Restart=always
-      RestartSec=10s
-      LimitNOFILE=40000
+  # Fleet
+  # Distribuited Scheduling Service
   - name: fleet.service
     command: start
-  - name: stop-update-engine.service
+
+  # Sysdig
+  # Montitoring Service
+  - name: sysdig.service
     command: start
     content: |
       [Unit]
-      Description=stop update-engine
+      Description=sysdig for the system !
+      Requires=docker.service
+      After=docker.service
+      After=haproxy.service
+      Wants=network-online.target
+      After=network-online.target
 
       [Service]
-      Type=oneshot
-      ExecStart=/usr/bin/systemctl stop update-engine.service
-      ExecStartPost=/usr/bin/systemctl mask update-engine.service
-  - name: install-deisctl.service
-    command: start
-    content: |
-      [Unit]
-      Description=Install deisctl utility
-      ConditionPathExists=!/opt/bin/deisctl
+      TimeoutStartSec=0
+      SyslogIdentifier=sysdig_process
+      ExecStartPre=-/usr/bin/docker kill sysdig
+      ExecStartPre=-/usr/bin/docker rm sysdig
+      ExecStart=/bin/bash -c "/usr/bin/docker run -d --name=sysdig --privileged -v /var/run/docker.sock:/host/var/run/docker.sock -v /dev:/host/dev -v /proc:/host/proc:ro sysdig/sysdig /bin/sh -c 'while true; do .; sleep 60; done'"
 
-      [Service]
-      Type=oneshot
-      ExecStart=/usr/bin/sh -c 'curl -sSL --retry 5 --retry-delay 2 http://deis.io/deisctl/install.sh | sh -s {{deis_version}}'
+  # NTP Time Server Configuration
   - name: ntpdate.service
     command: start
   - name: timedate-ntp-synchronization.service
@@ -70,15 +55,26 @@ coreos:
       ExecStart=/sbin/hwclock --systohc --utc
       RemainAfterExit=yes
       Type=oneshot
-  - name: debug-etcd.service
+
+  # Etcd
+  # Distribuited Key Value store
+  # Masked and handled by the etcd proxy
+  - name: etcd.service
+    command: start
     content: |
       [Unit]
-      Description=etcd debugging service
-
+      Description=etcd
       [Service]
-      ExecStartPre=/usr/bin/curl -sSL -o /opt/bin/jq http://stedolan.github.io/jq/download/linux64/jq
-      ExecStartPre=/usr/bin/chmod +x /opt/bin/jq
-      ExecStart=/usr/bin/bash -c "while true; do curl -sL http://127.0.0.1:4001/v2/stats/leader | /opt/bin/jq . ; sleep 1 ; done"
+      User=etcd
+      PermissionsStartOnly=true
+      Environment=ETCD_DATA_DIR=/var/lib/etcd
+      Environment=ETCD_NAME=%m
+      ExecStart=/usr/bin/etcd
+      Restart=always
+      RestartSec=10s
+      LimitNOFILE=40000
+
+  # Increase number of connections
   - name: increase-nf_conntrack-connections.service
     command: start
     content: |
@@ -89,6 +85,8 @@ coreos:
       Type=oneshot
       ExecStartPre=/usr/sbin/modprobe nf_conntrack
       ExecStart=/bin/sh -c "sysctl -w net.netfilter.nf_conntrack_max=262144"
+
+  # Format the ephemeral volume
   - name: format-ephemeral-volume.service
     command: start
     content: |
@@ -102,6 +100,8 @@ coreos:
       ExecStart=/usr/sbin/wipefs -f /dev/xvdb
       ExecStart=/usr/sbin/mkfs.ext4 -i 4096 -b 4096 /dev/xvdb
       ExecStart=/bin/touch /etc/ephemeral-volume-formatted
+
+  # Mount the ephemeral volume
   - name: media-ephemeral.mount
     command: start
     content: |
@@ -114,6 +114,61 @@ coreos:
       What=/dev/xvdb
       Where=/media/ephemeral
       Type=ext4
+
+  # Format the docker volume
+  - name: format-docker-volume.service
+    command: start
+    content: |
+      [Unit]
+      Description=Formats the added EBS volume for Docker
+      ConditionPathExists=!/etc/docker-volume-formatted
+
+      [Service]
+      Type=oneshot
+      RemainAfterExit=yes
+      ExecStart=/usr/sbin/wipefs -f /dev/xvdf
+      ExecStart=/usr/sbin/mkfs.ext4 -i 4096 -b 4096 /dev/xvdf
+      ExecStart=/bin/touch /etc/docker-volume-formatted
+
+  # Mount the docker volume
+  - name: var-lib-docker.mount
+    command: start
+    content: |
+      [Unit]
+      Description=Mount Docker volume to /var/lib/docker
+      Requires=format-docker-volume.service
+      After=format-docker-volume.service
+      Before=docker.service
+      [Mount]
+      What=/dev/xvdf
+      Where=/var/lib/docker
+      Type=ext4
+
+  # Deis ctl
+  # Used to install and manage deis
+  - name: install-deisctl.service
+    command: start
+    content: |
+      [Unit]
+      Description=Install deisctl utility
+      ConditionPathExists=!/opt/bin/deisctl
+
+      [Service]
+      Type=oneshot
+      ExecStart=/usr/bin/sh -c 'curl -sSL --retry 5 --retry-delay 2 http://deis.io/deisctl/install.sh | sh -s {{deis_version}}'
+
+  # Debug etcd
+  - name: debug-etcd.service
+    content: |
+      [Unit]
+      Description=etcd debugging service
+
+      [Service]
+      ExecStartPre=/usr/bin/curl -sSL -o /opt/bin/jq http://stedolan.github.io/jq/download/linux64/jq
+      ExecStartPre=/usr/bin/chmod +x /opt/bin/jq
+      ExecStart=/usr/bin/bash -c "while true; do curl -sL http://127.0.0.1:4001/v2/stats/leader | /opt/bin/jq . ; sleep 1 ; done"
+
+  # Etcd data directory
   - name: prepare-etcd-data-directory.service
     command: start
     content: |
@@ -128,49 +183,27 @@ coreos:
       RemainAfterExit=yes
       ExecStart=/usr/bin/mkdir -p /media/ephemeral/etcd
       ExecStart=/usr/bin/chown -R etcd:etcd /media/ephemeral/etcd
-  - name: format-docker-volume.service
-    command: start
-    content: |
-      [Unit]
-      Description=Formats the added EBS volume for Docker
-      ConditionPathExists=!/etc/docker-volume-formatted
-
-      [Service]
-      Type=oneshot
-      RemainAfterExit=yes
-      ExecStart=/usr/sbin/wipefs -f /dev/xvdf
-      ExecStart=/usr/sbin/mkfs.ext4 -i 4096 -b 4096 /dev/xvdf
-      ExecStart=/bin/touch /etc/docker-volume-formatted
-  - name: var-lib-docker.mount
-    command: start
-    content: |
-      [Unit]
-      Description=Mount Docker volume to /var/lib/docker
-      Requires=format-docker-volume.service
-      After=format-docker-volume.service
-      Before=docker.service
-      [Mount]
-      What=/dev/xvdf
-      Where=/var/lib/docker
-      Type=ext4
 
 write_files:
   - path: /etc/deis-release
     content: |
       DEIS_RELEASE=v{{deis_version}}
-  - path: /etc/motd
-    content: " \e[31m* *    \e[34m*   \e[32m*****    \e[39mddddd   eeeeeee iiiiiii   ssss\n\e[31m*   *  \e[34m* *  \e[32m*   *     \e[39md   d   e    e    i     s    s\n \e[31m* *  \e[34m***** \e[32m*****     \e[39md    d  e         i    s\n\e[32m*****  \e[31m* *    \e[34m*       \e[39md     d e         i     s\n\e[32m*   * \e[31m*   *  \e[34m* *      \e[39md     d eee       i      sss\n\e[32m*****  \e[31m* *  \e[34m*****     \e[39md     d e         i         s\n  \e[34m*   \e[32m*****  \e[31m* *      \e[39md    d  e         i          s\n \e[34m* *  \e[32m*   * \e[31m*   *     \e[39md   d   e    e    i    s    s\n\e[34m***** \e[32m*****  \e[31m* *     \e[39mddddd   eeeeeee iiiiiii  ssss\n\n\e[39mWelcome to Deis\t\t\tPowered by Core\e[38;5;45mO\e[38;5;206mS\e[39m\n"
+
   - path: /etc/profile.d/nse-function.sh
     permissions: '0755'
     content: |
       function nse() {
         docker exec -it $1 bash
       }
+
+  # Set the insecure registry
   - path: /etc/systemd/system/docker.service.d/50-insecure-registry.conf
     content: |
         [Service]
         EnvironmentFile=/etc/environment_proxy
         Environment="DOCKER_OPTS=--insecure-registry 10.0.0.0/8 --insecure-registry 172.16.0.0/12 --insecure-registry 192.168.0.0/16 --insecure-registry 100.64.0.0/10"
+
+  # Deis image fetcher
   - path: /run/deis/bin/get_image
     permissions: '0755'
     content: |
@@ -193,6 +226,7 @@ write_files:
 
       # remove leading slash
       echo ${IMAGE#/}
+
   - path: /opt/bin/deis-debug-logs
     permissions: '0755'
     content: |
@@ -216,12 +250,14 @@ write_files:
       deisctl list
       etcdctl ls --recursive /deis
       printf "\n"
+
   - path: /home/core/.toolboxrc
     owner: core
     content: |
       TOOLBOX_DOCKER_IMAGE=ubuntu-debootstrap
       TOOLBOX_DOCKER_TAG=14.04
       TOOLBOX_USER=root
+
   - path: /etc/environment_proxy
     owner: core
     content: |
@@ -233,7 +269,27 @@ write_files:
       https_proxy=
       all_proxy=
       no_proxy=
+
   - path: /etc/systemd/coredump.conf
     content: |
       [Coredump]
       Storage=none
+
+  - path: /etc/profile.d/bash-function.sh
+    permissions: '0755'
+    content: |
+      alias l.='ls -d .*'
+      alias ll='ls -al'
+      alias jc='journalctl'
+      alias flu='fleetctl list-units'
+      alias fluf='fleetctl list-unit-files'
+      alias flm='fleetctl list-machines'
+      alias wetcd='watch -n1 etcdtcl ls / --recursive'
+      alias ss='sudo systemctl'
+      alias elr='etcdctl ls --recursive'
+      alias sysdig='docker exec -it sysdig sysdig'
+      alias spectogram='docker exec -it sysdig sysdig -c spectrogram 200'
+      function etcdctl2()
+      {
+        docker exec -it etcd /etcdctl --peers=http://127.0.0.1:2379 "$@";
+      }
