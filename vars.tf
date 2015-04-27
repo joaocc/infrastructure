@@ -1,8 +1,8 @@
 # Cluster Size
 variable "counts" {
     default = {
-      production_workers = 5
-      feature_workers = 5
+      production_workers = 3
+      feature_workers = 1
       core = 5
 
       # Must update `var.subnet_azs` to match
