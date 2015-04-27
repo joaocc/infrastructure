@@ -98,4 +98,14 @@ resource "aws_instance" "bastion" {
         }
     }
 
+    # Copy Custom Deis Units
+    provisioner "file" {
+        source = "conf/deis-units/"
+        destination = "/home/ubuntu/.deis/units"
+        connection {
+            user = "ubuntu"
+            key_file = "private/.ssh/deis"
+        }
+    }
+
 }
