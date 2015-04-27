@@ -3,3 +3,6 @@ plan:
 
 apply:
 	terraform apply -input=false
+
+refresh:
+	terraform refresh -input=false
