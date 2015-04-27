@@ -4,10 +4,10 @@ resource "aws_instance" "deis-core" {
     ami = "${lookup(var.amis, "coreos")}"
     key_name = "deis"
     instance_type = "${lookup(var.instance_types, "core")}"
-    subnet_id = "${element(aws_subnet.subnet.*.id, count.index)}"
+    subnet_id = "${element(aws_subnet.subnet.*.id, count.index % lookup(var.counts, "subnets"))}"
     associate_public_ip_address = true
     security_groups = ["${aws_security_group.deis-private.id}"]
-    user_data = "${replace(replace(file("conf/deis-core/user-data"), "{{discovery_url}}", file("private/etcd/discovery-url")), "{{deis_version}}", "${var.deis_version}")}"
+    user_data = "${replace(replace(replace(file("conf/deis-core/user-data"), "{{discovery_url}}", file("private/etcd/discovery-url")), "{{deis_version}}", "${var.deis_version}"), "{{tags}}", "${lookup(var.fleet_tags, "core")}")}"
     tags {
         Name = "deis-core"
     }

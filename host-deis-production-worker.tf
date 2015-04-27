@@ -1,4 +1,4 @@
-resource "aws_autoscaling_group" "deis-workers" {
+resource "aws_autoscaling_group" "deis-production-workers" {
   name = "Deis Workers"
 
   # Network
@@ -8,21 +8,21 @@ resource "aws_autoscaling_group" "deis-workers" {
   # Cluster Size
   max_size = 12
   min_size = 3
-  desired_capacity = "${lookup(var.counts, "workers")}"
+  desired_capacity = "${lookup(var.counts, "production_workers")}"
 
   # General Configuration
   force_delete = true
-  launch_configuration = "${aws_launch_configuration.deis-worker.id}"
+  launch_configuration = "${aws_launch_configuration.deis-production-worker.id}"
 
 }
 
-resource "aws_launch_configuration" "deis-worker" {
+resource "aws_launch_configuration" "deis-production-worker" {
     name = "deis-worker"
 
     # General Config
     image_id = "${lookup(var.amis, "coreos")}"
-    instance_type = "${lookup(var.instance_types, "core")}"
-    user_data = "${replace(replace(file("conf/deis-worker/user-data"), "{{etcd_lb}}", "${aws_elb.etcd.dns_name}"), "{{deis_version}}", "${var.deis_version}")}"
+    instance_type = "${lookup(var.instance_types, "production_worker")}"
+    user_data = "${replace(replace(replace(file("conf/deis-worker/user-data"), "{{etcd_lb}}", "${aws_elb.etcd.dns_name}"), "{{deis_version}}", "${var.deis_version}"), "{{tags}}", "${lookup(var.fleet_tags, "production_worker")}")}"
     key_name = "deis"
 
     # Networking
