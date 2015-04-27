@@ -35,7 +35,7 @@ variable "fleet_tags" {
 # AMI Table
 variable "amis" {
     default = {
-      coreos = "ami-323b195a"
+      coreos = "ami-d2033bba"
       ubuntu = "ami-6889d200"
     }
 }
