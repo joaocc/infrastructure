@@ -4,9 +4,9 @@
 
 # Availability Zone 1
 resource "aws_subnet" "subnet" {
-    count = 4
+  count = "${lookup(var.counts, "subnets")}"
     vpc_id = "${aws_vpc.main.id}"
-    cidr_block = "10.21.1.0/24"
+    cidr_block = "10.21.${count.index + 1}.0/24"
     availability_zone = "us-east-1${lookup(var.subnet_azs, "subnet${count.index}")}"
 
     tags {
