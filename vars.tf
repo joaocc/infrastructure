@@ -1,8 +1,12 @@
 # Cluster Size
 variable "counts" {
     default = {
-      workers = 6
-      core = 3
+      production_workers = 5
+      feature_workers = 5
+      core = 5
+
+      # Must update `var.subnet_azs` to match
+      subnets = 3
     }
 }
 
@@ -41,6 +45,5 @@ variable "subnet_azs" {
       subnet0 = "a"
       subnet1 = "c"
       subnet2 = "d"
-      subnet3 = "e"
     }
 }
