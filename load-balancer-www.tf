@@ -6,6 +6,7 @@ resource "aws_elb" "www" {
   cross_zone_load_balancing = true
   security_groups = ["${aws_security_group.www.id}"]
   subnets = ["${aws_subnet.subnet.*.id}"]
+  instances = ["${aws_instance.deis-core.*.id}"]
   idle_timeout = 60
 
   # Listen for inbound HTTPS Connections
