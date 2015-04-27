@@ -2,7 +2,7 @@
 coreos:
   fleet:
     public-ip: $private_ipv4
-    metadata: "type=worker"
+    metadata: "{{tags}}"
     etcd_request_timeout: 3.0
 
   units:

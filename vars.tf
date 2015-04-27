@@ -19,6 +19,14 @@ variable "instance_types" {
     }
 }
 
+variable "fleet_tags" {
+  default = {
+    core = "type=core"
+    production_worker = "type=worker,environment=production"
+    feature_worker = "type=worker,environment=feature"
+  }
+}
+
 # AMI Table
 variable "amis" {
     default = {
