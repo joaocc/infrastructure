@@ -11,26 +11,6 @@ coreos:
     - name: fleet.service
       command: start
 
-    # Sysdig
-    # Montitoring Service
-    - name: sysdig.service
-      command: start
-      content: |
-        [Unit]
-        Description=sysdig for the system !
-        Requires=docker.service
-        After=docker.service
-        After=haproxy.service
-        Wants=network-online.target
-        After=network-online.target
-
-        [Service]
-        TimeoutStartSec=0
-        SyslogIdentifier=sysdig_process
-        ExecStartPre=-/usr/bin/docker kill sysdig
-        ExecStartPre=-/usr/bin/docker rm sysdig
-        ExecStart=/bin/bash -c "/usr/bin/docker run -d --name=sysdig --privileged -v /var/run/docker.sock:/host/var/run/docker.sock -v /dev:/host/dev -v /proc:/host/proc:ro sysdig/sysdig /bin/sh -c 'while true; do .; sleep 60; done'"
-
     # NTP Time Server Configuration
     - name: ntpdate.service
       command: start
