@@ -5,11 +5,11 @@ Requires=docker.service
 
 [Service]
 TimeoutStartSec=0
-ExecStartPre=-/usr/bin/docker kill sysdig-agent
-ExecStartPre=-/usr/bin/docker rm sysdig-agent
-ExecStartPre=/usr/bin/docker pull sysdig/agent
-ExecStart=/usr/bin/docker run --name sysdig-agent --privileged --net host -e ACCESS_KEY=`etcdctl get /sysdig_key 2> /dev/null` -e TAGS=`etcdctl get /sysdig_tags 2> /dev/null` -v /var/run/docker.sock:/host/var/run/docker.sock -v /dev:/host/dev -v /proc:/host/proc:ro -v /boot:/host/boot:ro sysdig/agent
-ExecStop=/usr/bin/docker stop sysdig-agent
+ExecStartPre=-/bin/sh -c "docker kill sysdig-agent"
+ExecStartPre=-/bin/sh -c "docker rm sysdig-agent"
+ExecStartPre=/bin/sh -c "docker pull sysdig/agent"
+ExecStart=/bin/sh -c "docker run --name sysdig-agent --privileged --net host -e ACCESS_KEY=`etcdctl get /sysdig_key 2> /dev/null` -e TAGS=`etcdctl get /sysdig_tags 2> /dev/null` -v /var/run/docker.sock:/host/var/run/docker.sock -v /dev:/host/dev -v /proc:/host/proc:ro -v /boot:/host/boot:ro sysdig/agent"
+ExecStop=/bin/sh -c "docker stop sysdig-agent"
 
 [X-Fleet]
 Global=true
