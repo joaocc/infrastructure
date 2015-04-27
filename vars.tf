@@ -18,8 +18,9 @@ variable "deis_version" {
 variable "instance_types" {
     default = {
       bastion = "t2.micro"
-      worker = "r3.xlarge"
-      core = "m3.large"
+      production_worker = "r3.xlarge"
+      feature_worker = "r3.large"
+      core = "r3.large"
     }
 }
 
