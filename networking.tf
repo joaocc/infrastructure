@@ -34,7 +34,7 @@ resource "aws_route_table" "public" {
 
 # Route table association for subnets
 resource "aws_route_table_association" "route_table_association" {
-    count = 3
+    count = "${lookup(var.counts, "subnets")}"
     subnet_id = "${element(aws_subnet.subnet.*.id, count.index)}"
     route_table_id = "${aws_route_table.public.id}"
 }
