@@ -1,13 +1,13 @@
 resource "aws_autoscaling_group" "deis-feature-workers" {
-  name = "Deis Workers"
+  name = "Deis Feature Workers"
 
   # Network
   availability_zones = ["${aws_subnet.subnet.*.availability_zone}"]
   vpc_zone_identifier = ["${aws_subnet.subnet.*.id}"]
 
   # Cluster Size
-  max_size = 12
-  min_size = 3
+  max_size = 4
+  min_size = 1
   desired_capacity = "${lookup(var.counts, "feature_workers")}"
 
   # General Configuration
@@ -17,7 +17,7 @@ resource "aws_autoscaling_group" "deis-feature-workers" {
 }
 
 resource "aws_launch_configuration" "deis-feature-worker" {
-    name = "deis-worker"
+    name = "deis-feature-worker"
 
     # General Config
     image_id = "${lookup(var.amis, "coreos")}"

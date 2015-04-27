@@ -1,5 +1,5 @@
 resource "aws_autoscaling_group" "deis-production-workers" {
-  name = "Deis Workers"
+  name = "Deis Production Workers"
 
   # Network
   availability_zones = ["${aws_subnet.subnet.*.availability_zone}"]
@@ -17,7 +17,7 @@ resource "aws_autoscaling_group" "deis-production-workers" {
 }
 
 resource "aws_launch_configuration" "deis-production-worker" {
-    name = "deis-worker"
+    name = "deis-production-worker"
 
     # General Config
     image_id = "${lookup(var.amis, "coreos")}"
