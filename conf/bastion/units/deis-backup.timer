@@ -2,7 +2,7 @@
 Description=deis-backup-timer
 
 [Timer]
-OnCalendar=hourly
+OnCalendar=daily
 
 [X-Fleet]
 MachineOf=%p.service
