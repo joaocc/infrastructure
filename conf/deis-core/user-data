@@ -36,6 +36,19 @@ coreos:
       RemainAfterExit=yes
       Type=oneshot
 
+  # Systemd journal gateway
+  - name: systemd-journal-gatewayd.socket
+    command: start
+    enable: yes
+    content: |
+      [Unit]
+      Description=Journal Gateway Service Socket
+      [Socket]
+      ListenStream=/var/run/journald.sock
+      Service=systemd-journal-gatewayd.service
+      [Install]
+      WantedBy=sockets.target
+
   # Etcd
   # Distribuited Key Value store
   # Masked and handled by the etcd proxy
