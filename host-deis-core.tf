@@ -24,3 +24,9 @@ resource "aws_instance" "deis-core" {
       volume_type = "gp2"
     }
 }
+
+resource "aws_eip" "deis-core" {
+    count = "${lookup(var.counts, "core")}"
+    instance = "${element(aws_instance.deis-core.*.id, count.index)}"
+    vpc = true
+}
