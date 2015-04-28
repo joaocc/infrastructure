@@ -8,7 +8,7 @@ TimeoutStartSec=0
 ExecStartPre=-/bin/sh -c "docker kill sysdig-agent"
 ExecStartPre=-/bin/sh -c "docker rm sysdig-agent"
 ExecStartPre=/bin/sh -c "docker pull sysdig/agent"
-ExecStart=/bin/sh -c "docker run --name sysdig-agent --privileged --net host -e ACCESS_KEY=`etcdctl get /sysdig_key 2> /dev/null` -v /var/run/docker.sock:/host/var/run/docker.sock -v /dev:/host/dev -v /proc:/host/proc:ro -v /boot:/host/boot:ro sysdig/agent"
+ExecStart=/bin/sh -c "docker run --name sysdig-agent --privileged --net host -e ACCESS_KEY=`etcdctl get /sysdigcloud.com/key 2> /dev/null` -v /var/run/docker.sock:/host/var/run/docker.sock -v /dev:/host/dev -v /proc:/host/proc:ro -v /boot:/host/boot:ro sysdig/agent"
 ExecStop=/bin/sh -c "docker stop sysdig-agent"
 
 [X-Fleet]
