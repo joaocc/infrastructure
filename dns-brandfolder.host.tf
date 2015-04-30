@@ -21,6 +21,15 @@ resource "aws_route53_record" "deisctl-brandfolder-host" {
    records = ["${aws_elb.deis-ctl.dns_name}"]
 }
 
+# Etcd ELB
+resource "aws_route53_record" "etcd-brandfolder-host" {
+   zone_id = "${aws_route53_zone.brandfolder-host.zone_id}"
+   name = "etcd.brandfolder.host"
+   type = "CNAME"
+   ttl = "300"
+   records = ["${aws_elb.etcd.dns_name}"]
+}
+
 # Postgres Database
 resource "aws_route53_record" "prod-pg-brandfolder-host" {
   zone_id = "${aws_route53_zone.brandfolder-host.zone_id}"
