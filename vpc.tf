@@ -8,3 +8,11 @@ resource "aws_vpc" "main" {
         Name = "Deis"
     }
 }
+
+resource "aws_vpn_gateway" "main-vpc" {
+    vpc_id = "${aws_vpc.main.id}"
+
+    tags {
+        Name = "main"
+    }
+}

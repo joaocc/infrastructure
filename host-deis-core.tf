@@ -9,7 +9,9 @@ resource "aws_instance" "deis-core" {
     security_groups = ["${aws_security_group.deis-private.id}"]
     user_data = "${replace(replace(replace(file("conf/deis-core/user-data"), "{{discovery_url}}", file("private/etcd/discovery-url")), "{{deis_version}}", "${var.deis_version}"), "{{tags}}", "${lookup(var.fleet_tags, "core")}")}"
     tags {
-        Name = "deis-core"
+        Name = "Deis Core ${count.index + 1}"
+        Type = "Core"
+        Environment = "Deis"
     }
 
     # Storage

@@ -59,35 +59,6 @@ coreos:
         ExecStartPre=/usr/sbin/modprobe nf_conntrack
         ExecStart=/bin/sh -c "sysctl -w net.netfilter.nf_conntrack_max=262144"
 
-    # Format the ephemeral volume
-    - name: format-ephemeral-volume.service
-      command: start
-      content: |
-        [Unit]
-        Description=Formats the ephemeral volume
-        ConditionPathExists=!/etc/ephemeral-volume-formatted
-
-        [Service]
-        Type=oneshot
-        RemainAfterExit=yes
-        ExecStart=/usr/sbin/wipefs -f /dev/xvdb
-        ExecStart=/usr/sbin/mkfs.ext4 -i 4096 -b 4096 /dev/xvdb
-        ExecStart=/bin/touch /etc/ephemeral-volume-formatted
-
-    # Mount the ephemeral volume
-    - name: media-ephemeral.mount
-      command: start
-      content: |
-        [Unit]
-        Description=Formats and mounts the ephemeral drive
-        Requires=format-ephemeral-volume.service
-        After=format-ephemeral-volume.service
-
-        [Mount]
-        What=/dev/xvdb
-        Where=/media/ephemeral
-        Type=ext4
-
     # Format the docker volume
     - name: format-docker-volume.service
       command: start
@@ -185,7 +156,7 @@ write_files:
     content: |
       #!/bin/bash
 
-      COMPONENTS=(builder cache controller database logger logspout publisher registry router store-daemon store-gateway store-metadata store-monitor )
+      COMPONENTS=(logspout publisher)
       for c in "${COMPONENTS[@]}"; do
         image=`/run/deis/bin/get_image /deis/$c`
         docker history $image >/dev/null 2>&1 || docker pull $image
@@ -253,7 +224,3 @@ write_files:
       alias elr='etcdctl ls --recursive'
       alias sysdig='docker exec -it sysdig sysdig'
       alias spectogram='docker exec -it sysdig sysdig -c spectrogram 200'
-      function etcdctl2()
-      {
-        docker exec -it etcd /etcdctl --peers=http://127.0.0.1:2379 "$@";
-      }

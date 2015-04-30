@@ -1,12 +1,9 @@
 [Unit]
-Description=deis-backup
+Description=deis-preseed
 
 [Service]
 EnvironmentFile=/etc/environment
-TimeoutStartSec=20m
-ExecStart=/bin/sh -c "COMPONENTS=(builder cache controller database logger logspout publisher registry router store-daemon store-gateway store-metadata store-monitor )
-                      for c in "${COMPONENTS[@]}"; do
-                        image=`/run/deis/bin/get_image /deis/$c`
-                        version=`etcdctl get /deis/platform/version 2> /dev/null || echo "latest"`
-                        docker history $image:$version >/dev/null 2>&1 || docker pull $image:$version
-                      done"
+ExecStart=-/run/deis/bin/preseed
+
+[X-Fleet]
+Global=true

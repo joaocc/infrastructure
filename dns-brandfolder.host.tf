@@ -30,6 +30,16 @@ resource "aws_route53_record" "etcd-brandfolder-host" {
    records = ["${aws_elb.etcd.dns_name}"]
 }
 
+# Core machines
+resource "aws_route53_record" "core-brandfolder-host" {
+  count = "${lookup(var.counts, "core")}"
+  zone_id = "${aws_route53_zone.brandfolder-host.zone_id}"
+  name = "core-${count.index + 1}.brandfolder.host"
+  type = "A"
+  ttl = "300"
+  records = ["${element(aws_instance.deis-core.*.private_ip, count.index)}"]
+}
+
 # Postgres Database
 resource "aws_route53_record" "prod-pg-brandfolder-host" {
   zone_id = "${aws_route53_zone.brandfolder-host.zone_id}"

@@ -9,9 +9,8 @@ coreos:
     discovery: {{discovery_url}}
     addr: $private_ipv4:4001
     peer-addr: $private_ipv4:7001
-    data-dir: /media/ephemeral/etcd
-    peer-election-timeout: 2000
-    peer-heartbeat-interval: 500
+    peer-election-timeout: 4000
+    peer-heartbeat-interval: 1000
 
   units:
   # Fleet
@@ -51,7 +50,6 @@ coreos:
 
   # Etcd
   # Distribuited Key Value store
-  # Masked and handled by the etcd proxy
   - name: etcd.service
     command: start
     content: |
@@ -78,35 +76,6 @@ coreos:
       Type=oneshot
       ExecStartPre=/usr/sbin/modprobe nf_conntrack
       ExecStart=/bin/sh -c "sysctl -w net.netfilter.nf_conntrack_max=262144"
-
-  # Format the ephemeral volume
-  - name: format-ephemeral-volume.service
-    command: start
-    content: |
-      [Unit]
-      Description=Formats the ephemeral volume
-      ConditionPathExists=!/etc/ephemeral-volume-formatted
-
-      [Service]
-      Type=oneshot
-      RemainAfterExit=yes
-      ExecStart=/usr/sbin/wipefs -f /dev/xvdb
-      ExecStart=/usr/sbin/mkfs.ext4 -i 4096 -b 4096 /dev/xvdb
-      ExecStart=/bin/touch /etc/ephemeral-volume-formatted
-
-  # Mount the ephemeral volume
-  - name: media-ephemeral.mount
-    command: start
-    content: |
-      [Unit]
-      Description=Formats and mounts the ephemeral drive
-      Requires=format-ephemeral-volume.service
-      After=format-ephemeral-volume.service
-
-      [Mount]
-      What=/dev/xvdb
-      Where=/media/ephemeral
-      Type=ext4
 
   # Format the docker volume
   - name: format-docker-volume.service
@@ -137,6 +106,18 @@ coreos:
       Where=/var/lib/docker
       Type=ext4
 
+  # Preseed deis container images
+  - path: /run/deis/bin/preseed
+    permissions: '0755'
+    content: |
+      #!/bin/bash
+
+      COMPONENTS=(builder cache controller database logger logspout publisher registry router store-daemon store-gateway store-metadata store-monitor)
+      for c in "${COMPONENTS[@]}"; do
+        image=`/run/deis/bin/get_image /deis/$c`
+        docker history $image >/dev/null 2>&1 || docker pull $image
+      done
+
   # Deis ctl
   # Used to install and manage deis
   - name: install-deisctl.service
@@ -160,22 +141,6 @@ coreos:
       ExecStartPre=/usr/bin/curl -sSL -o /opt/bin/jq http://stedolan.github.io/jq/download/linux64/jq
       ExecStartPre=/usr/bin/chmod +x /opt/bin/jq
       ExecStart=/usr/bin/bash -c "while true; do curl -sL http://127.0.0.1:4001/v2/stats/leader | /opt/bin/jq . ; sleep 1 ; done"
-
-  # Etcd data directory
-  - name: prepare-etcd-data-directory.service
-    command: start
-    content: |
-      [Unit]
-      Description=Prepares the etcd data directory
-      Requires=media-ephemeral.mount
-      After=media-ephemeral.mount
-      Before=etcd.service
-
-      [Service]
-      Type=oneshot
-      RemainAfterExit=yes
-      ExecStart=/usr/bin/mkdir -p /media/ephemeral/etcd
-      ExecStart=/usr/bin/chown -R etcd:etcd /media/ephemeral/etcd
 
 write_files:
   - path: /etc/deis-release
@@ -282,7 +247,3 @@ write_files:
       alias elr='etcdctl ls --recursive'
       alias sysdig='docker exec -it sysdig sysdig'
       alias spectogram='docker exec -it sysdig sysdig -c spectrogram 200'
-      function etcdctl2()
-      {
-        docker exec -it etcd /etcdctl --peers=http://127.0.0.1:2379 "$@";
-      }

@@ -14,6 +14,25 @@ resource "aws_autoscaling_group" "deis-feature-workers" {
   force_delete = true
   launch_configuration = "${aws_launch_configuration.deis-feature-worker.id}"
 
+  # Tags
+  tag {
+    key = "Name"
+    value = "Feature Worker"
+    propagate_at_launch = true
+  }
+
+  tag {
+    key = "Environment"
+    value = "Feature"
+    propagate_at_launch = true
+  }
+
+  tag {
+    key = "Type"
+    value = "Worker"
+    propagate_at_launch = true
+  }
+
 }
 
 resource "aws_launch_configuration" "deis-feature-worker" {

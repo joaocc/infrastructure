@@ -14,6 +14,25 @@ resource "aws_autoscaling_group" "deis-production-workers" {
   force_delete = true
   launch_configuration = "${aws_launch_configuration.deis-production-worker.id}"
 
+  # Tags
+  tag {
+    key = "Name"
+    value = "Production Worker"
+    propagate_at_launch = true
+  }
+
+  tag {
+    key = "Environment"
+    value = "Production"
+    propagate_at_launch = true
+  }
+
+  tag {
+    key = "Type"
+    value = "Worker"
+    propagate_at_launch = true
+  }
+
 }
 
 resource "aws_launch_configuration" "deis-production-worker" {

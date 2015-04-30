@@ -7,7 +7,8 @@ resource "aws_instance" "bastion" {
     associate_public_ip_address = true
     security_groups = ["${aws_security_group.bastion.id}"]
     tags {
-        Name = "bastion"
+        Name = "Bastion (SSH Gateway)"
+        Type = "Utility"
     }
 
     # Copy the .bash-profile
