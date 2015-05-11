@@ -16,3 +16,5 @@ WantedBy=multi-user.target
 
 [X-Fleet]
 Global=true
+MachineMetadata=type=worker
+MachineMetadata=function=deis
