@@ -39,19 +39,16 @@
 # Pull latest services on boot
 - name: refresh-infrastructure.service
   command: start
-  enable: yes
   content: |
     [Unit]
     Description=Refresh Deis Units
 
     [Service]
     ExecStartPre=/bin/sh -c "rm -rf /var/lib/infrastructure"
-    ExecStart=/bin/sh -c "git clone https://github.com/brandfolder/infrastructure.git /var/lib/infrastructure"
+    ExecStartPre=/bin/sh -c "git clone https://github.com/brandfolder/infrastructure.git /var/lib/infrastructure"
+    ExecStart=/bin/true
     RemainAfterExit=yes
     Type=oneshot
-
-    [Install]
-    WantedBy=multi-user.target
 
 # Systemd journal gateway
 - name: systemd-journal-gatewayd.socket
@@ -79,6 +76,28 @@
     Type=oneshot
     ExecStartPre=/usr/sbin/modprobe nf_conntrack
     ExecStart=/bin/sh -c "sysctl -w net.netfilter.nf_conntrack_max=262144"
+
+- name: docker.service
+  command: start
+  content: |
+    [Unit]
+    Description=Docker Application Container Engine
+    Documentation=http://docs.docker.com
+    After=var-lib-docker.mount
+    Requires=var-lib-docker.mount
+    After=docker.socket early-docker.target network.target
+    Requires=docker.socket early-docker.target
+
+    [Service]
+    Environment=TMPDIR=/var/tmp
+    EnvironmentFile=-/run/flannel_docker_opts.env
+    MountFlags=slave
+    LimitNOFILE=1048576
+    LimitNPROC=1048576
+    ExecStart=/usr/lib/coreos/dockerd --daemon --host=fd:// $DOCKER_OPTS $DOCKER_OPT_BIP $DOCKER_OPT_MTU $DOCKER_OPT_IPMASQ
+
+    [Install]
+    WantedBy=multi-user.target
 
 # Format the docker volume
 - name: format-docker-volume.service
