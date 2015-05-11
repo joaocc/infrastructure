@@ -10,7 +10,7 @@ resource "aws_instance" "bastion" {
 
     tags {
         Name = "Bastion (SSH Gateway)"
-        Type = "Utility"
+        Type = "Bastion"
     }
 
     # Storage
