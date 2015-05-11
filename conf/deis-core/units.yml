@@ -1,0 +1,41 @@
+# Etcd
+# Distribuited Key Value store
+- name: etcd.service
+  command: start
+  content: |
+    [Unit]
+    Description=etcd
+
+    [Service]
+    User=etcd
+    PermissionsStartOnly=true
+    Environment=ETCD_DATA_DIR=/var/lib/etcd
+    Environment=ETCD_NAME=%m
+    ExecStart=/usr/bin/etcd
+    Restart=always
+    RestartSec=10s
+    LimitNOFILE=40000
+
+# Deis ctl
+# Used to install and manage deis
+- name: install-deisctl.service
+  command: start
+  content: |
+    [Unit]
+    Description=Install deisctl utility
+    ConditionPathExists=!/opt/bin/deisctl
+
+    [Service]
+    Type=oneshot
+    ExecStart=/usr/bin/sh -c 'curl -sSL --retry 5 --retry-delay 2 http://deis.io/deisctl/install.sh | sh -s $DEIS_VERSION'
+
+# Debug etcd
+- name: debug-etcd.service
+  content: |
+    [Unit]
+    Description=etcd debugging service
+
+    [Service]
+    ExecStartPre=/usr/bin/curl -sSL -o /opt/bin/jq http://stedolan.github.io/jq/download/linux64/jq
+    ExecStartPre=/usr/bin/chmod +x /opt/bin/jq
+    ExecStart=/usr/bin/bash -c "while true; do curl -sL http://127.0.0.1:4001/v2/stats/leader | /opt/bin/jq . ; sleep 1 ; done"

@@ -10,10 +10,6 @@ variable "counts" {
     }
 }
 
-variable "deis_version" {
-    default = "1.5.2"
-}
-
 # Instance Settings
 variable "instance_types" {
     default = {
@@ -26,9 +22,10 @@ variable "instance_types" {
 
 variable "fleet_tags" {
   default = {
-    core = "type=core"
-    production_worker = "type=worker,environment=production"
-    feature_worker = "type=worker,environment=feature"
+    core = "type=core,function=deis"
+    production_worker = "type=worker,environment=production,function=deis"
+    feature_worker = "type=worker,environment=feature,function=deis"
+    bastion = "type=bastion"
   }
 }
 

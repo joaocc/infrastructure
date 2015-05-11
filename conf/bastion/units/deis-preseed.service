@@ -1,9 +1,0 @@
-[Unit]
-Description=deis-preseed
-
-[Service]
-EnvironmentFile=/etc/environment
-ExecStart=-/run/deis/bin/preseed
-
-[X-Fleet]
-Global=true

@@ -1,0 +1,125 @@
+# Fleet
+# Distribuited Scheduling Service
+- name: fleet.service
+  command: start
+
+# NTP Time Server Configuration
+- name: ntpdate.service
+  command: start
+
+- name: timedate-ntp-synchronization.service
+  command: start
+  content: |
+    [Unit]
+    Description=Synchronize system clock
+    After=ntpdate.service
+
+    [Service]
+    ExecStart=/usr/bin/timedatectl set-timezone UTC
+    ExecStart=/usr/bin/timedatectl set-ntp true
+    ExecStart=/sbin/hwclock --systohc --utc
+    RemainAfterExit=yes
+    Type=oneshot
+
+# Preseed Docker Images on boot
+- name: deis-preseed.service
+  command: start
+  content: |
+    [Unit]
+    Description=Preseed Docker Images
+    After=docker.service
+    Before=fleet.service
+
+    [Service]
+    ExecStart=/run/deis/bin/preseed
+    RemainAfterExit=yes
+    Type=oneshot
+
+# Pull latest services on boot
+- name: deis-services-update.service
+  command: start
+  content: |
+    [Unit]
+    Description=Preseed Docker Images
+    After=docker.service
+    Before=fleet.service
+
+    [Service]
+    ExecStartPre=/bin/sh -c "rm -rf /home/core/infrastructure"
+    ExecStartPre=/bin/sh -c "git clone https://github.com/brandfolder/infrastructure.git /home/core/infrastructure"
+    ExecStart=/bin/sh -c "cp -r /home/core/infrastructure/deis-units/* /home/.deis"
+    RemainAfterExit=yes
+    Type=oneshot
+
+# Pull latest services on boot
+- name: custom-services-update.service
+  command: start
+  content: |
+    [Unit]
+    Description=Preseed Docker Images
+    After=docker.service
+    Before=fleet.service
+
+    [Service]
+    ExecStartPre=/bin/sh -c "rm -rf /home/core/infrastructure"
+    ExecStartPre=/bin/sh -c "git clone https://github.com/brandfolder/infrastructure.git /home/core/infrastructure"
+    ExecStart=/bin/sh -c "cp -r /home/core/infrastructure/custom-units/* /home/units"
+    RemainAfterExit=yes
+    Type=oneshot
+
+# Systemd journal gateway
+- name: systemd-journal-gatewayd.socket
+  command: start
+  enable: yes
+  content: |
+    [Unit]
+    Description=Journal Gateway Service Socket
+
+    [Socket]
+    ListenStream=/var/run/journald.sock
+    Service=systemd-journal-gatewayd.service
+
+    [Install]
+    WantedBy=sockets.target
+
+# Increase number of connections
+- name: increase-nf_conntrack-connections.service
+  command: start
+  content: |
+    [Unit]
+    Description=Increase the number of connections in nf_conntrack. default is 65536
+
+    [Service]
+    Type=oneshot
+    ExecStartPre=/usr/sbin/modprobe nf_conntrack
+    ExecStart=/bin/sh -c "sysctl -w net.netfilter.nf_conntrack_max=262144"
+
+# Format the docker volume
+- name: format-docker-volume.service
+  command: start
+  content: |
+    [Unit]
+    Description=Formats the added EBS volume for Docker
+    ConditionPathExists=!/etc/docker-volume-formatted
+
+    [Service]
+    Type=oneshot
+    RemainAfterExit=yes
+    ExecStart=/usr/sbin/wipefs -f /dev/xvdf
+    ExecStart=/usr/sbin/mkfs.ext4 -i 4096 -b 4096 /dev/xvdf
+    ExecStart=/bin/touch /etc/docker-volume-formatted
+
+# Mount the docker volume
+- name: var-lib-docker.mount
+  command: start
+  content: |
+    [Unit]
+    Description=Mount Docker volume to /var/lib/docker
+    Requires=format-docker-volume.service
+    After=format-docker-volume.service
+    Before=docker.service
+
+    [Mount]
+    What=/dev/xvdf
+    Where=/var/lib/docker
+    Type=ext4

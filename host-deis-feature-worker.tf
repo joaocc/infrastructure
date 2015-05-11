@@ -36,12 +36,11 @@ resource "aws_autoscaling_group" "deis-feature-workers" {
 }
 
 resource "aws_launch_configuration" "deis-feature-worker" {
-    name = "deis-feature-worker"
 
     # General Config
     image_id = "${lookup(var.amis, "coreos")}"
     instance_type = "${lookup(var.instance_types, "feature_worker")}"
-    user_data = "${replace(replace(replace(file("conf/deis-worker/user-data"), "{{etcd_lb}}", "${aws_elb.etcd.dns_name}"), "{{deis_version}}", "${var.deis_version}"), "{{tags}}", "${lookup(var.fleet_tags, "feature_worker")}")}"
+    user_data = "${template_file.deis-feature-worker.rendered}"
     key_name = "deis"
 
     # Networking
@@ -59,5 +58,7 @@ resource "aws_launch_configuration" "deis-feature-worker" {
       volume_size = 100
       volume_type = "gp2"
     }
+
+    lifecycle { create_before_destroy = true }
 
 }

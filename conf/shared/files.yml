@@ -1,0 +1,80 @@
+# Function to exec bash in a docker container
+- path: /etc/profile.d/nse-function.sh
+  permissions: '0755'
+  content: |
+    function nse() {
+      docker exec -it $1 bash
+    }
+
+# Set the insecure registry
+- path: /etc/systemd/system/docker.service.d/50-insecure-registry.conf
+  content: |
+    [Service]
+    EnvironmentFile=/etc/environment_proxy
+    Environment="DOCKER_OPTS=--insecure-registry 10.0.0.0/8 --insecure-registry 172.16.0.0/12 --insecure-registry 192.168.0.0/16 --insecure-registry 100.64.0.0/10"
+
+# Fetcher for deis images
+- path: /run/deis/bin/get_image
+  permissions: '0755'
+  content: |
+    #!/bin/bash
+    # usage: get_image <component_path>
+    IMAGE=`etcdctl get $1/image 2>/dev/null`
+
+    # if no image was set in etcd, we use the default plus the release string
+    if [ $? -ne 0 ]; then
+      RELEASE=`etcdctl get /deis/platform/version 2>/dev/null`
+
+      # if no release was set in etcd, use the default provisioned with the server
+      if [ $? -ne 0 ]; then
+        source /etc/deis-release
+        RELEASE=$DEIS_RELEASE
+      fi
+
+      IMAGE=$1:$RELEASE
+    fi
+
+    # remove leading slash
+    echo ${IMAGE#/}
+
+- path: /etc/environment_proxy
+  owner: core
+  content: |
+    HTTP_PROXY=
+    HTTPS_PROXY=
+    ALL_PROXY=
+    NO_PROXY=
+    http_proxy=
+    https_proxy=
+    all_proxy=
+    no_proxy=
+
+- path: /etc/systemd/coredump.conf
+  content: |
+    [Coredump]
+    Storage=none
+
+- path: /etc/profile.d/bash-function.sh
+  permissions: '0755'
+  content: |
+    alias l.='ls -d .*'
+    alias ll='ls -al'
+    alias jc='journalctl'
+    alias flu='fleetctl list-units'
+    alias fluf='fleetctl list-unit-files'
+    alias flm='fleetctl list-machines'
+    alias wetcd='watch -n1 etcdtcl ls / --recursive'
+    alias ss='sudo systemctl'
+    alias elr='etcdctl ls --recursive'
+
+# Preseed deis container images
+- path: /run/deis/bin/preseed
+  permissions: '0755'
+  content: |
+    #!/bin/bash
+
+    COMPONENTS=(builder cache controller database logger logspout publisher registry router store-daemon store-gateway store-metadata store-monitor)
+    for c in "${COMPONENTS[@]}"; do
+      image=`/run/deis/bin/get_image /deis/$c`
+      docker history $image >/dev/null 2>&1 || docker pull $image
+    done

@@ -36,12 +36,11 @@ resource "aws_autoscaling_group" "deis-production-workers" {
 }
 
 resource "aws_launch_configuration" "deis-production-worker" {
-    name = "deis-production-worker"
 
     # General Config
     image_id = "${lookup(var.amis, "coreos")}"
     instance_type = "${lookup(var.instance_types, "production_worker")}"
-    user_data = "${replace(replace(replace(file("conf/deis-worker/user-data"), "{{etcd_lb}}", "${aws_elb.etcd.dns_name}"), "{{deis_version}}", "${var.deis_version}"), "{{tags}}", "${lookup(var.fleet_tags, "production_worker")}")}"
+    user_data = "${template_file.deis-production-worker.rendered}"
     key_name = "deis"
 
     # Networking
@@ -59,5 +58,7 @@ resource "aws_launch_configuration" "deis-production-worker" {
       volume_size = 100
       volume_type = "gp2"
     }
+
+    lifecycle { create_before_destroy = true }
 
 }
