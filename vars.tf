@@ -13,7 +13,7 @@ variable "counts" {
 # Instance Settings
 variable "instance_types" {
     default = {
-      bastion = "t2.micro"
+      bastion = "t2.small"
       production_worker = "r3.xlarge"
       feature_worker = "r3.large"
       core = "r3.large"
