@@ -24,6 +24,7 @@
     [Unit]
     Description=Install deisctl utility
     ConditionPathExists=!/opt/bin/deisctl
+    After=refresh-infrastructure.service
 
     [Service]
     Type=oneshot
