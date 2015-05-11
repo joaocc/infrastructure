@@ -31,41 +31,27 @@
     Before=fleet.service
 
     [Service]
-    ExecStart=/run/deis/bin/preseed
+    ExecStartPre=/run/deis/bin/preseed
+    ExecStart=/bin/true
     RemainAfterExit=yes
     Type=oneshot
 
 # Pull latest services on boot
-- name: deis-services-update.service
+- name: refresh-infrastructure.service
   command: start
+  enable: yes
   content: |
     [Unit]
-    Description=Preseed Docker Images
-    After=docker.service
-    Before=fleet.service
+    Description=Refresh Deis Units
 
     [Service]
-    ExecStartPre=/bin/sh -c "rm -rf /home/core/infrastructure"
-    ExecStartPre=/bin/sh -c "git clone https://github.com/brandfolder/infrastructure.git /home/core/infrastructure"
-    ExecStart=/bin/sh -c "cp -r /home/core/infrastructure/deis-units/* /home/.deis"
+    ExecStartPre=/bin/sh -c "rm -rf /var/lib/infrastructure"
+    ExecStart=/bin/sh -c "git clone https://github.com/brandfolder/infrastructure.git /var/lib/infrastructure"
     RemainAfterExit=yes
     Type=oneshot
 
-# Pull latest services on boot
-- name: custom-services-update.service
-  command: start
-  content: |
-    [Unit]
-    Description=Preseed Docker Images
-    After=docker.service
-    Before=fleet.service
-
-    [Service]
-    ExecStartPre=/bin/sh -c "rm -rf /home/core/infrastructure"
-    ExecStartPre=/bin/sh -c "git clone https://github.com/brandfolder/infrastructure.git /home/core/infrastructure"
-    ExecStart=/bin/sh -c "cp -r /home/core/infrastructure/custom-units/* /home/units"
-    RemainAfterExit=yes
-    Type=oneshot
+    [Install]
+    WantedBy=multi-user.target
 
 # Systemd journal gateway
 - name: systemd-journal-gatewayd.socket

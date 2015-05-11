@@ -13,4 +13,16 @@ resource "aws_instance" "bastion" {
         Type = "Utility"
     }
 
+    # Storage
+    root_block_device {
+      volume_size = 50
+      volume_type = "gp2"
+    }
+
+    ebs_block_device {
+      device_name = "/dev/xvdf"
+      volume_size = 100
+      volume_type = "gp2"
+    }
+
 }

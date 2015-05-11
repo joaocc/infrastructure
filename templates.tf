@@ -31,13 +31,17 @@ resource "template_file" "deis-feature-worker" {
 
 }
 
+resource "template_file" "bastion_files" {
+  filename = "${path.cwd}/conf/bastion/files.tpl"
+}
+
 resource "template_file" "bastion" {
   filename = "${path.cwd}/conf/user-data.tpl"
 
   vars {
     fleet_tags = "${lookup(var.fleet_tags, "bastion")}"
     units = "${file("conf/bastion/units.yml")}"
-    files = "${file("conf/bastion/files.yml")}"
+    files = "${template_file.bastion_files.rendered}"
   }
 
 }

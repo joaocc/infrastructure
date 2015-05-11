@@ -67,6 +67,11 @@
     alias ss='sudo systemctl'
     alias elr='etcdctl ls --recursive'
 
+- path: /etc/profile.d/deis-ctl-units.sh
+  permissions: '0755'
+  content: |
+    export DEISCTL_UNITS=/var/lib/infrastructure/deis-units
+
 # Preseed deis container images
 - path: /run/deis/bin/preseed
   permissions: '0755'

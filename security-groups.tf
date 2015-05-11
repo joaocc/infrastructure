@@ -66,6 +66,14 @@ resource "aws_security_group" "deis-private" {
       security_groups = ["${aws_security_group.bastion.id}"]
   }
 
+  # Allow etcd from the bastion hosts
+  ingress {
+      from_port = 4001
+      to_port = 4001
+      protocol = "tcp"
+      security_groups = ["${aws_security_group.bastion.id}"]
+  }
+
   # Allow HTTP/S from the Deis Public ELB
   ingress {
       from_port = 80

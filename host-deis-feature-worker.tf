@@ -28,6 +28,12 @@ resource "aws_autoscaling_group" "deis-feature-workers" {
   }
 
   tag {
+    key = "Function"
+    value = "Deis"
+    propagate_at_launch = true
+  }
+
+  tag {
     key = "Type"
     value = "Worker"
     propagate_at_launch = true
