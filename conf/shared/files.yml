@@ -67,7 +67,7 @@
     alias flm='fleetctl list-machines'
     alias wetcd='watch -n1 etcdtcl ls / --recursive'
     alias wflm='watch fleetctl list-machines'
-    alias wflu='watch fleetctl list-machines'
+    alias wflu='watch fleetctl list-units'
     alias ss='sudo systemctl'
     alias elr='etcdctl ls --recursive'
 
