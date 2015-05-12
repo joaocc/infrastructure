@@ -3,13 +3,6 @@
 This is the configuration for the Brandfolder infrastructure. Built and managed
 with [Terraform](github.com/hashicorp/terraform).
 
-***Note:*** **Pending several PR's you must use the brandfolder fork of terraform**
-```
-$ git clone git@github.com/brandfolder/terraform
-$ make updatedeps
-$ make dev
-```
-
 ## Prerequisites
 
 * Install Terraform
