@@ -3,7 +3,7 @@ resource "aws_db_instance" "default" {
     identifier = "postgres"
 
     # Instance Config
-    instance_class = "db.r3.xlarge"
+    instance_class = "${lookup(var.instance_types, "database")}"
 
     # Storage
     allocated_storage = 100

@@ -41,10 +41,10 @@ resource "aws_route53_record" "prod-pg-brandfolder-host" {
 }
 
 # Redis Primary
-resource "aws_route53_record" "prod-1-redis-brandfolder-host" {
+resource "aws_route53_record" "prod-redis-brandfolder-host" {
   zone_id = "${aws_route53_zone.brandfolder-host.zone_id}"
   name = "prod.redis.brandfolder.host"
   type = "CNAME"
   ttl = "300"
-  records = ["production.miqyjj.ng.0001.use1.cache.amazonaws.com"]
+  records = ["default-redis.miqyjj.ng.0001.use1.cache.amazonaws.com"]
 }

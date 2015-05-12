@@ -17,6 +17,8 @@ variable "instance_types" {
       production_worker = "r3.xlarge"
       feature_worker = "r3.large"
       core = "r3.large"
+      database = "db.r3.xlarge"
+      redis = "cache.m3.large"
     }
 }
 
