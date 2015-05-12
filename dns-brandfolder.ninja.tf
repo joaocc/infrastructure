@@ -3,7 +3,7 @@ resource "aws_route53_zone" "brandfolder-ninja" {
    name = "brandfolder.ninja"
 }
 
-# Subdomains to brandfolder.ninja
+# SSL into to brandfolder.ninja
 resource "aws_route53_record" "ssl-brandfolder-ninja" {
    zone_id = "${aws_route53_zone.brandfolder-ninja.zone_id}"
    name = "ssl.brandfolder.ninja"
