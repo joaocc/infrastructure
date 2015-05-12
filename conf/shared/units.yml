@@ -3,6 +3,23 @@
 - name: fleet.service
   command: start
 
+- name: flanneld.service
+  drop-ins:
+    - name: 40-pull-image.conf
+      content: |
+        [Service]
+        ExecStartPre=/usr/bin/docker pull quay.io/coreos/flannel:${FLANNEL_VER}
+    - name: 50-network-config.conf
+      content: |
+        [Service]
+        ExecStartPre=/usr/bin/etcdctl set /coreos.com/network/config '{ "Network": "10.22.0.0/16" }'
+    - name: 60-unexpected-reboot-docker.conf
+      content: |
+        [Service]
+        ExecStartPost=/usr/bin/systemctl restart docker
+  command: start
+
+
 # NTP Time Server Configuration
 - name: ntpdate.service
   command: start
@@ -50,21 +67,6 @@
     RemainAfterExit=yes
     Type=oneshot
 
-# Systemd journal gateway
-- name: systemd-journal-gatewayd.socket
-  command: start
-  enable: yes
-  content: |
-    [Unit]
-    Description=Journal Gateway Service Socket
-
-    [Socket]
-    ListenStream=/var/run/journald.sock
-    Service=systemd-journal-gatewayd.service
-
-    [Install]
-    WantedBy=sockets.target
-
 # Increase number of connections
 - name: increase-nf_conntrack-connections.service
   command: start
@@ -83,10 +85,8 @@
     [Unit]
     Description=Docker Application Container Engine
     Documentation=http://docs.docker.com
-    After=var-lib-docker.mount
-    Requires=var-lib-docker.mount
-    After=docker.socket early-docker.target network.target
-    Requires=docker.socket early-docker.target
+    After=var-lib-docker.mount docker.socket early-docker.target network.target
+    Requires=var-lib-docker.mount docker.socket early-docker.target
 
     [Service]
     Environment=TMPDIR=/var/tmp
@@ -94,6 +94,8 @@
     MountFlags=slave
     LimitNOFILE=1048576
     LimitNPROC=1048576
+    ExecStartPre=-/usr/bin/ip link set docker0 down
+    ExecStartPre=-/usr/sbin/brctl delbr docker0
     ExecStart=/usr/lib/coreos/dockerd --daemon --host=fd:// $DOCKER_OPTS $DOCKER_OPT_BIP $DOCKER_OPT_MTU $DOCKER_OPT_IPMASQ
 
     [Install]
