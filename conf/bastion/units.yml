@@ -34,3 +34,5 @@
     ExecStartPre=-/usr/bin/docker rm etcd_proxy
     ExecStartPre=/bin/sh -c "docker history jwaldrip/robins:latest >/dev/null || docker pull jwaldrip/robins:latest"
     ExecStart=/bin/bash -c "/usr/bin/docker run -d --net host --name etcd_proxy jwaldrip/robins etcd.brandfolder.host 4001"
+    RestartSec=5
+    Restart=always
