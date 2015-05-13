@@ -52,6 +52,29 @@ resource "aws_security_group" "deis-public" {
   }
 }
 
+# Resource
+resource "aws_security_group" "service-discovery-dns" {
+  name = "Service-Discovery-DNS"
+  description = "Open DNS for Service Discovery"
+  vpc_id = "${aws_vpc.main.id}"
+
+  # Allow SSH from the bastion hosts
+  ingress {
+      from_port = 53
+      to_port = 53
+      protocol = "tcp"
+      cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  # Allow SSH from the bastion hosts
+  ingress {
+      from_port = 53
+      to_port = 53
+      protocol = "udp"
+      cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
 # Private VPC
 resource "aws_security_group" "deis-private" {
   name = "Deis-Private"

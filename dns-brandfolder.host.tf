@@ -48,3 +48,13 @@ resource "aws_route53_record" "prod-redis-brandfolder-host" {
   ttl = "300"
   records = ["default-redis.miqyjj.ng.0001.use1.cache.amazonaws.com"]
 }
+
+# Service discovery in the core
+# Etcd ELB
+resource "aws_route53_record" "services-brandfolder-host" {
+   zone_id = "${aws_route53_zone.brandfolder-host.zone_id}"
+   name = "services.brandfolder.host"
+   type = "NS"
+   ttl = "86400"
+   records = ["${element(aws_instance.deis-core.*.public_ip, count.index)}"]
+}
