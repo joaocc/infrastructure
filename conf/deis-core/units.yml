@@ -46,4 +46,4 @@
     - name: 00-set-deis-components.conf
       content: |
         [Service]
-        Environment=DEIS_COMPONENTS="builder cache controller database logger logspout publisher registry router store-daemon store-gateway store-metadata store-monitor"
+        Environment="DEIS_COMPONENTS=builder cache controller database logger logspout publisher registry router store-daemon store-gateway store-metadata store-monitor"
