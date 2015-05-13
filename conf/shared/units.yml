@@ -4,6 +4,7 @@
   command: start
 
 - name: flanneld.service
+  command: start
   drop-ins:
     - name: 40-pull-image.conf
       content: |
@@ -17,8 +18,6 @@
       content: |
         [Service]
         ExecStartPost=/usr/bin/systemctl restart docker
-  command: start
-
 
 # NTP Time Server Configuration
 - name: ntpdate.service
