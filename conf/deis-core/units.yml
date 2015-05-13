@@ -41,7 +41,7 @@
     ExecStartPre=/usr/bin/chmod +x /opt/bin/jq
     ExecStart=/usr/bin/bash -c "while true; do curl -sL http://127.0.0.1:4001/v2/stats/leader | /opt/bin/jq . ; sleep 1 ; done"
 
-name: deis-preseed.service
+- name: deis-preseed.service
   drop-ins:
     - name: 00-set-deis-components.conf
       content: |

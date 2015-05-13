@@ -24,10 +24,9 @@
     RestartSec=5
     Restart=always
 
-name: deis-preseed.service
+- name: deis-preseed.service
   drop-ins:
     - name: 00-set-deis-components.conf
       content: |
         [Service]
         Environment=DEIS_COMPONENTS="logspout publisher"
-        
