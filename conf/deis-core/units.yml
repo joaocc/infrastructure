@@ -40,3 +40,10 @@
     ExecStartPre=/usr/bin/curl -sSL -o /opt/bin/jq http://stedolan.github.io/jq/download/linux64/jq
     ExecStartPre=/usr/bin/chmod +x /opt/bin/jq
     ExecStart=/usr/bin/bash -c "while true; do curl -sL http://127.0.0.1:4001/v2/stats/leader | /opt/bin/jq . ; sleep 1 ; done"
+
+name: deis-preseed.service
+  drop-ins:
+    - name: 00-set-deis-components.conf
+      content: |
+        [Service]
+        Environment=DEIS_COMPONENTS="builder cache controller database logger logspout publisher registry router store-daemon store-gateway store-metadata store-monitor"

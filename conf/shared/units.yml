@@ -48,7 +48,14 @@
     Before=fleet.service
 
     [Service]
-    ExecStartPre=/run/deis/bin/preseed
+    ExecStartPre=/bin/bash -c '\
+      DEIS_COMPONENTS=${DEIS_COMPONENTS:-} \
+      IFS=' ' read -a list <<< "$DEIS_COMPONENTS" \
+      for c in "${list[@]}"; do \
+        image=`/run/deis/bin/get_image /deis/$c` \
+        docker pull $image \
+      done'
+
     ExecStart=/bin/true
     RemainAfterExit=yes
     Type=oneshot
