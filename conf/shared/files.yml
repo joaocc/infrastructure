@@ -66,13 +66,14 @@
     alias fluf='fleetctl list-unit-files'
     alias flm='fleetctl list-machines'
     alias wetcd='watch -n1 etcdtcl ls / --recursive'
-    alias wflm='watch fleetctl list-machines'
-    alias wflu='watch fleetctl list-units'
+    alias wflm='watch -n1 fleetctl list-machines'
+    alias wflu='watch -n1 fleetctl list-units'
+    alias wfls='watch -n1 sh -c \"fleetctl list-machines \&\& echo \"\" \&\& fleetctl list-units\"'
     alias ss='sudo systemctl'
     alias elr='etcdctl ls --recursive'
+    alias fls='sh -c "fleetctl list-machines && echo \"\" && fleetctl list-units"'
 
 - path: /etc/profile.d/deis-ctl-units.sh
   permissions: '0755'
   content: |
     export DEISCTL_UNITS=/var/lib/infrastructure/deis-units
-    
