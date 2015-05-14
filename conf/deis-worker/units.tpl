@@ -1,20 +1,6 @@
 - name: etcd.service
   mask: true
 
-# Deis ctl
-# Used to install and manage deis
-- name: install-deisctl.service
-  command: start
-  content: |
-    [Unit]
-    Description=Install deisctl utility
-    ConditionPathExists=!/opt/bin/deisctl
-    After=refresh-infrastructure.service
-
-    [Service]
-    Type=oneshot
-    ExecStart=/usr/bin/sh -c 'curl -sSL --retry 5 --retry-delay 2 http://deis.io/deisctl/install.sh | sh -s $DEIS_VERSION'
-
 # Robins Etcd Proxy
 # Provides a local loop back to the etcd services running on the core
 - name: robins_etcdproxy.service
@@ -34,5 +20,15 @@
     ExecStartPre=-/usr/bin/docker rm etcd_proxy
     ExecStartPre=/bin/sh -c "docker history jwaldrip/robins:latest >/dev/null || docker pull jwaldrip/robins:latest"
     ExecStart=/bin/bash -c "/usr/bin/docker run -d --net host --name etcd_proxy jwaldrip/robins etcd.brandfolder.host 4001"
+
     RestartSec=5
     Restart=always
+
+- name: deis-preseed.service
+  drop-ins:
+    - name: 00-set-deis-components.conf
+      content: |
+        [Service]
+        Environment="DEIS_COMPONENTS=logspout publisher"
+
+${file("conf/shared/robins.yml")}

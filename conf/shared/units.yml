@@ -2,10 +2,22 @@
 # Distribuited Scheduling Service
 - name: fleet.service
   command: start
+  drop-ins:
+    - name: require-flannel.conf
+      content: |
+        [Unit]
+        After=flanneld.service
+        Requires=flanneld.service
 
 - name: flanneld.service
   command: start
   drop-ins:
+    - name: 30-unexpected-reboot-docker.conf
+      content: |
+        [Unit]
+        Before=docker.service
+        Wants=etcd.service
+        After=etcd.service
     - name: 40-pull-image.conf
       content: |
         [Service]
@@ -14,10 +26,6 @@
       content: |
         [Service]
         ExecStartPre=/usr/bin/etcdctl set /coreos.com/network/config '{ "Network": "10.22.0.0/16" }'
-    - name: 60-unexpected-reboot-docker.conf
-      content: |
-        [Service]
-        ExecStartPost=/usr/bin/systemctl restart docker
 
 # NTP Time Server Configuration
 - name: ntpdate.service
@@ -85,27 +93,14 @@
     ExecStartPre=/usr/sbin/modprobe nf_conntrack
     ExecStart=/bin/sh -c "sysctl -w net.netfilter.nf_conntrack_max=262144"
 
-- name: docker.service
+- name: early-docker.service
   command: start
-  content: |
-    [Unit]
-    Description=Docker Application Container Engine
-    Documentation=http://docs.docker.com
-    After=var-lib-docker.mount docker.socket early-docker.target network.target
-    Requires=var-lib-docker.mount docker.socket early-docker.target
-
-    [Service]
-    Environment=TMPDIR=/var/tmp
-    EnvironmentFile=-/run/flannel_docker_opts.env
-    MountFlags=slave
-    LimitNOFILE=1048576
-    LimitNPROC=1048576
-    ExecStartPre=-/usr/bin/ip link set docker0 down
-    ExecStartPre=-/usr/sbin/brctl delbr docker0
-    ExecStart=/usr/lib/coreos/dockerd --daemon --host=fd:// $DOCKER_OPTS $DOCKER_OPT_BIP $DOCKER_OPT_MTU $DOCKER_OPT_IPMASQ
-
-    [Install]
-    WantedBy=multi-user.target
+  drop-ins:
+    - name: 00-require-var-lib-docker-mount.conf
+      content: |
+        [Unit]
+        After=var-lib-docker.mount
+        Requires=var-lib-docker.mount
 
 # Format the docker volume
 - name: format-docker-volume.service
@@ -130,7 +125,7 @@
     Description=Mount Docker volume to /var/lib/docker
     Requires=format-docker-volume.service
     After=format-docker-volume.service
-    Before=docker.service
+    Before=early-docker.service
 
     [Mount]
     What=/dev/xvdf
