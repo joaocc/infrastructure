@@ -17,6 +17,8 @@ ExecStart=/bin/bash -c '\
     --env "SERVICE_9200_NAME=http" \
     --env "SERVICE_9300_NAME=transport" \
     --env "SERVICE_TAGS=core" \
+    --port 0:9200 \
+    --port 0:9300 \
     elasticsearch:latest \
     elasticsearch \
     --node.name=%p-%i \
