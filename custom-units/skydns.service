@@ -6,8 +6,7 @@ After=docker.service
 [Service]
 EnvironmentFile=/etc/environment
 TimeoutStartSec=300
-ExecStartPre=-/usr/bin/docker kill %p
-ExecStartPre=-/usr/bin/docker rm %p
+ExecStartPre=-/bin/sh -c "docker rm -f %p 2> /dev/null"
 ExecStartPre=/usr/bin/docker pull skynetservices/skydns:2.2.0b
 ExecStartPre=-/usr/bin/etcdctl mk /skydns/config '{"dns_addr":"0.0.0.0:53", "domain": "services.brandfolder.host.", "ttl":30, "nameservers": ["8.8.8.8:53"]}'
 ExecStart=/bin/sh -c 'docker run --name %p -p 53:53/udp -p 53:53/tcp -e ETCD_MACHINES=http://$COREOS_PRIVATE_IPV4:4001 skynetservices/skydns:2.2.0b'

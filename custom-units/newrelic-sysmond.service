@@ -4,9 +4,9 @@ Description=newrelic-sysmond
 [Service]
 EnvironmentFile=/etc/environment
 TimeoutStartSec=20m
-ExecStartPre=/bin/sh -c "docker history johanneswuerbach/newrelic-sysmond >/dev/null || docker pull johanneswuerbach/newrelic-sysmond"
-ExecStartPre=-/bin/sh -c "docker rm -f newrelic-sysmond 2> /dev/null || true"
-ExecStart=/bin/sh -c "docker run --rm --name newrelic-sysmond -e NEW_RELIC_LICENSE_KEY=`etcdctl get /newrelic.com/key` -e CUSTOM_HOSTNAME=%H -v /var/run/docker.sock:/var/run/docker.sock johanneswuerbach/newrelic-sysmond"
+ExecStartPre=-/bin/sh -c "docker rm -f %p 2> /dev/null"
+ExecStartPre=/bin/sh -c "docker pull johanneswuerbach/newrelic-sysmond"
+ExecStart=/bin/sh -c "docker run --rm --name %p -e NEW_RELIC_LICENSE_KEY=`etcdctl get /newrelic.com/key` -e CUSTOM_HOSTNAME=%H -v /var/run/docker.sock:/var/run/docker.sock johanneswuerbach/newrelic-sysmond"
 ExecStopPost=-/usr/bin/docker stop newrelic-sysmond
 Restart=on-failure
 RestartSec=5
