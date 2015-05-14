@@ -14,8 +14,6 @@ ExecStart=/bin/bash -c '\
   /usr/bin/docker run \
     --name %p \
     --volume /data/elasticsearch:/usr/share/elasticsearch/data \
-    --env "SERVICE_9200_NAME=http" \
-    --env "SERVICE_9300_NAME=transport" \
     --env "SERVICE_TAGS=core" \
     --publish 0:9200 \
     --publish 0:9300 \
