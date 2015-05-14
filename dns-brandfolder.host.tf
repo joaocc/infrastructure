@@ -56,5 +56,5 @@ resource "aws_route53_record" "services-brandfolder-host" {
    name = "services.brandfolder.host"
    type = "NS"
    ttl = "86400"
-   records = ["${aws_route53_record.core-brandfolder-host.*.name}"]
+   records = ["${split("|", replace(join("|", aws_route53_record.core-brandfolder-host.*.name), "|", ".|"))}."]
 }
