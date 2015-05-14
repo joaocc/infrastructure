@@ -8,7 +8,7 @@ EnvironmentFile=/etc/environment
 TimeoutStartSec=300
 ExecStartPre=-/bin/sh -c "docker rm -f %p 2> /dev/null"
 ExecStartPre=/usr/bin/docker pull gliderlabs/registrator:v4
-ExecStart=/bin/sh -c 'docker run --rm --name %p -h $HOSTNAME -v /var/run/docker.sock:/tmp/docker.sock gliderlabs/registrator:v4 -internal -ttl 30 -ttl-refresh 20 skydns2://$COREOS_PRIVATE_IPV4:4001/internal.services.brandfolder.host'
+ExecStart=/bin/sh -c 'docker run --rm --name %p -h $HOSTNAME -v /var/run/docker.sock:/tmp/docker.sock gliderlabs/registrator:v4 -internal -ttl 3600 -ttl-refresh 30 skydns2://$COREOS_PRIVATE_IPV4:4001/internal.services.brandfolder.host'
 ExecStop=/usr/bin/docker stop %p
 Restart=always
 
