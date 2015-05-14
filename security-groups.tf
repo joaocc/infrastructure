@@ -89,6 +89,14 @@ resource "aws_security_group" "deis-private" {
       security_groups = ["${aws_security_group.bastion.id}"]
   }
 
+  # Allow Flannel from the bastion hosts
+  ingress {
+      from_port = 8285
+      to_port = 8285
+      protocol = "udp"
+      security_groups = ["${aws_security_group.bastion.id}"]
+  }
+
   # Allow etcd from the bastion hosts
   ingress {
       from_port = 4001
