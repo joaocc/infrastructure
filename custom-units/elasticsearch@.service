@@ -8,11 +8,12 @@ TimeoutSec=180
 EnvironmentFile=/etc/environment
 
 ExecStartPre=/usr/bin/mkdir -p /data/elasticsearch
-ExecStartPre=-/bin/sh -c "docker rm -f %p 2> /dev/null"
+ExecStartPre=-/bin/sh -c "docker rm -f %p"
 ExecStartPre=/usr/bin/docker pull elasticsearch:latest
 ExecStart=/bin/bash -c '\
   /usr/bin/docker run \
     --name %p \
+    --rm \
     --volume /data/elasticsearch:/usr/share/elasticsearch/data \
     --env "SERVICE_TAGS=core" \
     elasticsearch:latest \
@@ -22,8 +23,7 @@ ExecStart=/bin/bash -c '\
     --discovery.zen.ping.multicast.enabled=false \
     --discovery.zen.ping.unicast.hosts=%p.internal.services.brandfolder.host'
 
-ExecStop=/usr/bin/docker stop %p
-ExecStop=/usr/bin/docker rm %p
+ExecStop=-/usr/bin/docker stop %p
 RestartSec=5
 Restart=on-failure
 
