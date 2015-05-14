@@ -28,7 +28,17 @@ resource "aws_route53_record" "core-brandfolder-host" {
   name = "core-${count.index + 1}.brandfolder.host"
   type = "A"
   ttl = "300"
-  records = ["${element(aws_instance.deis-core.*.private_ip, count.index)}"]
+  records = ["${element(aws_eip.deis-core.*.private_ip, count.index)}"]
+}
+
+# Core machines
+resource "aws_route53_record" "dns-brandfolder-host" {
+  count = "${lookup(var.counts, "core")}"
+  zone_id = "${aws_route53_zone.brandfolder-host.zone_id}"
+  name = "dns-${count.index + 1}.brandfolder.host"
+  type = "A"
+  ttl = "300"
+  records = ["${element(aws_eip.deis-core.*.public_ip, count.index)}"]
 }
 
 # Postgres Database
@@ -55,6 +65,6 @@ resource "aws_route53_record" "services-brandfolder-host" {
    zone_id = "${aws_route53_zone.brandfolder-host.zone_id}"
    name = "services.brandfolder.host"
    type = "NS"
-   ttl = "86400"
-   records = ["${split("|", replace(join("|", aws_route53_record.core-brandfolder-host.*.name), "|", ".|"))}."]
+   ttl = "10800"
+   records = ["${split("|", replace(join("|", aws_route53_record.dns-brandfolder-host.*.name), "|", ".|"))}."]
 }
