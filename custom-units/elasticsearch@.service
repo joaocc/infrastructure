@@ -8,8 +8,8 @@ TimeoutSec=180
 EnvironmentFile=/etc/environment
 
 ExecStartPre=/usr/bin/mkdir -p /data/elasticsearch
+ExecStartPre=-/bin/sh -c "docker rm -f %p 2> /dev/null"
 ExecStartPre=/usr/bin/docker pull elasticsearch:latest
-
 ExecStart=/bin/bash -c '\
   /usr/bin/docker run \
     --name %p \
