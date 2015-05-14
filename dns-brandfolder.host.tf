@@ -56,5 +56,5 @@ resource "aws_route53_record" "services-brandfolder-host" {
    name = "services.brandfolder.host"
    type = "NS"
    ttl = "86400"
-   records = ["${element(aws_instance.deis-core.*.public_ip, count.index)}"]
+   records = ["${aws_instance.deis-core.*.public_ip}"]
 }
