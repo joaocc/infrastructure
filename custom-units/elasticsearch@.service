@@ -19,7 +19,6 @@ ExecStart=/bin/bash -c '\
     elasticsearch \
     --node.name=%p-%i \
     --cluster.name="production-elasticsearch" \
-    --network.publish_host=${COREOS_PRIVATE_IPV4} \
     --discovery.zen.ping.multicast.enabled=false \
     --discovery.zen.ping.unicast.hosts=%p.internal.services.brandfolder.host'
 
