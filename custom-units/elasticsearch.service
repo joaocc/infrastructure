@@ -15,8 +15,6 @@ ExecStart=/bin/bash -c '\
     --name %p \
     --volume /data/elasticsearch:/usr/share/elasticsearch/data \
     --env "SERVICE_TAGS=core" \
-    --publish 0:9200 \
-    --publish 0:9300 \
     elasticsearch:latest \
     elasticsearch \
     --node.name=%p-%i \
