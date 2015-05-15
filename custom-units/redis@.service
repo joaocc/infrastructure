@@ -1,0 +1,52 @@
+[Unit]
+Description=ElasticSearch service
+After=docker.service
+Requires=docker.service
+
+[Service]
+TimeoutSec=180
+EnvironmentFile=/etc/environment
+
+# Cleanup any pervious container
+ExecStartPre=-/bin/sh -c "docker rm -f %p-%i"
+
+# Pull latest image
+ExecStartPre=/usr/bin/docker pull redis:latest
+
+# Set up the volumes for this container, so that we persist across restarts
+ExecStartPre=/bin/bash -c '\
+    docker inspect $p-$i-volumes 2> /dev/null || \
+    docker run \
+    --name $p-$i-volumes \
+    --volume /data \
+    --volume /usr/local/etc/redis \
+    alpine:latest \
+    /bin/true'
+
+# Read configuration from etcd and apply it to redis
+ExecStartPre=/bin/bash -c '\
+    etcdctl get /services/redis/redis.conf | base64 -d | docker run \
+    --volumes-from $p-$i-volumes \
+    alpine:latest \
+    sh -c "cat > /usr/local/etc/redis/redis.conf"'
+
+# Start redis
+ExecStart=/bin/bash -c '\
+    docker run \
+    --volumes-from $p-$i-volumes \
+    --name %p-%i \
+    --rm \
+    --env "SERVICE_NAME=%p" \
+    --env "SERVICE_TAGS=core" \
+    redis:latest \
+    redis-server \
+    /usr/local/etc/redis/redis.conf \
+    --appendonly yes --port 6379'
+
+ExecStop=-/usr/bin/docker stop %p-%i
+RestartSec=5
+Restart=on-failure
+
+[X-Fleet]
+MachineMetadata=type=core
+Conflicts=%p@*.service
