@@ -15,7 +15,7 @@ ExecStartPre=/usr/bin/docker pull elasticsearch:latest
 ExecStartPre=/usr/bin/docker pull brandfolder/shovel:latest
 
 # Set up the volumes for this container, so that we persist across restarts
-ExecStartPre=/bin/bash -c '\
+ExecStartPre=/bin/bash -ec '\
     docker inspect %p-%i-volumes 2> /dev/null || \
     docker run \
     --name %p-%i-volumes \
@@ -26,7 +26,7 @@ ExecStartPre=/bin/bash -c '\
 
 # Read configuration from etcd and apply it to elasticsearch
 ExecStartPre=/bin/bash -c '\
-    etcdctl get /services/%p/elasticsearch.yml | base64 -d | docker run \
+    etcdctl get /services/%p/elasticsearch.yml 2> /dev/null | base64 -d | docker run \
     --volumes-from %p-%i-volumes \
     alpine:latest \
     sh -c "cat > /usr/share/elasticsearch/config/elasticsearch.yml"'
