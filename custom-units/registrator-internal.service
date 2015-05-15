@@ -1,6 +1,6 @@
 [Unit]
 Description=Docker Registrator - flannel network
-Requires=docker.service
+After=docker.service
 Wants=docker.service
 
 [Service]
