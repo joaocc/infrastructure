@@ -7,12 +7,13 @@ Requires=docker.service
 TimeoutSec=180
 EnvironmentFile=/etc/environment
 
+ExecStartPre=-/bin/sh -c "docker rm -f %p-%i"
 ExecStartPre=/usr/bin/docker pull elasticsearch:latest
 ExecStartPre=/usr/bin/docker pull brandfolder/shovel:latest
 ExecStart=/bin/bash -c '\
-    docker start -a %p-%i 2> /dev/null || \
     docker run \
     --name %p-%i \
+    --rm \
     --env "SERVICE_NAME=%p" \
     --env "SERVICE_TAGS=core" \
     elasticsearch:latest \
