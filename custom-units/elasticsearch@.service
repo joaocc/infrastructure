@@ -16,9 +16,9 @@ ExecStartPre=/usr/bin/docker pull brandfolder/shovel:latest
 
 # Set up the volumes for this container, so that we persist across restarts
 ExecStartPre=/bin/bash -c '\
-    docker inspect %p-%i-volume 2> /dev/null || \
+    docker inspect %p-%i-volumes 2> /dev/null || \
     docker run \
-    --name %p-%i-volume \
+    --name %p-%i-volumes \
     --volume /usr/share/elasticsearch/config \
     --volume /usr/share/elasticsearch/data \
     alpine:latest \
