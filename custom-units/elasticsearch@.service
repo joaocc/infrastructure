@@ -9,6 +9,7 @@ EnvironmentFile=/etc/environment
 
 ExecStartPre=-/bin/sh -c "docker rm -f %p-%i"
 ExecStartPre=/usr/bin/docker pull elasticsearch:latest
+ExecStartPre=/usr/bin/docker pull brandfolder/shovel:latest
 ExecStart=/bin/bash -c '\
   /usr/bin/docker run \
     --name %p-%i \
@@ -20,7 +21,7 @@ ExecStart=/bin/bash -c '\
     --node.name=%p-%i \
     --cluster.name="%p" \
     --discovery.zen.ping.multicast.enabled=false \
-    --discovery.zen.ping.unicast.hosts=%p.internal.services.brandfolder.host'
+    --discovery.zen.ping.unicast.hosts=$(docker run --rm brandfolder/shovel dig %p.internal.services.brandfolder.host -p 9300)'
 
 ExecStop=-/usr/bin/docker stop %p-%i
 RestartSec=5
