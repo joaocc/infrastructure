@@ -15,7 +15,7 @@ ExecStartPrt=-/bin/sh -c "docker rm -f %p-%i-volumes"
 ExecStartPre=/usr/bin/docker pull elasticsearch:latest
 ExecStartPre=/usr/bin/docker pull brandfolder/shovel:latest
 
-# Set up the volumes for this container, so that we persist across restarts
+# Set up the volumes for this container
 ExecStartPre=/bin/bash -c '\
     docker run \
     --name %p-%i-volumes \
