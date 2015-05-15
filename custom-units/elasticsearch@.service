@@ -25,15 +25,15 @@ ExecStartPre=/bin/bash -c '\
 
 # Read configuration from etcd and apply it to elasticsearch
 ExecStartPre=/bin/bash -c '\
-    --rm \
     etcdctl get /services/%p/elasticsearch.yml 2> /dev/null | base64 -d | docker run \
+    --rm \
     --volumes-from %p-%i-volumes \
     alpine:latest \
     sh -c "cat > /usr/share/elasticsearch/config/elasticsearch.yml"'
 
 ExecStartPre=/bin/bash -c '\
-    --rm \
     etcdctl get /services/%p/logging.yml | base64 -d | docker run \
+    --rm \
     --volumes-from %p-%i-volumes \
     alpine:latest \
     sh -c "cat > /usr/share/elasticsearch/config/logging.yml"'
