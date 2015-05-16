@@ -51,7 +51,7 @@ ExecStart=/bin/bash -c '\
     --node.name=%p-%i \
     --cluster.name="%p" \
     --discovery.zen.ping.multicast.enabled=false \
-    --discovery.zen.ping.unicast.hosts=$(docker run --rm brandfolder/shovel dig %p.internal.services.brandfolder.host -p 9300 -WeT 65)'
+    --discovery.zen.ping.unicast.hosts=$(docker run --rm brandfolder/shovel dig %p.internal.services.brandfolder.host -p 9300 -WeiT 65)'
 
 ExecStop=-/usr/bin/docker stop %p-%i
 RestartSec=5
