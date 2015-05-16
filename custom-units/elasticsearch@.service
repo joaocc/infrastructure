@@ -9,7 +9,7 @@ EnvironmentFile=/etc/environment
 
 # Cleanup previous containers
 ExecStartPre=-/bin/sh -c "docker rm -f %p-%i"
-ExecStartPrt=-/bin/sh -c "docker rm -f %p-%i-volumes"
+ExecStartPre=-/bin/sh -c "docker rm -f %p-%i-volumes"
 
 # Pull latest images
 ExecStartPre=/usr/bin/docker pull elasticsearch:latest
