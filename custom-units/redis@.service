@@ -18,6 +18,7 @@ ExecStartPre=/usr/bin/docker pull redis:latest
 ExecStartPre=/bin/bash -c '\
     docker run \
     --name %p-%i-volumes \
+    --volume /data \
     --volume /usr/local/etc/redis \
     alpine:latest \
     /bin/true'
@@ -49,4 +50,3 @@ Restart=on-failure
 
 [X-Fleet]
 MachineMetadata=type=core
-Conflicts=%p@*.service
