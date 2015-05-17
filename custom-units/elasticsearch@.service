@@ -19,6 +19,7 @@ ExecStartPre=/usr/bin/docker pull brandfolder/shovel:latest
 ExecStartPre=/bin/bash -c '\
     docker run \
     --name %p-%i-volumes \
+    --volume /usr/share/elasticsearch/data \
     --volume /usr/share/elasticsearch/config \
     alpine:latest \
     /bin/true'
@@ -59,4 +60,3 @@ Restart=on-failure
 
 [X-Fleet]
 MachineMetadata=type=core
-Conflicts=%p@*.service
