@@ -1,8 +1,0 @@
-[Unit]
-Description=container-cleaner-timer
-
-[Timer]
-OnCalendar=minutely
-
-[X-Fleet]
-Global=true

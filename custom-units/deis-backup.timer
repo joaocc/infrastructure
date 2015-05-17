@@ -1,8 +1,0 @@
-[Unit]
-Description=deis-backup-timer
-
-[Timer]
-OnCalendar=daily
-
-[X-Fleet]
-MachineOf=%p.service
