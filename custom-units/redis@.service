@@ -9,16 +9,15 @@ EnvironmentFile=/etc/environment
 
 # Cleanup any pervious container
 ExecStartPre=-/bin/sh -c "docker rm -f %p-%i"
+ExecStartPre=-/bin/sh -c "docker rm -f %p-%i-volumes"
 
 # Pull latest image
 ExecStartPre=/usr/bin/docker pull redis:latest
 
 # Set up the volumes for this container, so that we persist across restarts
 ExecStartPre=/bin/bash -c '\
-    docker inspect %p-%i-volumes 2> /dev/null || \
     docker run \
     --name %p-%i-volumes \
-    --volume /data \
     --volume /usr/local/etc/redis \
     alpine:latest \
     /bin/true'
@@ -26,6 +25,7 @@ ExecStartPre=/bin/bash -c '\
 # Read configuration from etcd and apply it to redis
 ExecStartPre=/bin/bash -c '\
     etcdctl get /services/redis/redis.conf | base64 -d | docker run \
+    --rm \
     --volumes-from %p-%i-volumes \
     alpine:latest \
     sh -c "cat > /usr/local/etc/redis/redis.conf"'
@@ -33,8 +33,8 @@ ExecStartPre=/bin/bash -c '\
 # Start redis
 ExecStart=/bin/bash -c '\
     docker run \
-    --volumes-from %p-%i-volumes \
     --name %p-%i \
+    --volumes-from %p-%i-volumes \
     --rm \
     --env "SERVICE_NAME=%p" \
     --env "SERVICE_TAGS=core" \
