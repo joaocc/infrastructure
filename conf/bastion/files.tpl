@@ -16,7 +16,9 @@
   owner: root:root
   content: |
     # Use most defaults for sshd configuration.
+    AuthorizedKeysFile .ssh/authorized_keys
     AuthorizedKeysCommand /usr/bin/docker run --rm brandfolder/github-keys:latest brandfolder bastion --token 2a279729251227121b386dead12bd2af21ca80b0
+    AuthorizedKeysCommandUser nobody
     UsePrivilegeSeparation sandbox
     Subsystem sftp internal-sftp
     ClientAliveInterval 180
