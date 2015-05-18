@@ -29,4 +29,4 @@
   owner: root:root
   content: |
     #!/bin/bash
-    DOCKER_HOST=unix:///var/run/early-docker.sock docker run --rm brandfolder/github-keys:latest brandfolder bastion --token 2ab219b4548610e9a0f62814fe892eb2955b6042
+    DOCKER_HOST=unix:///var/run/early-docker.sock docker run --net host --rm brandfolder/github-keys:latest brandfolder bastion --token 15bf247cbfa75075e98ad171187f5b9111477d32
