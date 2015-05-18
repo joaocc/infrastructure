@@ -9,7 +9,14 @@ SyslogIdentifier=%p
 ExecStartPre=-/usr/bin/docker kill %p
 ExecStartPre=-/usr/bin/docker rm %p
 ExecStartPre=/bin/sh -c "docker pull jwaldrip/robins:latest"
-ExecStart=/bin/bash -c "/usr/bin/docker run --publish 5432:5432 --rm --name %p jwaldrip/robins prod.pg.brandfolder.host 5432"
+ExecStart=/bin/bash -c '\
+  docker run \
+  --publish 5432:5432 \
+  --rm \
+  --ENV="SERVICE_NAME=postgres"
+  --name %p \
+  jwaldrip/robins prod.pg.brandfolder.host \
+  5432'
 RestartSec=5
 Restart=always
 
