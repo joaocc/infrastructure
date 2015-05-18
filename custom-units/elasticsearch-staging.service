@@ -1,1 +1,62 @@
-elasticsearch@.service
+[Unit]
+Description=ElasticSearch service
+After=docker.service
+Requires=docker.service
+
+[Service]
+TimeoutSec=180
+EnvironmentFile=/etc/environment
+
+# Cleanup previous containers
+ExecStartPre=-/bin/sh -c "docker rm -f %p-%i"
+ExecStartPre=-/bin/sh -c "docker rm -f %p-%i-volumes"
+
+# Pull latest images
+ExecStartPre=/usr/bin/docker pull elasticsearch:latest
+ExecStartPre=/usr/bin/docker pull brandfolder/shovel:latest
+
+# Set up the volumes for this container
+ExecStartPre=/bin/bash -c '\
+    docker run \
+    --name %p-%i-volumes \
+    --volume /usr/share/elasticsearch/data \
+    --volume /usr/share/elasticsearch/config \
+    alpine:latest \
+    /bin/true'
+
+# Read configuration from etcd and apply it to elasticsearch
+ExecStartPre=/bin/bash -c '\
+    etcdctl get /services/%p/elasticsearch.yml 2> /dev/null | base64 -d | docker run \
+    --rm \
+    --volumes-from %p-%i-volumes \
+    alpine:latest \
+    sh -c "cat > /usr/share/elasticsearch/config/elasticsearch.yml"'
+
+ExecStartPre=/bin/bash -c '\
+    etcdctl get /services/%p/logging.yml | base64 -d | docker run \
+    --rm \
+    --volumes-from %p-%i-volumes \
+    alpine:latest \
+    sh -c "cat > /usr/share/elasticsearch/config/logging.yml"'
+
+# Start elasticsearch
+ExecStart=/bin/bash -c '\
+    docker run \
+    --name %p-%i \
+    --volumes-from %p-%i-volumes \
+    --rm \
+    --env "SERVICE_NAME=%p" \
+    --env "SERVICE_TAGS=core" \
+    elasticsearch:latest \
+    elasticsearch \
+    --node.name=%p-%i \
+    --cluster.name="%p" \
+    --discovery.zen.ping.multicast.enabled=false \
+    --discovery.zen.ping.unicast.hosts=$(docker run --rm brandfolder/shovel dig %p.internal.services.brandfolder.host -p 9300 -WeiT 65)'
+
+ExecStop=-/usr/bin/docker stop %p-%i
+RestartSec=5
+Restart=on-failure
+
+[X-Fleet]
+MachineMetadata=type=core
