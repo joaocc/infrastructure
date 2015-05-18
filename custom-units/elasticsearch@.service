@@ -40,6 +40,11 @@ ExecStartPre=/bin/bash -c '\
     sh -c "cat > /usr/share/elasticsearch/config/logging.yml"'
 
 ExecStartPre=/bin/bash -c '\
+    docker run \
+    --rm \
+    --volumes-from %p-%i-volumes \
+    alpine:latest mkdir -p /usr/share/elasticsearch/config/shield \
+    && \
     etcdctl get /services/%p/shield/roles.yml | base64 -d | docker run \
     --rm \
     --volumes-from %p-%i-volumes \
