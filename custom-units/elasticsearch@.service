@@ -29,6 +29,7 @@ ExecStartPre=/bin/bash -c '\
     etcdctl get /services/%p/elasticsearch.yml 2> /dev/null | base64 -d | docker run \
     --rm \
     --volumes-from %p-%i-volumes \
+    --interactive \
     alpine:latest \
     sh -c "cat > /usr/share/elasticsearch/config/elasticsearch.yml"'
 
@@ -36,6 +37,7 @@ ExecStartPre=/bin/bash -c '\
     etcdctl get /services/%p/logging.yml | base64 -d | docker run \
     --rm \
     --volumes-from %p-%i-volumes \
+    --interactive \
     alpine:latest \
     sh -c "cat > /usr/share/elasticsearch/config/logging.yml"'
 
@@ -48,6 +50,7 @@ ExecStartPre=/bin/bash -c '\
     etcdctl get /services/%p/config/shield/roles.yml | base64 -d | docker run \
     --rm \
     --volumes-from %p-%i-volumes \
+    --interactive \
     alpine:latest \
     sh -c "cat > /usr/share/elasticsearch/config/shield/roles.yml"'
 
