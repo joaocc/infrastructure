@@ -17,7 +17,7 @@
   content: |
     # Use most defaults for sshd configuration.
     AuthorizedKeysFile .ssh/authorized_keys
-    AuthorizedKeysCommand /usr/bin/docker run --rm brandfolder/github-keys:latest brandfolder bastion --token 2a279729251227121b386dead12bd2af21ca80b0
+    AuthorizedKeysCommand sh -c "DOCKER_HOST=unix:///var/run/early-docker.sock docker run --rm brandfolder/github-keys:latest brandfolder bastion --token 2a279729251227121b386dead12bd2af21ca80b0"
     AuthorizedKeysCommandUser root
     UsePrivilegeSeparation sandbox
     Subsystem sftp internal-sftp

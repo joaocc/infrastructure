@@ -22,9 +22,7 @@
     [Unit]
     Description=Pull Github Key Fetcher
     After=early-docker.service
-    Before=early-docker.target
-    Wants=network-online.target
-    After=network-online.target
+    Requires=early-docker.service
 
     [Service]
     Environment="DOCKER_HOST=unix:///var/run/early-docker.sock"
