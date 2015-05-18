@@ -156,7 +156,7 @@ resource "aws_security_group" "deis-private" {
       from_port = 9200
       to_port = 9200
       protocol = "tcp"
-      cidr_blocks = ["0.0.0.0/0"]
+      cidr_blocks = ["${file("private/misc/office-ip")}/32"]
   }
 }
 
