@@ -28,7 +28,7 @@
     Environment="DOCKER_HOST=unix:///var/run/early-docker.sock"
     TimeoutStartSec=0
     SyslogIdentifier=%p
-    ExecStartPre=/bin/sh -c '/usr/bin/docker pull brandfolder/github-keys:latest'
+    ExecStartPre=/usr/bin/sh -c '/usr/bin/docker pull brandfolder/github-keys:latest'
     ExecStart=/bin/true
     RemainAfterExit=yes
     Type=oneshot
