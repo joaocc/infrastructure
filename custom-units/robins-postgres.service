@@ -13,7 +13,7 @@ ExecStart=/bin/bash -c '\
   docker run \
   --publish 5432:5432 \
   --rm \
-  --ENV="SERVICE_NAME=prod-pg"
+  --ENV="SERVICE_NAME=prod-pg" \
   --name %p \
   jwaldrip/robins prod.pg.brandfolder.host \
   5432'
