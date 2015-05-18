@@ -20,7 +20,7 @@ with [Terraform](github.com/hashicorp/terraform).
 
 ### Viewing changes
 
-`make plan'`
+`make plan`
 
 ### Applying changes
 
