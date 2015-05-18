@@ -27,10 +27,13 @@
     After=network-online.target
 
     [Service]
+    Environment="DOCKER_HOST=unix:///var/run/early-docker.sock"
+    TimeoutStartSec=0
+    SyslogIdentifier=%p
+    ExecStartPre=/bin/sh -c '/usr/bin/docker pull brandfolder/github-keys:latest'
+    ExecStart=/bin/true
     RemainAfterExit=yes
     Type=oneshot
-    Environment="DOCKER_HOST=unix:///var/run/early-docker.sock"
-    ExecStart=/usr/bin/docker pull brandfolder/github-keys:latest
 
 ${file("conf/shared/robins.yml")}
 
