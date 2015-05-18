@@ -17,14 +17,14 @@
   content: |
     # Use most defaults for sshd configuration.
     AuthorizedKeysFile .ssh/authorized_keys
-    AuthorizedKeysCommand sh -c /usr/bin/github-keys
+    AuthorizedKeysCommand /opt/bin/github-keys
     AuthorizedKeysCommandUser root
     UsePrivilegeSeparation sandbox
     Subsystem sftp internal-sftp
     ClientAliveInterval 180
     UseDNS no
 
-- path: /usr/bin/github-keys
+- path: /opt/bin/github-keys
   permissions: 0755
   owner: root:root
   content: |
