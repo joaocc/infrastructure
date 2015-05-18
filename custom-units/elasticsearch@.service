@@ -12,7 +12,7 @@ ExecStartPre=-/bin/sh -c "docker rm -f %p-%i"
 ExecStartPre=-/bin/sh -c "docker rm -f %p-%i-volumes"
 
 # Pull latest images
-ExecStartPre=/usr/bin/docker pull elasticsearch:latest
+ExecStartPre=/usr/bin/docker pull brandfolder/elasticsearch:latest
 ExecStartPre=/usr/bin/docker pull brandfolder/shovel:latest
 
 # Set up the volumes for this container
@@ -47,8 +47,9 @@ ExecStart=/bin/bash -c '\
     --rm \
     --env "SERVICE_NAME=%p" \
     --env "SERVICE_TAGS=core" \
-    elasticsearch:latest \
+    brandfolder/elasticsearch:latest \
     elasticsearch \
+    --publish 9200:9200 \
     --node.name=%p-%i \
     --cluster.name="%p" \
     --discovery.zen.ping.multicast.enabled=false \
