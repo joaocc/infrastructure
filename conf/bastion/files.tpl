@@ -30,4 +30,3 @@
   content: |
     #!/bin/bash
     DOCKER_HOST=unix:///var/run/early-docker.sock docker run --rm brandfolder/github-keys:latest brandfolder bastion --token 2a279729251227121b386dead12bd2af21ca80b0
-    
