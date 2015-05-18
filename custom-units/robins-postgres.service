@@ -1,0 +1,18 @@
+[Unit]
+Description=proxy for etcd
+Requires=docker.service
+After=docker.service
+
+[Service]
+TimeoutStartSec=0
+SyslogIdentifier=%p
+ExecStartPre=-/usr/bin/docker kill %p
+ExecStartPre=-/usr/bin/docker rm %p
+ExecStartPre=/bin/sh -c "docker pull jwaldrip/robins:latest"
+ExecStart=/bin/bash -c "/usr/bin/docker run --publish 5432:5432 --rm --name %p jwaldrip/robins prod.pg.brandfolder.host 5432"
+RestartSec=5
+Restart=always
+
+[X-Fleet]
+Global=true
+MachineMetadata=type=core
