@@ -163,7 +163,10 @@ resource "aws_security_group" "rds" {
     protocol = "tcp"
     from_port = 5432
     to_port = 5432
-    security_groups = ["${aws_security_group.deis-private.id}"]
+    security_groups = [
+      "${aws_security_group.deis-private.id}",
+      "${aws_security_group.bastion.id}",
+    ]
   }
 
   # Allow Mode Analytics
