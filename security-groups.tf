@@ -158,6 +158,14 @@ resource "aws_security_group" "deis-private" {
       protocol = "tcp"
       cidr_blocks = ["${file("private/misc/office-ip")}/32"]
   }
+
+  # Allow Mode Analytics
+  ingress {
+    protocol = "tcp"
+    from_port = 5432
+    to_port = 5432
+    cidr_blocks = ["54.68.30.98/32", "54.68.45.3/32", "54.164.204.122/32", "54.172.100.146/32"]
+  }
 }
 
 # Private DB
