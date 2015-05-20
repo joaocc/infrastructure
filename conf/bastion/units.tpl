@@ -53,7 +53,11 @@
     ExecStart=/bin/bash -c '\
       users=`docker run --net host --rm brandfolder/github-keys:latest --token ${file("private/misc/github-token")} brandfolder bastion list-users`; \
       for user in $users ; do \
-        useradd -p "*" -m "$user" -U -G core || true; \
+        useradd -p "*" -m "$user" -U -G core ; \
+        if [ $? -eq 0 ] ; then \
+          cp /home/core/deis home/$user/.ssh/deis ; \
+          cp /home/core/deis home/$user/.bash_profile ; \
+        fi; \
       done'
 
 # Update github users on a timer
