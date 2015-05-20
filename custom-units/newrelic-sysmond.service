@@ -1,5 +1,7 @@
 [Unit]
 Description=newrelic-sysmond
+Requires=docker.service
+After=docker.service
 
 [Service]
 EnvironmentFile=/etc/environment
