@@ -50,10 +50,11 @@
     [Unit]
     Description=Preseed Docker Images
     After=docker.service
+    Requires=docker.service
     Before=fleet.service
 
     [Service]
-    ExecStartPre=/bin/bash -c '\
+    ExecStart=/bin/bash -c '\
       DEIS_COMPONENTS=${DEIS_COMPONENTS:-} \
       IFS=' ' read -a list <<< "$DEIS_COMPONENTS" \
       for c in "${list[@]}"; do \
@@ -61,7 +62,6 @@
         docker pull $image \
       done'
 
-    ExecStart=/bin/true
     RemainAfterExit=yes
     Type=oneshot
 
@@ -76,8 +76,7 @@
     ConditionPathExists=!/var/lib/infrastructure
 
     [Service]
-    ExecStartPre=/bin/sh -c "git clone https://github.com/brandfolder/infrastructure.git /var/lib/infrastructure"
-    ExecStart=/bin/true
+    ExecStart=/bin/sh -c "git clone https://github.com/brandfolder/infrastructure.git /var/lib/infrastructure"
     RemainAfterExit=yes
     Type=oneshot
 
@@ -117,14 +116,18 @@
     ExecStartPre=/usr/sbin/modprobe nf_conntrack
     ExecStart=/bin/sh -c "sysctl -w net.netfilter.nf_conntrack_max=262144"
 
-- name: early-docker.service
-  command: start
+- name: docker.service
   drop-ins:
     - name: 00-require-var-lib-docker-mount.conf
       content: |
         [Unit]
         After=var-lib-docker.mount
         Requires=var-lib-docker.mount
+
+- name: early-docker.service
+  drop-ins:
+    - name: 00-require-var-lib-docker-mount.conf
+      content: "# Deprecated"
 
 # Format the docker volume
 - name: format-docker-volume.service
@@ -149,7 +152,7 @@
     Description=Mount Docker volume to /var/lib/docker
     Requires=format-docker-volume.service
     After=format-docker-volume.service
-    Before=early-docker.service
+    Before=docker.service
 
     [Mount]
     What=/dev/xvdf
