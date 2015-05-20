@@ -1,0 +1,20 @@
+- path: /opt/bin/app-command
+  permissions: '0755'
+  owner: root:root
+  content: |
+    #!/bin/bash
+    APP=$1
+    if [ -z "$APP" ] ; then echo "container required" && exit 2 ; fi
+
+    # Capture and validate the command
+    shift
+    COMMAND=$@
+    if [ -z "$COMMAND" ] ; then echo "command required" && exit 2 ; fi
+
+    # Verify the unit
+    UNIT=`fleetctl list-units -fields unit | grep -E "${APP}_v[0-9]+\." | sed s/\.service// | head -1`
+    if [ -z "$UNIT" ] ; then echo "application not found" && exit 2 ; fi
+
+    # Run the command
+    echo "running \`$COMMAND\` on '$UNIT'..."
+    fleetctl ssh $UNIT "docker exec -it $UNIT bash -c 'export PATH=./bin:$PATH ; gem install bundler &> /dev/null ; exec $COMMAND'"

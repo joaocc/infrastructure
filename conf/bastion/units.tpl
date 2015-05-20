@@ -55,8 +55,11 @@
       for user in $users ; do \
         useradd -p "*" -m "$user" -U -G core ; \
         if [ $? -eq 0 ] ; then \
-          cp /home/core/deis home/$user/.ssh/deis ; \
-          cp /home/core/deis home/$user/.bash_profile ; \
+          cp /home/core/.ssh/deis /home/$user/.ssh/deis ; \
+          chown $user /home/$user/.ssh/deis ; \
+          rm /home/$user/.bash_profile ; \
+          cat /home/core/.bash_profile >> /home/$user/.bash_profile ; \
+          chown $user /home/$user/.bash_profile ; \
         fi; \
       done'
 

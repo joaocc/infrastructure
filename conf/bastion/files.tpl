@@ -47,17 +47,4 @@
     echo "$keys" >> /var/log/authorized-keys.log
     echo "$keys"
 
-- path: /opt/bin/app-command
-  permissions: '0755'
-  owner: root:root
-  content: |
-    #!/bin/bash
-    name=$1
-    if [ "$1" -z ] ; then echo "container required" && exit 2 ; fi;
-    if [ "$2" -z ] ; then echo "command required" && exit 2 ; fi;
-    shift
-    command=$@
-    echo "running \`$command\` on '$name'..."
-    unit=`fleetctl list-units -fields unit | grep -E "${name}_v[0-9]+\." | sed s/\.service// | head -1`
-    fleetctl ssh $unit "docker exec -it $unit bash -c 'export PATH=./bin:$PATH ; gem install bundler &> /dev/null ; exec $command'"
-
+${file("conf/bastion/app_command.yml")}
