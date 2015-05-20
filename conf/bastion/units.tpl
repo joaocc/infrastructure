@@ -15,6 +15,7 @@
     Type=oneshot
     ExecStart=/usr/bin/sh -c 'curl -sSL --retry 5 --retry-delay 2 http://deis.io/deisctl/install.sh | sh -s $DEIS_VERSION'
 
+
 # Pull Latest ssh key retriever
 - name: github-key-retriever.service
   command: start
@@ -26,14 +27,9 @@
 
     [Service]
     Environment="DOCKER_HOST=unix:///var/run/early-docker.sock"
-    TimeoutStartSec=0
-    SyslogIdentifier=%p
-    ExecStartPre=/usr/bin/sh -c '/usr/bin/docker pull brandfolder/github-keys:latest'
-    ExecStart=/bin/true
+    ExecStart=/usr/bin/sh -c 'docker pull brandfolder/github-keys:latest'
     RemainAfterExit=yes
     Type=oneshot
-
-${file("conf/shared/robins.yml")}
 
 - name: sshd.service
   drop-ins:
@@ -43,3 +39,33 @@ ${file("conf/shared/robins.yml")}
         After=github-key-retriever.service
         Requires=github-key-retriever.service
 
+# Sync Github Users
+- name: sync-github-users.service
+  command: start
+  content: |
+    [Unit]
+    Description=Sync users with github
+    After=github-key-retriever.service
+    Requires=github-key-retriever.service
+
+    [Service]
+    Environment="DOCKER_HOST=unix:///var/run/early-docker.sock"
+    ExecStart=/bin/bash -c '\
+      users=`docker run --net host --rm brandfolder/github-keys:latest --token ${file("private/misc/github-token")} brandfolder bastion list-users`; \
+      for user in $users ; do \
+        useradd -p "*" -m "$user" -U -G core || true; \
+      done'
+
+# Update github users on a timer
+- name: sync-github-users.timer
+  command: start
+  content: |
+    [Unit]
+    Description=Sync Github Users Timer
+    After=sync-github-users.service
+    Requires=sync-github-users.service
+
+    [Timer]
+    OnCalendar=minutely
+
+${file("conf/shared/robins.yml")}
