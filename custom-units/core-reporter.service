@@ -6,7 +6,7 @@ Requires=docker.service
 [Service]
 TimeoutSec=180
 EnvironmentFile=/etc/environment
-ExecStart=/usr/bin/docker run --name %p --rm --env "SERVICE_NAME=core" --publish 10000:10000 -it alpine:latest sh -c "while true ; do sleep 86400 ; done"
+ExecStart=/usr/bin/docker run --name %p --rm --env "SERVICE_NAME=core" --publish 10000:10000 alpine:latest sh -c "while true ; do sleep 86400 ; done"
 
 [X-Fleet]
 MachineMetadata=type=core
