@@ -7,7 +7,7 @@ ExecStartPre=-/bin/mkdir -pv /opt/uswitch/journald-forwarder
 ExecStartPre=-/usr/bin/curl -L -o /opt/uswitch/journald-forwarder/journald-forwarder https://github.com/uswitch/journald-forwarder/releases/download/v0.2/journald-forwarder
 ExecStartPre=-/bin/chmod +x /opt/uswitch/journald-forwarder/journald-forwarder
 ExecStart=/bin/sh -c '\
-  LOGGLY_TOKEN=`etcdctl get /loggly.com/token`
-  LOGGLY_TAG=`etcdctl get /loggly.com/tag`
+  LOGGLY_TOKEN=`etcdctl get /loggly.com/token` ;\
+  LOGGLY_TAG=`etcdctl get /loggly.com/tag` ;\
   /opt/uswitch/journald-forwarder/journald-forwarder -token $LOGGLY_TOKEN -tag $LOGGLY_TAG'
 
