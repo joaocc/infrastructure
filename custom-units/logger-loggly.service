@@ -1,0 +1,11 @@
+[Unit]
+Description=Loggly Forwarder
+
+[Service]
+ExecStart=/bin/sh -c "journalctl -o short -f | awk '{ print \"\<34\>1\", $0; fflush(); }' | awk '{ print $0, \"[eadc3810-9cbd-49c8-82e6-d272994acb8c@41058 tag='coreos']\" }' | ncat --ssl logs-01.loggly.com 6514"
+
+[Install]
+WantedBy=multi-user.target
+
+[X-Fleet]
+Global=true
