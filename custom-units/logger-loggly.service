@@ -11,3 +11,5 @@ ExecStart=/bin/sh -c '\
   LOGGLY_TAG=`etcdctl get /loggly.com/tag` ;\
   /opt/uswitch/journald-forwarder/journald-forwarder -token $LOGGLY_TOKEN -tag $LOGGLY_TAG'
 
+[X-Fleet]
+Global=true
