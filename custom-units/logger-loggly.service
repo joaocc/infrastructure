@@ -1,11 +1,24 @@
 [Unit]
-Description=Loggly Forwarder
+Description=Loggly
+After=docker.service
+Requires=docker.service
 
 [Service]
-ExecStart=/bin/sh -c "journalctl -o short -f | awk '{ print \"\<34\>1\", $0; fflush(); }' | awk '{ print $0, \"[eadc3810-9cbd-49c8-82e6-d272994acb8c@41058 tag='coreos']\" }' | ncat --ssl logs-01.loggly.com 6514"
+EnvironmentFile=/etc/environment
+TimeoutStartSec=0
 
-[Install]
-WantedBy=multi-user.target
+ExecStartPre=-/usr/bin/docker stop loggly
+ExecStartPre=-/usr/bin/docker rm loggly
+ExecStartPre=/usr/bin/docker pull psev/loggly
+
+ExecStart=/bin/sh -c '\
+  /usr/bin/docker run --name %p \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  psev/loggly \
+  -t `etcdctl get /loggly.com/token` \
+  -d unix:///var/run/docker.sock'
+
+ExecStop=/usr/bin/docker stop loggly
 
 [X-Fleet]
 Global=true
