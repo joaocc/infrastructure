@@ -2,7 +2,7 @@
 Description=Log forwarder
 
 [Service]
-ExecStart=/bin/sh -c "journalctl -o short -f | ncat --ssl logs2.papertrailapp.com `etcdget /papertrail.com/port`"
+ExecStart=/bin/sh -c "journalctl -o short -f | ncat --ssl logs2.papertrailapp.com `etcdctl get /papertrail.com/port`"
 
 [Install]
 WantedBy=multi-user.target
