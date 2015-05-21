@@ -18,6 +18,9 @@
     ExecStartPre=-/usr/bin/docker kill etcd_proxy
     ExecStartPre=-/usr/bin/docker rm etcd_proxy
     ExecStartPre=/bin/sh -c "docker history jwaldrip/robins:latest >/dev/null || docker pull jwaldrip/robins:latest"
-    ExecStart=/bin/bash -c "/usr/bin/docker run --net host --rm --name %p jwaldrip/robins etcd.brandfolder.host 4001"
+    ExecStart=/bin/bash -c '\
+      HOSTS=`docker run --net host --rm brandfolder/shovel dig core.private.services.brandfolder.host` ; \
+      /usr/bin/docker run --net host --rm --name %p jwaldrip/robins $HOSTS 4001'
+
     RestartSec=5
     Restart=always
