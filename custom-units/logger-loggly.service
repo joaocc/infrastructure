@@ -1,24 +1,13 @@
 [Unit]
-Description=Loggly
+Description=Forward journald logs to Loggly
 After=docker.service
-Requires=docker.service
 
 [Service]
-EnvironmentFile=/etc/environment
-TimeoutStartSec=0
-
-ExecStartPre=-/usr/bin/docker stop loggly
-ExecStartPre=-/usr/bin/docker rm loggly
-ExecStartPre=/usr/bin/docker pull psev/loggly
-
+ExecStartPre=-/bin/mkdir -pv /opt/uswitch/journald-forwarder
+ExecStartPre=-/usr/bin/curl -L -o /opt/uswitch/journald-forwarder/journald-forwarder https://github.com/uswitch/journald-forwarder/releases/download/v0.2/journald-forwarder
+ExecStartPre=-/bin/chmod +x /opt/uswitch/journald-forwarder/journald-forwarder
 ExecStart=/bin/sh -c '\
-  /usr/bin/docker run --name %p \
-  -v /var/run/docker.sock:/var/run/docker.sock \
-  psev/loggly \
-  -t `etcdctl get /loggly.com/token` \
-  -d unix:///var/run/docker.sock'
+  LOGGLY_TOKEN=`etcdctl get /loggly.com/token`
+  LOGGLY_TAG=`etcdctl get /loggly.com/tag`
+  /opt/uswitch/journald-forwarder/journald-forwarder -token $LOGGLY_TOKEN -tag $LOGGLY_TAG'
 
-ExecStop=/usr/bin/docker stop loggly
-
-[X-Fleet]
-Global=true
