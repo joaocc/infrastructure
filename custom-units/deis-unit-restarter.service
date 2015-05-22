@@ -11,3 +11,6 @@ ExecStart=/bin/sh -c '\
     fleetctl start $UNIT ;\
     sleep 300 ;\
 done'
+
+[X-Fleet]
+Global=true
