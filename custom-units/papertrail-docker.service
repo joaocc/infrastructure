@@ -8,7 +8,7 @@ EnvironmentFile=/etc/environment
 TimeoutStartSec=0
 
 ExecStartPre=-/usr/bin/docker rm -f %p
-ExecStartPre=/usr/bin/docker pull psev/loggly
+ExecStartPre=/usr/bin/docker pull gliderlabs/logspout
 
 ExecStart=/bin/sh -c '\
   /usr/bin/docker run \
