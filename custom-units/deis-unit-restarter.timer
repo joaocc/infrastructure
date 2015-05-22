@@ -1,0 +1,8 @@
+[Unit]
+Description=deis-unit-restarter-timer
+
+[Timer]
+OnCalendar=daily
+
+[X-Fleet]
+Global=true
