@@ -10,8 +10,8 @@ resource "aws_route53_record" "A-bf-staging-com" {
    type = "A"
 
    alias {
-     name = "${aws_elb.www.dns_name}"
-     zone_id = "${aws_elb.www.zone_id}"
+     name = "${aws_elb.brandfolder-com.dns_name}"
+     zone_id = "${aws_elb.brandfolder-com.zone_id}"
      evaluate_target_health = true
     }
 }

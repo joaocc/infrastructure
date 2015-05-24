@@ -9,7 +9,7 @@ resource "aws_route53_record" "STAR-brandfolder-com" {
    name = "*.brandfolder.com"
    type = "CNAME"
    ttl = 3600
-   records = ["${aws_elb.www.dns_name}"]
+   records = ["${aws_elb.brandfolder-com.dns_name}"]
 }
 
 # Alias Brandfolder.com to the ELB
@@ -19,8 +19,8 @@ resource "aws_route53_record" "brandfolder-com" {
    type = "A"
 
    alias {
-     name = "${aws_elb.www.dns_name}"
-     zone_id = "${aws_elb.www.zone_id}"
+     name = "${aws_elb.brandfolder-com.dns_name}"
+     zone_id = "${aws_elb.brandfolder-com.zone_id}"
      evaluate_target_health = true
     }
 }
