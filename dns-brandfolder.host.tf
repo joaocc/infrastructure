@@ -12,15 +12,6 @@ resource "aws_route53_record" "bastion-brandfolder-host" {
    records = ["${aws_instance.bastion.public_dns}"]
 }
 
-# Etcd ELB
-resource "aws_route53_record" "etcd-brandfolder-host" {
-   zone_id = "${aws_route53_zone.brandfolder-host.zone_id}"
-   name = "etcd.brandfolder.host"
-   type = "CNAME"
-   ttl = "300"
-   records = ["${aws_elb.etcd.dns_name}"]
-}
-
 # Core machines
 resource "aws_route53_record" "core-brandfolder-host" {
   count = "${lookup(var.counts, "core")}"
