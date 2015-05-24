@@ -1,15 +1,16 @@
 # Public ELB
-resource "aws_elb" "deis" {
-  name = "Deis"
-
-  # Instances
-  instances = ["${aws_instance.deis-core.*.id}"]
+resource "aws_elb" "www" {
+  name = "www"
 
   # Network
   cross_zone_load_balancing = true
-  security_groups = ["${aws_security_group.deis-public.id}"]
+  security_groups = [
+    "${aws_security_group.router.id}",
+    "${aws_security_group.internal-communication.id}"
+  ]
   subnets = ["${aws_subnet.subnet.*.id}"]
-  idle_timeout = 1800
+  instances = ["${aws_instance.deis-core.*.id}"]
+  idle_timeout = 60
 
   # Listen for inbound HTTPS Connections
   listener {
@@ -17,7 +18,7 @@ resource "aws_elb" "deis" {
     lb_protocol = "https"
     instance_port = 80
     instance_protocol = "http"
-    ssl_certificate_id = "arn:aws:iam::260121740514:server-certificate/STAR_Brandfolder_ninja"
+    ssl_certificate_id = "arn:aws:iam::260121740514:server-certificate/STAR_Brandfolder_com"
   }
 
   # Inbound HTTP Connections
@@ -26,14 +27,6 @@ resource "aws_elb" "deis" {
     instance_port = 80
     instance_protocol = "http"
     lb_protocol = "http"
-  }
-
-  # Listen for deployments
-  listener {
-    lb_port = 2222
-    lb_protocol = "tcp"
-    instance_port = 2222
-    instance_protocol = "tcp"
   }
 
   # Healthcheck against port 80
