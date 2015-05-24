@@ -3,6 +3,7 @@ variable "counts" {
     default = {
       production_workers = 3
       feature_workers = 1
+      routers = 3
       core = 5
 
       # Must update `var.subnet_azs` to match
@@ -19,6 +20,7 @@ variable "instance_types" {
       core = "r3.large"
       database = "db.r3.xlarge"
       redis = "cache.m3.large"
+      router = "c3.large"
     }
 }
 
@@ -28,6 +30,7 @@ variable "fleet_tags" {
     production_worker = "type=worker,environment=production,function=deis"
     feature_worker = "type=worker,environment=feature,function=deis"
     bastion = "type=bastion"
+    router = "type=router,function=deis"
   }
 }
 

@@ -35,6 +35,21 @@ resource "template_file" "deis-feature-worker" {
 
 }
 
+resource "template_file" "deis_router_units" {
+  filename = "${path.cwd}/conf/deis-router/units.tpl"
+}
+
+resource "template_file" "deis-router" {
+  filename = "${path.cwd}/conf/user-data.tpl"
+
+  vars {
+    fleet_tags = "${lookup(var.fleet_tags, "router")}"
+    units = "${template_file.deis_router_units.rendered}"
+    files = "${file("conf/deis-router/files.yml")}"
+  }
+
+}
+
 resource "template_file" "bastion_files" {
   filename = "${path.cwd}/conf/bastion/files.tpl"
 }
