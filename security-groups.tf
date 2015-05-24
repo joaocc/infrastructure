@@ -19,6 +19,8 @@ resource "aws_security_group" "www" {
       protocol = "tcp"
       cidr_blocks = ["0.0.0.0/0"]
   }
+
+  lifecycle { create_before_destroy = true }
 }
 
 # Security Group to Enable Access to the Deis cluster
@@ -50,6 +52,8 @@ resource "aws_security_group" "deis-public" {
       protocol = "tcp"
       cidr_blocks = ["0.0.0.0/0"]
   }
+
+  lifecycle { create_before_destroy = true }
 }
 
 # Resource
@@ -73,6 +77,8 @@ resource "aws_security_group" "service-discovery-dns" {
       protocol = "udp"
       cidr_blocks = ["0.0.0.0/0"]
   }
+
+  lifecycle { create_before_destroy = true }
 }
 
 # Private VPC
@@ -166,6 +172,8 @@ resource "aws_security_group" "deis-private" {
     to_port = 5432
     cidr_blocks = ["54.68.30.98/32", "54.68.45.3/32", "54.164.204.122/32", "54.172.100.146/32"]
   }
+
+  lifecycle { create_before_destroy = true }
 }
 
 # Private DB
@@ -192,28 +200,6 @@ resource "aws_security_group" "rds" {
     to_port = 5432
     cidr_blocks = ["54.68.30.98/32", "54.68.45.3/32", "54.164.204.122/32", "54.172.100.146/32"]
   }
-}
 
-# Public Bastion
-resource "aws_security_group" "bastion" {
-  name = "bastion"
-  description = "Enable public SSH to the bastion host"
-  vpc_id = "${aws_vpc.main.id}"
-
-  # Allow balanced ssh connections
-  ingress {
-      from_port = 2323
-      to_port = 2323
-      protocol = "tcp"
-      self = true
-  }
-
-  # Allow inbound SSH
-  ingress {
-      from_port = 22
-      to_port = 22
-      protocol = "tcp"
-      cidr_blocks = ["0.0.0.0/0"]
-  }
-
+  lifecycle { create_before_destroy = true }
 }
