@@ -77,4 +77,3 @@ Restart=on-failure
 [X-Fleet]
 MachineMetadata=type=core
 Conflicts=%p@*.service
-Conflicts=deis-router@*.service
