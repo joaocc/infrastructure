@@ -146,7 +146,7 @@ resource "aws_security_group" "deis-private" {
   # Allow all internal communication
   ingress {
     from_port = 0
-    to_port = 65535
+    to_port = 0
     protocol = -1
     self = true
   }
