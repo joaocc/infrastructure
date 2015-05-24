@@ -6,7 +6,7 @@ Requires=fleet.service
 [Service]
 ExecStart=/bin/sh -c '\
   UNITS=`fleetctl list-units --fields unit | grep -E "_v[0-9]+\.[A-Za-z-]+\.[0-9]+"` ;\
-  for UNIT in $UNITS ; do ;\
+  for UNIT in $UNITS ; do \
     fleetctl stop $UNIT ;\
     fleetctl start $UNIT ;\
     sleep 300 ;\
