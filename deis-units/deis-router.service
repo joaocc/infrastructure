@@ -15,6 +15,5 @@ RestartSec=5
 WantedBy=multi-user.target
 
 [X-Fleet]
-Global=true
-MachineMetadata=type=router
+MachineMetadata=type=core
 MachineMetadata=function=deis
