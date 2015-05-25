@@ -25,7 +25,7 @@ resource "aws_autoscaling_group" "deis-router" {
 
   tag {
     key = "Function"
-    value = "Router"
+    value = "Deis"
     propagate_at_launch = true
   }
 
