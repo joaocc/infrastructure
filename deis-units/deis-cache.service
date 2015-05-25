@@ -7,7 +7,7 @@ TimeoutStartSec=20m
 ExecStartPre=/bin/sh -c "IMAGE=`/run/deis/bin/get_image /deis/cache` && docker pull $IMAGE"
 ExecStartPre=-/bin/sh -c "docker rm -f %p"
 ExecStart=/bin/sh -c '\
-  IMAGE=`/run/deis/bin/get_image %p` && \
+  IMAGE=`/run/deis/bin/get_image /deis/cache` && \
   docker run \
   --name %p \
   --rm \
