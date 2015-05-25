@@ -6,10 +6,19 @@ After=docker.service
 [Service]
 EnvironmentFile=/etc/environment
 TimeoutStartSec=20m
-ExecStartPre=/bin/sh -c "IMAGE=`/run/deis/bin/get_image /deis/publisher` && docker history $IMAGE >/dev/null 2>&1 || docker pull $IMAGE"
-ExecStartPre=/bin/sh -c "docker inspect deis-publisher >/dev/null 2>&1 && docker rm -f deis-publisher || true"
-ExecStart=/bin/sh -c "IMAGE=`/run/deis/bin/get_image /deis/publisher` && docker run --name deis-publisher --rm -e HOST=$COREOS_PRIVATE_IPV4 -e ETCD_HOST=$COREOS_PRIVATE_IPV4 -v /var/run/docker.sock:/var/run/docker.sock $IMAGE"
-ExecStopPost=-/usr/bin/docker rm -f deis-publisher
+ExecStartPre=/bin/sh -c "IMAGE=`/run/deis/bin/get_image /deis/publisher` && docker pull $IMAGE"
+ExecStartPre=-/bin/sh -c "docker rm -f %p"
+ExecStart=/bin/sh -c '\
+  IMAGE=`/run/deis/bin/get_image /deis/publisher` && \
+  docker run \
+  --name %p \
+  --rm \
+  -e HOST=$COREOS_PRIVATE_IPV4 \
+  -e ETCD_HOST=$COREOS_PRIVATE_IPV4 \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  $IMAGE'
+
+ExecStopPost=-/usr/bin/docker rm -f %p
 Restart=on-failure
 RestartSec=5
 
