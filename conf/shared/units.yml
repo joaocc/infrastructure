@@ -140,9 +140,10 @@
     [Service]
     Type=oneshot
     RemainAfterExit=yes
-    ExecStart=/usr/sbin/wipefs -f /dev/xvdf
-    ExecStart=/usr/sbin/mkfs.ext4 -i 4096 -b 4096 /dev/xvdf
-    ExecStart=/bin/touch /etc/docker-volume-formatted
+    ExecStartPre=/usr/sbin/wipefs -f /dev/xvdf
+    ExecStartPre=/usr/sbin/mkfs.ext4 -i 4096 -b 4096 /dev/xvdf
+    ExecStartPre=/bin/touch /etc/docker-volume-formatted
+    ExecStart=/bin/true
 
 # Mount the docker volume
 - name: var-lib-docker.mount
