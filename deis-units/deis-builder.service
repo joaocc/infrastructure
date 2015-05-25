@@ -18,7 +18,7 @@ ExecStartPre=-/bin/sh -c "/sbin/losetup -f"
 ExecStart=/bin/sh -c '\
   IMAGE=`/run/deis/bin/get_image /deis/builder` && \
   docker run \
-  --name %p
+  --name %p \
   --rm \
   -p 2223:22 \
   --volumes-from=%p-data \
