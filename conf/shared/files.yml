@@ -77,3 +77,9 @@
   permissions: '0755'
   content: |
     export DEISCTL_UNITS=/var/lib/infrastructure/deis-units
+
+- path: /etc/systemd/journald.conf.d/settings.conf
+  content: |
+    [Journal]
+    SystemMaxUse=10G
+    MaxRetentionSec=2day
