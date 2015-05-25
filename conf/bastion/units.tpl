@@ -53,7 +53,7 @@
     ExecStart=/bin/bash -c '\
       users=`docker run --net host --rm brandfolder/github-keys:latest --token ${file("private/misc/github-token")} brandfolder bastion list-users`; \
       for user in $users ; do \
-        useradd -p "*" -m "$user" -U -G core ; \
+        useradd -p "*" -m "$user" -U -G core 2> /dev/null ; \
         if [ $? -eq 0 ] ; then \
           cp /home/core/.ssh/deis /home/$user/.ssh/deis ; \
           chown $user /home/$user/.ssh/deis ; \
