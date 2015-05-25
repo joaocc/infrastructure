@@ -5,4 +5,4 @@ Description=deis-unit-restarter-timer
 OnCalendar=daily
 
 [X-Fleet]
-Global=true
+MachineOf=%p.service
