@@ -14,3 +14,4 @@ done'
 
 [X-Fleet]
 MachineMetadata=function=deis
+MachineMetadata=type=worker
