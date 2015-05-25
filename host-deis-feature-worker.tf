@@ -2,7 +2,7 @@ resource "aws_autoscaling_group" "deis-feature-workers" {
   name = "Deis Feature Workers"
 
   # Network
-  availability_zones = ["${aws_subnet.subnet.*.availability_zone}"]
+  availability_zones = ["us-east-1d"]
   vpc_zone_identifier = ["${aws_subnet.subnet.*.id}"]
 
   # Cluster Size
