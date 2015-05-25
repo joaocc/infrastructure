@@ -4,8 +4,10 @@ resource "aws_autoscaling_group" "deis-router" {
   # Network
   availability_zones = ["${aws_subnet.subnet.*.availability_zone}"]
   vpc_zone_identifier = ["${aws_subnet.subnet.*.id}"]
-  load_balancers = ["${aws_elb.brandfolder-com.id}",
-                    "${aws_elb.brandfolder-ninja.id}"]
+  load_balancers = [
+    "${aws_elb.brandfolder-com.id}",
+    "${aws_elb.brandfolder-ninja.id}"
+  ]
 
   # Cluster Size
   max_size = 12
