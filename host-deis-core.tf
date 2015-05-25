@@ -7,8 +7,8 @@ resource "aws_instance" "deis-core" {
     subnet_id = "${element(aws_subnet.subnet.*.id, count.index % lookup(var.counts, "subnets"))}"
     associate_public_ip_address = true
     security_groups = [
-      "${aws_security_group.deis-private.id}",
-      "${aws_security_group.service-discovery-dns.id}"
+      "${aws_security_group.core.id}",
+      "${aws_security_group.internal-communication.id}"
     ]
     user_data = "${template_file.deis-core.rendered}"
     tags {

@@ -50,7 +50,10 @@ resource "aws_launch_configuration" "deis-feature-worker" {
     key_name = "deis"
 
     # Networking
-    security_groups = ["${aws_security_group.deis-private.id}"]
+    security_groups = [
+      "${aws_security_group.worker.id}",
+      "${aws_security_group.internal-communication.id}"
+    ]
     associate_public_ip_address = true
 
     # Storage
