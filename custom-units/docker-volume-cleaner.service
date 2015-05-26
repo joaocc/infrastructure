@@ -1,7 +1,6 @@
 [Unit]
 Description=Cleanup unused docker volumes
-After=docker.service
-Requires=docker.service
+Wants=docker.service
 
 [Service]
 ExecStartPre=/usr/bin/docker pull martin/docker-cleanup-volumes

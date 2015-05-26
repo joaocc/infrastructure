@@ -1,7 +1,6 @@
 [Unit]
 Description=Restarts Deis Units, one at a time, and in 5 minute intervals
-After=fleet.service
-Requires=fleet.service
+Wants=fleet.service
 
 [Service]
 ExecStart=/bin/bash -c '\
