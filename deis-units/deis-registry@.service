@@ -7,7 +7,7 @@ Requires=deis-cache.service
 EnvironmentFile=/etc/environment
 TimeoutStartSec=30m
 ExecStartPre=-/usr/bin/etcdctl mkdir /deis/cache >/dev/null 2>&1
-ExecStartPre=/bin/sh -c 'IMAGE=`/run/deis/bin/get_image /deis/registry` && docker pull $IMAGE"
+ExecStartPre=/bin/sh -c 'IMAGE=`/run/deis/bin/get_image /deis/registry` && docker pull $IMAGE'
 ExecStartPre=-/bin/sh -c "docker rm -f %p"
 ExecStart=/bin/sh -c '\
   IMAGE=`/run/deis/bin/get_image /deis/registry` && \
@@ -18,7 +18,7 @@ ExecStart=/bin/sh -c '\
   -e EXTERNAL_PORT=5000 \
   -e HOST=$COREOS_PRIVATE_IPV4 \
   $IMAGE'
-  
+
 ExecStopPost=-/usr/bin/docker rm -f %p
 Restart=on-failure
 RestartSec=5
