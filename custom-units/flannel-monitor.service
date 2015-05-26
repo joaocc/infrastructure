@@ -1,0 +1,11 @@
+[Unit]
+Wants=docker.service
+
+[Service]
+ExecStartPre=-/usr/bin/docker rm -f %p
+ExecStartPre=/usr/bin/docker pull brandfolder/flannel-monitor:latest
+ExecStart=/bin/sh -c 'docker run --name %p --rm -e "HOSTNAME=`hostname`" brandfolder/flannel-monitor:latest'
+ExecStop=/usr/bin/docker stop %p
+
+[X-Fleet]
+Global=true
