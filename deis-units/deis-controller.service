@@ -1,7 +1,5 @@
 [Unit]
 Description=deis-controller
-After=deis-cache.service
-Requires=deis-cache.service
 
 [Service]
 EnvironmentFile=/etc/environment

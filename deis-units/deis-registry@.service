@@ -1,7 +1,5 @@
 [Unit]
 Description=deis-registry
-After=deis-cache.service
-Requires=deis-cache.service
 
 [Service]
 EnvironmentFile=/etc/environment
