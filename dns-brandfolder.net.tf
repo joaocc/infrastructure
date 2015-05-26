@@ -34,3 +34,11 @@ resource "aws_route53_record" "TXT-brandfolder-net" {
   type = "TXT"
   records = ["v=spf1 a include:spf.mailjet.com ?all"]
 }
+
+resource "aws_route53_record" "TXT-brandfolder-net" {
+  zone_id = "${aws_route53_zone.brandfolder-net.zone_id}"
+  name = "brandfolder.net"
+  ttl = 3600
+  type = "TXT"
+  records = ["google-site-verification=owYdC8tcvcFSq7tOLGIS-Ddy0RAX-bUpb-CcB2o5x14"]
+}
