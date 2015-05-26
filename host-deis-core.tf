@@ -30,19 +30,6 @@ resource "aws_instance" "deis-core" {
     }
 }
 
-# Deis core instances
-resource "aws_instance" "deis-core-user-data" {
-    ami = "${lookup(var.amis, "coreos_633_1_0")}"
-    key_name = "deis"
-    instance_type = "t2.micro"
-    subnet_id = "${element(aws_subnet.subnet.*.id, count.index % lookup(var.counts, "subnets"))}"
-    user_data = "${template_file.deis-core.rendered}"
-
-    tags {
-        Name = "Deis Core User Data"
-    }
-}
-
 resource "aws_eip" "deis-core" {
     count = "${lookup(var.counts, "core")}"
     instance = "${element(aws_instance.deis-core.*.id, count.index)}"

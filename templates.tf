@@ -1,6 +1,10 @@
 resource "template_file" "deis-core" {
   filename = "${path.cwd}/conf/user-data.tpl"
 
+  provisioner "local-exec" {
+    command = "mkdir -p ./tmp/deis-core && cat <<'__USERDATA__' > ./tmp/deis-core/user_data.yml\n${template_file.deis-core.rendered}\n__USERDATA__"
+  }
+
   vars {
     fleet_tags = "${lookup(var.fleet_tags, "core")}"
     units = "${file("conf/deis-core/units.yml")}"
@@ -16,6 +20,10 @@ resource "template_file" "deis_worker_units" {
 resource "template_file" "deis-production-worker" {
   filename = "${path.cwd}/conf/user-data.tpl"
 
+  provisioner "local-exec" {
+    command = "mkdir -p ./tmp/deis-production-worker && cat <<'__USERDATA__' > ./tmp/deis-production-worker/user_data.yml\n${template_file.deis-production-worker.rendered}\n__USERDATA__"
+  }
+
   vars {
     fleet_tags = "${lookup(var.fleet_tags, "production_worker")}"
     units = "${template_file.deis_worker_units.rendered}"
@@ -26,6 +34,10 @@ resource "template_file" "deis-production-worker" {
 
 resource "template_file" "deis-feature-worker" {
   filename = "${path.cwd}/conf/user-data.tpl"
+
+  provisioner "local-exec" {
+    command = "mkdir -p ./tmp/deis-feature-worker && cat <<'__USERDATA__' > ./tmp/deis-feature-worker/user_data.yml\n${template_file.deis-feature-worker.rendered}\n__USERDATA__"
+  }
 
   vars {
     fleet_tags = "${lookup(var.fleet_tags, "feature_worker")}"
@@ -41,6 +53,10 @@ resource "template_file" "deis_router_units" {
 
 resource "template_file" "deis-router" {
   filename = "${path.cwd}/conf/user-data.tpl"
+
+  provisioner "local-exec" {
+    command = "mkdir -p ./tmp/deis-router && cat <<'__USERDATA__' > ./tmp/deis-router/user_data.yml\n${template_file.deis-router.rendered}\n__USERDATA__"
+  }
 
   vars {
     fleet_tags = "${lookup(var.fleet_tags, "router")}"
@@ -60,6 +76,10 @@ resource "template_file" "bastion_units" {
 
 resource "template_file" "bastion" {
   filename = "${path.cwd}/conf/user-data.tpl"
+
+  provisioner "local-exec" {
+    command = "mkdir -p ./tmp/bastion && cat <<'__USERDATA__' > ./tmp/bastion/user_data.yml\n${template_file.bastion.rendered}\n__USERDATA__"
+  }
 
   vars {
     fleet_tags = "${lookup(var.fleet_tags, "bastion")}"
