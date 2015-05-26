@@ -18,7 +18,10 @@ resource "aws_db_instance" "default" {
     port = 5432
     publicly_accessible = false
     db_subnet_group_name = "${aws_db_subnet_group.default.name}"
-    vpc_security_group_ids = ["${aws_security_group.rds.id}"]
+    vpc_security_group_ids = [
+      "${aws_security_group.postgres.id}",
+      "${aws_security_group.internal-communication.id}"
+    ]
 
     # DB Config
     username = "${file("private/db/pguser")}"
