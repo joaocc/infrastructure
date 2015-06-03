@@ -32,5 +32,22 @@ resource "aws_route53_record" "TXT-brandfolder-net" {
   name = "brandfolder.net"
   ttl = 3600
   type = "TXT"
-  records = ["v=spf1 a include:spf.mailjet.com ?all"]
+  records = [
+    "v=spf1 a include:spf.mailjet.com ?all",
+    "google-site-verification=owYdC8tcvcFSq7tOLGIS-Ddy0RAX-bUpb-CcB2o5x14"
+  ]
+}
+
+resource "aws_route53_record" "MX-brandfolder-net" {
+  zone_id = "${aws_route53_zone.brandfolder-net.zone_id}"
+  name = "brandfolder.net"
+  ttl = 3600
+  type = "MX"
+  records = [
+    "1 aspmx.l.google.com.",
+    "5 alt1.aspmx.l.google.com.",
+    "5 alt2.aspmx.l.google.com.",
+    "10 aspmx2.googlemail.com.",
+    "10 aspmx3.googlemail.com."
+  ]
 }
