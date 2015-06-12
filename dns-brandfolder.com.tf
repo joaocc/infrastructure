@@ -177,6 +177,14 @@ resource "aws_route53_record" "CNAME-intercom-domainkey-brandfolder-com" {
   records = ["131d15b0-cc84-4947-8bd2-2b4a354c0518.dkim.intercom.io."]
 }
 
+resource "aws_route53_record" "CNAME-static-brandfolder-com" {
+  zone_id = "${aws_route53_zone.brandfolder-com.zone_id}"
+  name = "static.brandfolder.com"
+  ttl = 3600
+  type = "CNAME"
+  records = ["d2r5j2eb686xip.cloudfront.net."]
+}
+
 resource "aws_route53_record" "MX-brandfolder-com" {
   zone_id = "${aws_route53_zone.brandfolder-com.zone_id}"
   name = "brandfolder.com"
