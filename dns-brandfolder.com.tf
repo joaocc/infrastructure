@@ -185,6 +185,14 @@ resource "aws_route53_record" "CNAME-static-brandfolder-com" {
   records = ["d2r5j2eb686xip.cloudfront.net."]
 }
 
+resource "aws_route53_record" "CNAME-ractive-brandfolder-com" {
+  zone_id = "${aws_route53_zone.brandfolder-com.zone_id}"
+  name = "ractive.brandfolder.com"
+  ttl = 3600
+  type = "CNAME"
+  records = ["d2r5j2eb686xip.cloudfront.net."]
+}
+
 resource "aws_route53_record" "MX-brandfolder-com" {
   zone_id = "${aws_route53_zone.brandfolder-com.zone_id}"
   name = "brandfolder.com"
