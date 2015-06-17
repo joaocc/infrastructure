@@ -5,4 +5,5 @@ Description=clean the volumes daily
 OnCalendar=daily
 
 [X-Fleet]
-MachineOf=%p.service
+Global=true
+MachineMetadata=type=worker
