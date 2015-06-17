@@ -1,0 +1,9 @@
+[Unit]
+Description=clean the volumes daily
+
+[Timer]
+OnCalendar=daily
+
+[X-Fleet]
+Global=true
+MachineOf=%p.service
