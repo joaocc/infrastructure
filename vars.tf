@@ -39,6 +39,7 @@ variable "amis" {
     default = {
       coreos_633_1_0 = "ami-d2033bba"
       coreos_647_0_0 = "ami-ea657582"
+      coreos_681_0_0 = "ami-79ad4712"
     }
 }
 

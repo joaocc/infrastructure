@@ -1,7 +1,7 @@
 # Deis core instances
 resource "aws_instance" "deis-core" {
     count = "${lookup(var.counts, "core")}"
-    ami = "${lookup(var.amis, "coreos_633_1_0")}"
+    ami = "${lookup(var.amis, "coreos_633_1_0")}" # This can NEVER change
     key_name = "deis"
     instance_type = "${lookup(var.instance_types, "core")}"
     subnet_id = "${element(aws_subnet.subnet.*.id, count.index % lookup(var.counts, "subnets"))}"
