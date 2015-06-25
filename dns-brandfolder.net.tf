@@ -21,6 +21,14 @@ resource "aws_route53_record" "CNAME-email-brandfolder-net" {
 
 resource "aws_route53_record" "TXT-mailjet-domainkey-brandfolder-net" {
   zone_id = "${aws_route53_zone.brandfolder-net.zone_id}"
+  name = "smtpapi._domainkey.brandfolder.net"
+  ttl = 3600
+  type = "TXT"
+  records = ["k=rsa; t=s; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDPtW5iwpXVPiH5FzJ7Nrl8USzuY9zqqzjE0D1r04xDN6qwziDnmgcFNNfMewVKN2D1O+2J9N14hRprzByFwfQW76yojh54Xu3uSbQ3JP0A7k8o8GutRF8zbFUA8n0ZH2y0cIEjMliXY4W4LwPA7m4q0ObmvSjhd63O9d8z1XkUBwIDAQAB"]
+}
+
+resource "aws_route53_record" "TXT-mailjet-domainkey-brandfolder-net" {
+  zone_id = "${aws_route53_zone.brandfolder-net.zone_id}"
   name = "mailjet._domainkey.brandfolder.net"
   ttl = 3600
   type = "TXT"
