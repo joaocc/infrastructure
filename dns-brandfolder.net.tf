@@ -19,7 +19,7 @@ resource "aws_route53_record" "CNAME-email-brandfolder-net" {
   records = ["r.mailjet.com."]
 }
 
-resource "aws_route53_record" "TXT-mailjet-domainkey-brandfolder-net" {
+resource "aws_route53_record" "TXT-smtpapi-domainkey-brandfolder-net" {
   zone_id = "${aws_route53_zone.brandfolder-net.zone_id}"
   name = "smtpapi._domainkey.brandfolder.net"
   ttl = 3600
