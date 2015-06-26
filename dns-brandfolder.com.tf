@@ -57,6 +57,30 @@ resource "aws_route53_record" "CNAME-email-brandfolder-com" {
   records = ["sendgrid.net."]
 }
 
+resource "aws_route53_record" "CNAME-blogs-brandfolder-com" {
+  zone_id = "${aws_route53_zone.brandfolder-com.zone_id}"
+  name = "blogs.brandfolder.com"
+  ttl = 3600
+  type = "CNAME"
+  records = ["548041.group41.sites.hubspot.net."]
+}
+
+resource "aws_route53_record" "CNAME-bites-brandfolder-com" {
+  zone_id = "${aws_route53_zone.brandfolder-com.zone_id}"
+  name = "bites.brandfolder.com"
+  ttl = 3600
+  type = "CNAME"
+  records = ["548041.group41.sites.hubspot.net."]
+}
+
+resource "aws_route53_record" "CNAME-pages-brandfolder-com" {
+  zone_id = "${aws_route53_zone.brandfolder-com.zone_id}"
+  name = "pages.brandfolder.com"
+  ttl = 3600
+  type = "CNAME"
+  records = ["548041.group41.sites.hubspot.net."]
+}
+
 resource "aws_route53_record" "CNAME-f22f7bd4d53dc388fb463faec130df49-brandfolder-com" {
   zone_id = "${aws_route53_zone.brandfolder-com.zone_id}"
   name = "f22f7bd4d53dc388fb463faec130df49.brandfolder.com"
