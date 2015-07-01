@@ -41,12 +41,28 @@ resource "aws_route53_record" "A-o1-email-brandfolder-com" {
   records = ["198.37.149.122"]
 }
 
+resource "aws_route53_record" "A-o1-notify-brandfolder-com" {
+  zone_id = "${aws_route53_zone.brandfolder-com.zone_id}"
+  name = "o1.notify.brandfolder.com"
+  ttl = 3600
+  type = "A"
+  records = ["167.89.64.145"]
+}
+
 resource "aws_route53_record" "A-go-brandfolder-com" {
   zone_id = "${aws_route53_zone.brandfolder-com.zone_id}"
   name = "go.brandfolder.com"
   ttl = 3600
   type = "A"
   records = ["151.236.219.228"]
+}
+
+resource "aws_route53_record" "CNAME-notify-brandfolder-com" {
+  zone_id = "${aws_route53_zone.brandfolder-com.zone_id}"
+  name = "notify.brandfolder.com"
+  ttl = 3600
+  type = "CNAME"
+  records = ["sendgrid.net"]
 }
 
 resource "aws_route53_record" "CNAME-email-brandfolder-com" {
@@ -280,19 +296,25 @@ resource "aws_route53_record" "TXT-smtpapi-domainkey-email-brandfolder-com" {
   records = ["k=rsa; t=s; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDPtW5iwpXVPiH5FzJ7Nrl8USzuY9zqqzjE0D1r04xDN6qwziDnmgcFNNfMewVKN2D1O+2J9N14hRprzByFwfQW76yojh54Xu3uSbQ3JP0A7k8o8GutRF8zbFUA8n0ZH2y0cIEjMliXY4W4LwPA7m4q0ObmvSjhd63O9d8z1XkUBwIDAQAB"]
 }
 
+resource "aws_route53_record" "TXT-smtpapi-domainkey-notify-brandfolder-com" {
+  zone_id = "${aws_route53_zone.brandfolder-com.zone_id}"
+  name = "smtpapi._domainkey.notify.brandfolder.com"
+  ttl = 3600
+  type = "TXT"
+  records = ["k=rsa; t=s; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDPtW5iwpXVPiH5FzJ7Nrl8USzuY9zqqzjE0D1r04xDN6qwziDnmgcFNNfMewVKN2D1O+2J9N14hRprzByFwfQW76yojh54Xu3uSbQ3JP0A7k8o8GutRF8zbFUA8n0ZH2y0cIEjMliXY4W4LwPA7m4q0ObmvSjhd63O9d8z1XkUBwIDAQAB"]
+}
+
 resource "aws_route53_record" "TXT-brandfolder-com" {
   zone_id = "${aws_route53_zone.brandfolder-com.zone_id}"
   name = "brandfolder.com"
   ttl = 3600
   type = "TXT"
   records = [
-    "v=spf1 a include:_spf.google.com ~all",
     "google-site-verification=52y1mQwB1FJgSPp03JBxSythvB-JxFhoGce9Mb4LZ8w",
     "google-site-verification=fpYi_aBU0xQkIQ1h7tHqW3hBV0x37b5poElRLUzpKeM",
     "google-site-verification=Pg2cNGAvmgs9WlWoEA3NbNlKNDKRNGE7RwThK1lVk4s",
     "google-site-verification=uX3oSt2cKp8NJaosqBdUeEgSRwldAjn305U2DHGdEsk",
-    "google-site-verification=xUSCk_okRwv1JfD6JNED5jqbSYz-TXIiOHlcDvlFpo4",
-    "v=spf1 a mx include:_spf.google.com include:smtp1.uservoice.com include:spf.mail.intercom.io include:sendgrid.net ~all"
+    "google-site-verification=xUSCk_okRwv1JfD6JNED5jqbSYz-TXIiOHlcDvlFpo4"
   ]
 }
 
