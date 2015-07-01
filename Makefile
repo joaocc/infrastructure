@@ -6,3 +6,6 @@ apply:
 
 refresh:
 	terraform refresh -input=false
+
+push:
+	terraform push -vcs=false -name brandfolder/infrastructure .
