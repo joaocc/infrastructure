@@ -40,6 +40,7 @@ variable "amis" {
       coreos_633_1_0 = "ami-d2033bba"
       coreos_647_0_0 = "ami-ea657582"
       coreos_681_0_0 = "ami-79ad4712"
+      coreos_681_2_0 = "ami-b1cb49ac"
     }
 }
 
