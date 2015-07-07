@@ -314,7 +314,8 @@ resource "aws_route53_record" "TXT-brandfolder-com" {
     "google-site-verification=fpYi_aBU0xQkIQ1h7tHqW3hBV0x37b5poElRLUzpKeM",
     "google-site-verification=Pg2cNGAvmgs9WlWoEA3NbNlKNDKRNGE7RwThK1lVk4s",
     "google-site-verification=uX3oSt2cKp8NJaosqBdUeEgSRwldAjn305U2DHGdEsk",
-    "google-site-verification=xUSCk_okRwv1JfD6JNED5jqbSYz-TXIiOHlcDvlFpo4"
+    "google-site-verification=xUSCk_okRwv1JfD6JNED5jqbSYz-TXIiOHlcDvlFpo4",
+    "v=spf1 a mx include:_spf.google.com include:smtp1.uservoice.com include:spf.mail.intercom.io include:sendgrid.net ~all"    
   ]
 }
 
