@@ -42,7 +42,7 @@ resource "aws_autoscaling_group" "deis-router" {
 resource "aws_launch_configuration" "deis-router" {
 
     # General Config
-    image_id = "${lookup(var.amis, "coreos_681_2_0")}"
+    image_id = "${lookup(var.amis, "coreos_717_1_0")}"
     instance_type = "${lookup(var.instance_types, "router")}"
     user_data = "${template_file.deis-router.rendered}"
     key_name = "deis"
