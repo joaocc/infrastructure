@@ -8,6 +8,11 @@
         [Unit]
         After=flanneld.service
         Requires=flanneld.service
+    - name: auto-restart.conf
+      content: |
+        [Unit]
+        RestartSec=10
+        Restart=always
 
 - name: flanneld.service
   command: start
