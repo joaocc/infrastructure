@@ -1,6 +1,6 @@
 # Bastion instance for remote ssh access
 resource "aws_instance" "bastion" {
-    ami = "${lookup(var.amis, "coreos_717_1_0")}"
+    ami = "${lookup(var.amis, "coreos_717_3_0")}"
     key_name = "bastion-master"
     instance_type = "${lookup(var.instance_types, "bastion")}"
     subnet_id = "${aws_subnet.subnet.1.id}"
