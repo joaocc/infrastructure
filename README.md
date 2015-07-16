@@ -1,4 +1,4 @@
-# Infrastructure
+# Brandfolder Infrastructure
 
 This is the configuration for the Brandfolder infrastructure. 
 
@@ -6,11 +6,9 @@ This is the configuration for the Brandfolder infrastructure.
 |:-------------:|:-------------:|:-----:|
 | [![Deis](https://brandfolder.com/brandfolder-infrastructure/assets/yf0vtwt0)](http://deis.io) | [![Terraform](https://brandfolder.com/brandfolder-infrastructure/assets/ak6pnrtw)](https://terraform.io) | [![AWS](https://brandfolder.com/brandfolder-infrastructure/assets/a70ln6en)](https://aws.amazon.com)
 
-Built and managed with [Terraform](github.com/hashicorp/terraform).
-
 ## Developing on Brandfolder's Infrastructure
 
-### Prerequisites
+**Prerequisites:**
 
 * Install Terraform
 * Sign up for [Atlas](https://atlas.hashicorp.com/) and get invited to the Brandfolder organization.
@@ -23,15 +21,16 @@ Built and managed with [Terraform](github.com/hashicorp/terraform).
   export AWS_SECRET_ACCESS_KEY={{Your AWS Secret Access Key}}
   ```
 
-### Usage
+**Usage:**
 
-#### Viewing changes
-
-`make plan`
-
-#### Applying changes
-
-`make apply`
+1. Make the changes in project.
+1. View Planned Changes
+  `make plan`
+1. Commit the Changes
+  `git add -a`
+  `git commit -m "commit message`
+1. Apply the Changes
+  `make apply`
 
 ## Infrastructure Map
 
