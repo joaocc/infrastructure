@@ -6,13 +6,15 @@ This is the configuration for the Brandfolder infrastructure.
 |:-------------:|:-------------:|:-----:|
 | [![Deis](https://brandfolder.com/brandfolder-infrastructure/assets/yf0vtwt0)](http://deis.io) | [![Terraform](https://brandfolder.com/brandfolder-infrastructure/assets/ak6pnrtw)](https://terraform.io) | [![AWS](https://brandfolder.com/brandfolder-infrastructure/assets/a70ln6en)](https://aws.amazon.com)
 
-## Region
+## Server Locations
 
-Brandfolder's Infrastructure is deployed in the AWS East1 Region, located in Virginia, USA.
+Brandfolder's Origin is deployed in the AWS East Region, located in Virginia, USA. Any upload must go to the origin. Assets read from the site are served from the Asset Edge hosted by Amazon Cloudfront.
 
-## Infrastructure Map
+![Map](https://brandfolder.com/brandfolder-infrastructure/assets/vodcc3ms)
 
-View the [infrastructure map](map.asci).
+## Infrastructure Diagram
+
+View the [infrastructure diagram](diagram.asci).
 
 ## The Tech Stack
 
