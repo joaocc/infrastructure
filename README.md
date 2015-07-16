@@ -1,7 +1,12 @@
 # Infrastructure
 
-This is the configuration for the Brandfolder infrastructure. Built and managed
-with [Terraform](github.com/hashicorp/terraform).
+This is the configuration for the Brandfolder infrastructure. 
+
+| Powered By Deis | Managed With Terraform | Provided By AWS |
+|:-------------:|:-------------:|:-----:|
+| [![Deis](https://brandfolder.com/brandfolder-infrastructure/assets/yf0vtwt0)](http://deis.io) | [![Terraform](https://brandfolder.com/brandfolder-infrastructure/assets/ak6pnrtw)](https://terraform.io) | [![AWS](https://brandfolder.com/brandfolder-infrastructure/assets/a70ln6en)](https://aws.amazon.com)
+
+Built and managed with [Terraform](github.com/hashicorp/terraform).
 
 ## Prerequisites
 
