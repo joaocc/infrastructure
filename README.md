@@ -60,9 +60,19 @@ All of the machines automatically update to the stable channel of [Core OS](http
 
 ## Networking
 
+Networking within the cluser is done via 2 primary channels.
+
+### Host-to-Host networking
+
+Hosts must communicate with each other in order for services such as etcd, flannel and SkyDNS to communicate properly. In addition to core services, due to a limitation of Deis, the application containers communicate with the routers via host networking instead of container networking.
+
+### Container-to-Container Networking
+
+When containers have to access core services such as databases or cache servers, they communicate over the [flannel](https://github.com/coreos/flannel) container overlay network. This network does not communicate with the host network and encapsulates traffic between containers in a secure manner.
+
 ## Auto Scaling
 
-**TODO**
+Certain utilization events on the routers and workers trigger actions to scale up the machines until the utilization has subsided and the servers scale down.
 
 ## PaaS
 
