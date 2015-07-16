@@ -6,6 +6,10 @@ This is the configuration for the Brandfolder infrastructure.
 |:-------------:|:-------------:|:-----:|
 | [![Deis](https://brandfolder.com/brandfolder-infrastructure/assets/yf0vtwt0)](http://deis.io) | [![Terraform](https://brandfolder.com/brandfolder-infrastructure/assets/ak6pnrtw)](https://terraform.io) | [![AWS](https://brandfolder.com/brandfolder-infrastructure/assets/a70ln6en)](https://aws.amazon.com)
 
+## Region
+
+Brandfolder's Infrastructure is deployed in the AWS East1 Region, located in Virginia, USA.
+
 ## Infrastructure Map
 
 View the [infrastructure map](map.asci).
