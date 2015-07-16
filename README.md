@@ -10,7 +10,7 @@ This is the configuration for the Brandfolder infrastructure.
 
 Brandfolder's Origin is deployed in the AWS East Region, located in Virginia, USA. Any upload must go to the origin. Assets read from the site are served from the Asset Edge hosted by Amazon Cloudfront.
 
-![Map](https://brandfolder.com/brandfolder-infrastructure/assets/vodcc3ms)
+![Map](https://brandfolder.com/brandfolder-infrastructure/attachments/h75claxg/brandfolder-infrastructure-infra-locations-map-image.png?dl=true)
 
 ## Infrastructure Diagram
 
