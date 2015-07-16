@@ -1,6 +1,9 @@
 # Brandfolder Infrastructure
 
-This is the configuration for the Brandfolder infrastructure. 
+> We have done some great things at brandfolder in regards to infrastructure. We are confident that it is stable, scalable and secure. We are so confident about it that we thought we would share it with the world. 
+>
+> Jason Waldrip  
+> CTO, Brandfolder.com
 
 | Powered By Deis (PaaS) | Managed With Terraform (IaC) | Provided By AWS (IaaS) |
 |:-------------:|:-------------:|:-----:|
