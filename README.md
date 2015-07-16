@@ -1,6 +1,6 @@
 # Brandfolder Infrastructure
 
-> We have done some great things at brandfolder in regards to infrastructure. We are confident that it is stable, scalable and secure. We are so confident about it that we thought we would share it with the world. 
+> We have done some great things at Brandfolder in regards to infrastructure. We are confident that it is stable, scalable and secure. In fact, We are so confident about it that we thought we would share it with the world. 
 >
 > Jason Waldrip  
 > CTO, Brandfolder.com
