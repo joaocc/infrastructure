@@ -5,6 +5,10 @@
 > Jason Waldrip  
 > CTO, Brandfolder.com
 
+## Attributions
+
+The elegance of Brandfolder's infrastructure could not have been possible without these amazing tools.
+
 | Powered By Deis (PaaS) | Managed With Terraform (IaC) | Provided By AWS (IaaS) |
 |:-------------:|:-------------:|:-----:|
 | [![Deis](https://brandfolder.com/brandfolder-infrastructure/assets/yf0vtwt0)](http://deis.io) | [![Terraform](https://brandfolder.com/brandfolder-infrastructure/assets/ak6pnrtw)](https://terraform.io) | [![AWS](https://brandfolder.com/brandfolder-infrastructure/assets/a70ln6en)](https://aws.amazon.com)
