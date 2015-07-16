@@ -6,7 +6,7 @@ As Brandfolder grew, it saw the need to move away from Heroku and onto a more st
 
 One of our core values at Brandfolder speaks to elegance, so we felt as though our technology needed to reflect that as much as our product does. As an end user of Brandfolder, its simplicity makes your job easier. This is only possible due to Brandfolder's ability to rapidly iterate and ship code in order to refine the best experience. This same simplicity is what is required in order to make Brandfolder's developers easy enough to keep a fast pace. We are excited to say that our infrastructure has done just that. It has delivered a easily configurable and almost no touch maintenance that allows developers to remain working at an incredible pace. 
 
-We love what we have done and think that other companies can benefit from the work we have done. In addition we feel as though being transparent with our clients will give them the peace of mind that we have built a platform that is secure, stable, and scaleable to a factor that meets or exceeds their expectations. Therefore, Brandfolder's infrastructure in its entirety, is open source.
+We love what we have done and think that other companies can benefit from the work we have done. In addition we feel as though being transparent with our clients will give them the peace of mind that we have built a platform that is secure, stable, and scaleable to a factor that meets or exceeds their expectations. Therefore, Brandfolder's infrastructure in its entirety, is **open source**.
 
 ## Attributions
 
