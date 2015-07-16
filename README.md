@@ -2,7 +2,7 @@
 
 ## Introduction
 
-As Brandfolder grew, it saw the need to move away from Heroku and onto a more stable, secure, scalable, and affordable infrastructure. 
+As [Brandfolder](https://brandfolder.com) grew, it saw the need to move away from Heroku and onto a more stable, secure, scalable, and affordable infrastructure. 
 
 One of our core values at Brandfolder speaks to elegance, so we felt as though our technology needed to reflect that as much as our product does. As an end user of Brandfolder, its simplicity makes your job easier. This is only possible due to Brandfolder's ability to rapidly iterate and ship code in order to refine the best experience. This same simplicity is what is required in order to make Brandfolder's developers easy enough to keep a fast pace. We are excited to say that our infrastructure has done just that. It has delivered a easily configurable and almost no touch maintenance that allows developers to remain working at an incredible pace. 
 
