@@ -84,8 +84,6 @@ When containers have to access core services such as databases or cache servers,
 
 Certain utilization events on the routers and workers trigger actions to scale up the machines until the utilization has subsided and the servers scale down.
 
-## PaaS
-
 ## Developing on Brandfolder's Infrastructure
 
 **Prerequisites:**
