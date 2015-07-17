@@ -5,9 +5,10 @@ Requires=sshd.service
 
 [Service]
 ExecStart=/usr/bin/cat <<'BASH_SCRIPT' | bash \
-  while true \
-  do echo "hello" \
-  sleep 1 ; done \
+  while true ; do \
+    echo "hello" \
+    sleep 1 \
+  done \
 BASH_SCRIPT
 
 ExecStop=/bin/true
