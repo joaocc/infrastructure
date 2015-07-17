@@ -49,7 +49,7 @@ ExecStart=/usr/bin/bash -c '\
             else \
               etcdctl rm /blackhole/blacklist/"$ip" ; \
             fi \n \
-      WATCHER \
+      WATCHER \n \
           etcdctl exec-watch --recursive /blackhole/blacklist -- sh -c "echo $WATCHER_PROG | bash" & WATCHER_PID=$! ; \
           _term() { echo Killing etdctl pid $WATCHER_PID 2>&1 ; \
             kill $WATCHER_PID ; \
