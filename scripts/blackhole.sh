@@ -18,12 +18,14 @@ etcdctl mkdir $WHITELIST_KEY
 etcdctl mkdir $BLACKLIST_KEY
 
 add_to_whitelist(){
-  if ! etcdctl get "$WHITELIST_KEY"/"$ip" > /dev/null 2>&1 ; then
+  ip=$1
+  if ! is_whitelisted "$ip" ; then
     date | etcdctl set "$WHITELIST_KEY"/"$ip"
   fi
 }
 
 add_to_blacklist(){
+  ip=$1
   if ! etcdctl get "$BLACKLIST_KEY"/"$ip" > /dev/null 2>&1 ; then
     date | etcdctl set "$BLACKLIST_KEY"/"$ip"
   fi
@@ -31,11 +33,11 @@ add_to_blacklist(){
 
 is_whitelisted(){
   ip=$1
-  if ! etcdctl get "$WHITELIST_KEY"/"$ip" > /dev/null 2>&1 {
+  if ! etcdctl get "$WHITELIST_KEY"/"$ip" > /dev/null 2>&1 ; then
     false
-  } else {
+  else
     true
-  }
+  fi
 }
 
 # Whitelist fleet machines
@@ -44,7 +46,7 @@ is_whitelisted(){
   fleetctl list-machines --fields=ip -no-legend
 ) | sort | uniq | \
 while read ip ; do
-  add_to_whitelist $ip
+  add_to_whitelist "$ip"
 done
 
 # Scanning Program
@@ -54,7 +56,7 @@ done
   grep --line-buffered -e "Disconnecting: Too many authentication failures\|Failed password for" | \
   sed -u -e "s/^.*sshd@.*:22-//" -e "s/:.*$//" | \
   while read ip ; do
-    add_to_blacklist $ip
+    add_to_blacklist "$ip"
   done & READER_PID=$!
   (( JOURNALCTL_PID=READER_PID+1 )) ;
   _term() { echo Killing journalctl pid $JOURNALCTL_PID 2>&1 ;
@@ -72,7 +74,7 @@ done
   etcdctl exec-watch --recursive /blackhole/blacklist -- sh -c '
     ip=$(echo $ETCD_WATCH_KEY | sed "s/.*\///")
     if ! is_whitelisted ; then
-      (ip route add blackhole "$ip" && echo "added "$ip" to block list") | true
+      (ip route add blackhole "$ip" && echo "added $ip to block list") | true
     fi
   ' & WATCHER_PID=$!
 
@@ -87,9 +89,9 @@ done
 # Existing Key Blocker
 # Blocks all existing keys in etcd
 for key in $(etcdctl ls /blackhole/blacklist) ; do
-  ip=$(echo $key | sed "s/.*\///")
+  ip=$(echo "$key" | sed "s/.*\///")
   if ! is_whitelisted ; then
-    (ip route add blackhole "$ip" && echo "added "$ip" to block list") | true
+    (ip route add blackhole "$ip" && echo "added $ip to block list") | true
   fi
 done
 
