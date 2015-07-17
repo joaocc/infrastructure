@@ -6,7 +6,7 @@ core-user-data:
 	@cat ./tmp/deis-core/user_data.yml | pbcopy
 
 generators:
-	@sh -c 'for generator in `ls generators` ; do sh generators/$$generator ; done'
+	@sh -c 'for generator in `ls generators` ; do sh generators/$	$generator ; done'
 
 apply:
 	terraform apply -input=false
