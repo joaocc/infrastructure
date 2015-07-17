@@ -4,8 +4,8 @@ After=sshd.service
 Requires=sshd.service
 
 [Service]
-ExecStart=bash -c "while true ; do echo "hello" ; sleep 1 done"
-ExecStop=true
+ExecStart=/bin/bash -c "while true ; do echo "hello" ; sleep 1 done"
+ExecStop=/bin/true
 
 [X-Fleet]
 MachineMetadata=bastion
