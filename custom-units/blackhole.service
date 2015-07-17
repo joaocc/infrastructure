@@ -4,12 +4,45 @@ After=sshd.service
 Requires=sshd.service
 
 [Service]
-ExecStart=/usr/bin/cat <<'BASH_SCRIPT' | bash \
-  while true ; do \
-    echo "hello" \
-    sleep 1 \
-  done \
-BASH_SCRIPT
+ExecStart=/usr/bin/bash -c '\
+    if [ -f /var/run/blackhole.pid ] ; then \
+      echo "According to /var/run/blackhole.pid, this script is already running. Exiting." 1>&2 ; \
+      exit 1 ; \
+    fi ; \
+    echo $BASHPID > /var/run/blackhole.pid ; \
+    ( \
+      last --time-format notime -awi | grep pts | cut -c38- ; \
+      fleetctl list-machines --fields=ip -no-legend \
+    ) | sort | uniq | while read ip ; do \
+      if ! etcdctl get /blackhole/whitelist/$ip > /dev/null 2>&1 ; then \
+        date | etcdctl set /blackhole/whitelist/$ip ; \
+      fi; \
+    done ; \
+    ( \
+      /usr/bin/journalctl -f -o json | grep --line-buffered sshd | grep --line-buffered -e "Disconnecting: Too many authentication failures\|Failed password for" | sed -u -e "s/^.*sshd@.*:22-//" -e "s/:.*$//" | while read ip ; do \
+        if ! etcdctl get /blackhole/whitelist/$ip > /dev/null 2>&1 ; then \
+          date | etcdctl set --ttl 3600 /blackhole/blacklist/$ip ; \
+          ip route add blackhole $ip 2>/dev/null | true ; \
+        fi ; \
+      done & CHILD_PID=$! ; \
+      (( JOURNALCTL_PID = $CHILD_PID + 1 )) ; \
+      _term() { echo Killing journalctl pid $JOURNALCTL_PID 2>&1 ; \
+        kill $JOURNALCTL_PID ; \
+        exit 0 ; \
+      } ; \
+      trap _term SIGINT SIGTERM EXIT ; \
+      wait $CHILD_PID \
+    ) & CHILD_PID=$! ; \
+    (( BLACKHOLE_PID = $CHILD_PID + 1 )) ; \
+    _term() { echo Killing blackhole pid $BLACKHOLE_PID 2>&1 ; \
+      kill $BLACKHOLE_PID > /dev/null 2>&1 || true ; \
+      rm -f /var/run/blackhole.pid ; \
+      exit 0 ; \
+    } ; \
+    trap _term SIGINT SIGTERM EXIT ; \
+    echo $BASHPID > /var/run/blackhole.pid ; \
+    wait $CHILD_PID \
+'
 
 ExecStop=/bin/true
 
