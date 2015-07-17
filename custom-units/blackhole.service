@@ -6,8 +6,7 @@ Requires=sshd.service
 [Service]
 ExecStart=cat <<'Test' | bash \
           while true ; do \
-            echo \
-            "hello" \
+            echo "hello" \
             sleep 1 \
           done \
           Test
