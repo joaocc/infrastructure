@@ -2,11 +2,11 @@
 
 ## Introduction
 
-As Brandfolder grew, it saw the need to move away from Heroku and onto a more stable, secure, scalable, and affordable infrastructure. 
+As [Brandfolder](https://brandfolder.com) grew, it saw the need to move away from Heroku and onto a more stable, secure, scalable, and affordable infrastructure. 
 
 One of our core values at Brandfolder speaks to elegance, so we felt as though our technology needed to reflect that as much as our product does. As an end user of Brandfolder, its simplicity makes your job easier. This is only possible due to Brandfolder's ability to rapidly iterate and ship code in order to refine the best experience. This same simplicity is what is required in order to make Brandfolder's developers easy enough to keep a fast pace. We are excited to say that our infrastructure has done just that. It has delivered a easily configurable and almost no touch maintenance that allows developers to remain working at an incredible pace. 
 
-We love what we have done and think that other companies can benefit from the work we have done. In addition we feel as though being transparent with our clients will give them the peace of mind that we have built a platform that is secure, stable, and scaleable to a factor that meets or exceeds their expectations. Therefore, Brandfolder's infrastructure in its entirety, is **open source**.
+We love what we have done and think that other companies can benefit from the work we have done. In addition, we feel as though being transparent with our clients will give them the peace of mind that we have built a platform that is secure, stable, and scalable to a factor that meets or exceeds their expectations. Therefore, Brandfolder's infrastructure in its entirety is **open source**.
 
 ## Attributions
 
@@ -21,10 +21,10 @@ The elegance of Brandfolder's infrastructure could not have been possible withou
 ![Map](https://brandfolder.com/brandfolder-infrastructure/attachments/h75claxg/brandfolder-infrastructure-infra-locations-map-image.png?dl=true)
 
 ### Origin
-Brandfolder's Origin is deployed in the AWS East Region, located in Virginia, USA. Any action that requires a "write" action must be done on the origin, therefore all write traffic must be routed to the origin in Virginina.
+Brandfolder's Origin is deployed in the AWS East Region, located in Virginia, USA. Any action that requires a "write" action must be done on the origin, therefore all write traffic must be routed to the origin in Virginia.
 
 ### Asset Edge
-Assets are served from the asset edge upon subsequent requests from users closest to each edge location. Therefor the first request for each asset in each location will take longer than subsequent requests for that asset.
+Assets are served from the asset edge upon subsequent requests from users closest to each edge location. Therefore, the first request for each asset in each location will take longer than subsequent requests for that asset.
 
 ## Infrastructure Diagram
 
@@ -35,10 +35,10 @@ View the [infrastructure diagram](diagram.asci).
 Brandfolders infrastructure is built on a number of technologies that will be good to understand before developing/forking the configuration.
 
 * [Deis](https://deis.io) - Deis is an Open Source Platform-as-a-Service that makes deployment and configuration of applications quick and easy for the development team.
-* [Amazon AWS](https://aws.amazon.com) - Amazon AWS is an Infrastructure-as-a-Service that allows brandfolder to easily provision hardware on demand. Ultimately, the infrastructure would not be possile without the hardware to run it on.
+* [Amazon AWS](https://aws.amazon.com) - Amazon AWS is an Infrastructure-as-a-Service that allows Brandfolder to easily provision hardware on demand. Ultimately, the infrastructure would not be possible without the hardware to run it on.
 * [Terraform](https://terraform.io) - In this project you will see almost nothing by `.tf` files. These files are code that define our infrastructure. Terraform takes the pain out of managing infrastructure and allows for teams to spend more time on developing applications.
-* [Docker](https://docker.com) - Docker is at the root of everything at Brandfolder it is used all the way up from development to production. Docker utlimately allows for our applications and services to run into isolated containers.
-* [Core OS](https://coreos.com) - CoreOS is the operation system that runs Brandfolder's Servers. Core OS was designed to run and manage docker containers in a clusterd environment. Some of the other benfits of the OS also allow for very low touch management and administration.
+* [Docker](https://docker.com) - Docker is at the root of everything at Brandfolder it is used all the way up from development to production. Docker ultimately allows for our applications and services to run into isolated containers.
+* [Core OS](https://coreos.com) - CoreOS is the operation system that runs Brandfolder's Servers. Core OS was designed to run and manage docker containers in a clusterd environment. Some of the other benefits of the OS also allow for very low touch management and administration.
 * [etcd](https://github.com/coreos/etcd) - etcd, a component of Core OS maintains the configuration for everything in the cluster. It is a consistent, highly available, fault tolerant data store.
 * [fleet](https://github.com/coreos/fleet) - fleet, a component of Core OS is a cluster-wide scheduling system that allows us to run services and applications anywhere according to a central set of rules and tags set within etcd. 
 * [flannel](https://github.com/coreos/flannel) - flannel, a component of Core OS, is the networking mesh that allows all the containers in the cluster to speak to each other without having to allocate ports on the primary docker hosts.
@@ -68,7 +68,7 @@ The core is comprised of exactly and always 5 [Core OS](https://coreos.com/) mac
 
 ### The Workers
 
-Workers are autoscaling components that host running applications. They can scale up or down on demand and be cycled without damaging cluster availability. When applications are online they publish the workers IP and the containers listening port to etcd in order for the routers to consume.
+Workers are auto scaling components that host running applications. They can scale up or down on demand and be cycled without damaging cluster availability. When applications are online they publish the workers IP and the containers listening port to etcd in order for the routers to consume.
 
 ### The Routers
 
@@ -80,7 +80,7 @@ All of the machines automatically update to the stable channel of [Core OS](http
 
 ## Networking
 
-Networking within the cluser is done via 2 primary channels.
+Networking within the cluster is done via 2 primary channels.
 
 ### Host-to-Host networking
 
