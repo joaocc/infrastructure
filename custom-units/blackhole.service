@@ -20,7 +20,7 @@ ExecStart=/usr/bin/bash -c '\
     ) | sort | uniq | while read ip ; do \
       if ! etcdctl get /blackhole/whitelist/$ip > /dev/null 2>&1 ; then \
         date | etcdctl set /blackhole/whitelist/$ip ; \
-      fi; \
+      fi ; \
     done ; \
     \
     \
@@ -41,15 +41,16 @@ ExecStart=/usr/bin/bash -c '\
     \
     \
     ( \
-      etcdctl exec-watch --recursive /test/test -- sh -c \' \
-        ip=`echo $ETCD_WATCH_KEY | sed "s/.*\///"` ; \
+      read -r -d '' WATCHER_PROG <<"WATCHER"
+        ip=$(echo $ETCD_WATCH_KEY | sed "s/.*\///") ; \
         if ! etcdctl get /blackhole/whitelist/$ip > /dev/null 2>&1 ; then \
-          (ip route add blackhole $ip 2>/dev/null && echo "added $ip to block list") | true ; \
+          (ip route add blackhole "$ip" && echo "added "$ip" to block list") | true ; \
         else \
-          etcdctl rm /blackhole/blacklist/$ip \
+          etcdctl rm /blackhole/blacklist/"$ip" ; \
         fi \
-      \' \
-    ) ; & WATCHER_PID=$! ; \
+WATCHER
+      etcdctl exec-watch --recursive /test/test -- sh -c "echo $WATCHER_PROG | bash"
+    ) & WATCHER_PID=$! ; \
     \
     \
     (( BLACKHOLE_PID = $CHILD_PID + 1 )) ; \
