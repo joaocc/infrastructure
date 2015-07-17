@@ -14,8 +14,8 @@ export WHITELIST_KEY=/blackhole/whitelist
 export BLACKLIST_KEY=/blackhole/whitelist
 
 # Ensure namespaces are created
-etcdctl mkdir $WHITELIST_KEY
-etcdctl mkdir $BLACKLIST_KEY
+etcdctl mkdir $WHITELIST_KEY || true
+etcdctl mkdir $BLACKLIST_KEY || true
 
 add_to_whitelist(){
   ip=$1
