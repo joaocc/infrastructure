@@ -46,7 +46,7 @@ ExecStart=/usr/bin/bash -c '\
         if ! etcdctl get /blackhole/whitelist/$ip > /dev/null 2>&1 ; then \
           (ip route add blackhole $ip 2>/dev/null && echo "added $ip to block list") | true ; \
         else \
-          etcdctl rm /blackhole/blacklist/$ip
+          etcdctl rm /blackhole/blacklist/$ip \
         fi \
       \' \
     ) ; & WATCHER_PID=$! ; \
