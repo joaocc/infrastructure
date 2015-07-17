@@ -5,10 +5,16 @@ Requires=sshd.service
 
 [Service]
 ExecStart=/usr/bin/bash -c '\
+    set -eo pipefail ; \
+    \
+    \ # Check to see of the process is already running
     if [ -f /var/run/blackhole.pid ] ; then \
       echo "According to /var/run/blackhole.pid, this script is already running. Exiting." 1>&2 ; \
       exit 1 ; \
     fi ; \
+    \
+    \
+    \ # Add the fleet machines to a whitelist
     echo $BASHPID > /var/run/blackhole.pid ; \
     ( \
       last --time-format notime -awi | grep pts | cut -c38- ; \
@@ -18,11 +24,13 @@ ExecStart=/usr/bin/bash -c '\
         date | etcdctl set /blackhole/whitelist/$ip ; \
       fi; \
     done ; \
+    \
+    \
+    \ # Subprocess: Watch for invalid attempts and add them to the block list
     ( \
       /usr/bin/journalctl -f -o json | grep --line-buffered sshd | grep --line-buffered -e "Disconnecting: Too many authentication failures\|Failed password for" | sed -u -e "s/^.*sshd@.*:22-//" -e "s/:.*$//" | while read ip ; do \
         if ! etcdctl get /blackhole/whitelist/$ip > /dev/null 2>&1 ; then \
           date | etcdctl set --ttl 3600 /blackhole/blacklist/$ip ; \
-          ip route add blackhole $ip 2>/dev/null | true ; \
         fi ; \
       done & CHILD_PID=$! ; \
       (( JOURNALCTL_PID = $CHILD_PID + 1 )) ; \
@@ -33,6 +41,22 @@ ExecStart=/usr/bin/bash -c '\
       trap _term SIGINT SIGTERM EXIT ; \
       wait $CHILD_PID \
     ) & CHILD_PID=$! ; \
+    \
+    \
+    \ # Subprocess: Watch for new blocked keys
+    ( \
+      etcdctl exec-watch --recursive /test/test -- sh -c \' \
+        ip=`echo $ETCD_WATCH_KEY | sed "s/.*\///"` ; \
+        if ! etcdctl get /blackhole/whitelist/$ip > /dev/null 2>&1 ; then \
+          (ip route add blackhole $ip 2>/dev/null && echo "added $ip to block list") | true ; \
+        else \
+          etcdctl rm /blackhole/blacklist/$ip
+        fi \
+      \' \
+    ) ; & WATCHER_PID=$! ; \
+    \
+    \
+    \ # Process Manager
     (( BLACKHOLE_PID = $CHILD_PID + 1 )) ; \
     _term() { echo Killing blackhole pid $BLACKHOLE_PID 2>&1 ; \
       kill $BLACKHOLE_PID > /dev/null 2>&1 || true ; \
@@ -41,10 +65,17 @@ ExecStart=/usr/bin/bash -c '\
     } ; \
     trap _term SIGINT SIGTERM EXIT ; \
     echo $BASHPID > /var/run/blackhole.pid ; \
-    wait $CHILD_PID \
+    wait $CHILD_PID ;\
+    wait $WATCHER_PID \
 '
-
-ExecStop=/bin/true
+ExecStop=/usr/bin/bash -c '\
+    set -eo pipefail ; \
+    if [ ! -f /var/run/blackhole.pid ] ; then \
+      echo "Lack of /var/run/blackhole.pid means there is nothing to stop" 1>&2 \
+      exit 1 \
+    fi \
+    kill $(cat /var/run/blackhole.pid) \
+'
 
 [X-Fleet]
 MachineMetadata=bastion
