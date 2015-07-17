@@ -1,4 +1,6 @@
 [Unit]
+Name=blackhole
+Description=block malicious ssh connections
 After=sshd.service
 Requires=sshd.service
 
