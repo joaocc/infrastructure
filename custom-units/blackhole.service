@@ -40,7 +40,6 @@ ExecStart=/usr/bin/bash -c '\
     ) & CHILD_PID=$! ; \
     \
     \
-    # Subprocess: Watch for new blocked keys
     ( \
       etcdctl exec-watch --recursive /test/test -- sh -c \' \
         ip=`echo $ETCD_WATCH_KEY | sed "s/.*\///"` ; \
