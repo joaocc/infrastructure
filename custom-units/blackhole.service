@@ -4,12 +4,7 @@ After=sshd.service
 Requires=sshd.service
 
 [Service]
-ExecStart=cat <<'Test' | bash \
-          while true ; do \
-            echo "hello" \
-            sleep 1 \
-          done \
-          Test
+ExecStart=bash -c "while true ; do echo "hello" ; sleep 1 done"
 
 [X-Fleet]
 MachineMetadata=bastion
