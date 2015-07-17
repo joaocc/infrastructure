@@ -4,7 +4,12 @@ After=sshd.service
 Requires=sshd.service
 
 [Service]
-ExecStart=/bin/bash -c "while true ; do echo 'hello' ; sleep 1 ; done"
+ExecStart=/usr/bin/cat <<'BASH_SCRIPT' | bash \
+  while true \
+  do echo "hello" \
+  sleep 1 ; done \
+BASH_SCRIPT
+
 ExecStop=/bin/true
 
 [X-Fleet]
