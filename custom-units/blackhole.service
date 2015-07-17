@@ -5,64 +5,73 @@ Requires=sshd.service
 
 [Service]
 ExecStart=/usr/bin/bash -c '\
-    set -eo pipefail ; \
-    \
-    if [ -f /var/run/blackhole.pid ] ; then \
-      echo "According to /var/run/blackhole.pid, this script is already running. Exiting." 1>&2 ; \
-      exit 1 ; \
-    fi ; \
-    \
-    \
-    echo $BASHPID > /var/run/blackhole.pid ; \
-    ( \
-      last --time-format notime -awi | grep pts | cut -c38- ; \
-      fleetctl list-machines --fields=ip -no-legend \
-    ) | sort | uniq | while read ip ; do \
-      if ! etcdctl get /blackhole/whitelist/$ip > /dev/null 2>&1 ; then \
-        date | etcdctl set /blackhole/whitelist/$ip ; \
+      set -eo pipefail ; \
+      \
+      if [ -f /var/run/blackhole.pid ] ; then \
+        echo "According to /var/run/blackhole.pid, this script is already running. Exiting." 1>&2 ; \
+        exit 1 ; \
       fi ; \
-    done ; \
-    \
-    \
-    ( \
-      /usr/bin/journalctl -f -o json | grep --line-buffered sshd | grep --line-buffered -e "Disconnecting: Too many authentication failures\|Failed password for" | sed -u -e "s/^.*sshd@.*:22-//" -e "s/:.*$//" | while read ip ; do \
-        if ! etcdctl get /blackhole/whitelist/$ip > /dev/null 2>&1 ; then \
-          date | etcdctl set --ttl 3600 /blackhole/blacklist/$ip ; \
+      \
+      \
+      echo $BASHPID > /var/run/blackhole.pid ; \
+      ( \
+        last --time-format notime -awi | grep pts | cut -c38- ; \
+        fleetctl list-machines --fields=ip -no-legend \
+      ) | sort | uniq | while read ip ; do \
+        if ! etcdctl get /blackhole/whitelist/"$ip" > /dev/null 2>&1 ; then \
+          date | etcdctl set /blackhole/whitelist/"$ip" ; \
         fi ; \
-      done & CHILD_PID=$! ; \
-      (( JOURNALCTL_PID = $CHILD_PID + 1 )) ; \
-      _term() { echo Killing journalctl pid $JOURNALCTL_PID 2>&1 ; \
-        kill $JOURNALCTL_PID ; \
+      done ; \
+      \
+      \
+      ( \
+        /usr/bin/journalctl -f -o json | grep --line-buffered sshd | grep --line-buffered -e "Disconnecting: Too many authentication failures\|Failed password for" | sed -u -e "s/^.*sshd@.*:22-//" -e "s/:.*$//" | while read ip ; do \
+          if ! etcdctl get /blackhole/whitelist/"$ip" > /dev/null 2>&1 ; then \
+            date | etcdctl set --ttl 3600 /blackhole/blacklist/"$ip" ; \
+          fi ; \
+        done & READER_PID=$! ; \
+        (( JOURNALCTL_PID=READER_PID+1 )) ; \
+        _term() { echo Killing journalctl pid $JOURNALCTL_PID 2>&1 ; \
+          kill $JOURNALCTL_PID ; \
+          exit 0 ; \
+        } ; \
+        trap _term SIGINT SIGTERM EXIT ; \
+        wait $READER_PID \
+      ) & SCANNER_PID=$! ; \
+      (( SCANNER_PID=SCANNER_PID+1 )) ; \
+      \
+      \
+      ( \
+        read -r -d "" WATCHER_PROG <<"WATCHER" \n \
+          ip=$(echo $ETCD_WATCH_KEY | sed "s/.*\///") ; \
+          if ! etcdctl get /blackhole/whitelist/$ip > /dev/null 2>&1 ; then \
+            (ip route add blackhole "$ip" && echo "added "$ip" to block list") | true ; \
+          else \
+            etcdctl rm /blackhole/blacklist/"$ip" ; \
+          fi \n \
+    WATCHER \
+        etcdctl exec-watch --recursive /blackhole/blacklist -- sh -c "echo $WATCHER_PROG | bash" & WATCHER_PID=$! \
+        _term() { echo Killing etdctl pid $WATCHER_PID 2>&1 ; \
+          kill $WATCHER_PID ; \
+          exit 0 ; \
+        } ; \
+        trap _term SIGINT SIGTERM EXIT ; \
+        wait $WATCHER_PID \
+      ) & BLOCKER_PID=$! ; \
+      (( BLOCKER_PID=BLOCKER_PID+1 )) ; \
+      \
+      \
+      _term() { \
+        echo "Killing Blackhole Processes"  2>&1 ; \
+        kill $SCANNER_PID > /dev/null 2>&1 || true ; \
+        kill $BLOCKER_PID > /dev/null 2>&1 || true ; \
+        rm -f /var/run/blackhole.pid ; \
         exit 0 ; \
       } ; \
       trap _term SIGINT SIGTERM EXIT ; \
-      wait $CHILD_PID \
-    ) & CHILD_PID=$! ; \
-    \
-    \
-    ( \
-      read -r -d "" WATCHER_PROG <<"WATCHER" \
-        ip=$(echo $ETCD_WATCH_KEY | sed "s/.*\///") ; \
-        if ! etcdctl get /blackhole/whitelist/$ip > /dev/null 2>&1 ; then \
-          (ip route add blackhole "$ip" && echo "added "$ip" to block list") | true ; \
-        else \
-          etcdctl rm /blackhole/blacklist/"$ip" ; \
-        fi \
-WATCHER \
-      etcdctl exec-watch --recursive /test/test -- sh -c "echo $WATCHER_PROG | bash" \
-    ) & WATCHER_PID=$! ; \
-    \
-    \
-    (( BLACKHOLE_PID = $CHILD_PID + 1 )) ; \
-    _term() { echo Killing blackhole pid $BLACKHOLE_PID 2>&1 ; \
-      kill $BLACKHOLE_PID > /dev/null 2>&1 || true ; \
-      rm -f /var/run/blackhole.pid ; \
-      exit 0 ; \
-    } ; \
-    trap _term SIGINT SIGTERM EXIT ; \
-    echo $BASHPID > /var/run/blackhole.pid ; \
-    wait $CHILD_PID ; \
-    wait $WATCHER_PID \
+      echo $BASHPID > /var/run/blackhole.pid ; \
+      wait $SCANNER_PID ; \
+      wait $BLOCKER_PID ; \
 '
 ExecStop=/usr/bin/bash -c '\
     set -eo pipefail ; \
