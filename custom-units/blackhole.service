@@ -41,15 +41,15 @@ ExecStart=/usr/bin/bash -c '\
     \
     \
     ( \
-      read -r -d '' WATCHER_PROG <<"WATCHER"
+      read -r -d "" WATCHER_PROG <<"WATCHER" \
         ip=$(echo $ETCD_WATCH_KEY | sed "s/.*\///") ; \
         if ! etcdctl get /blackhole/whitelist/$ip > /dev/null 2>&1 ; then \
           (ip route add blackhole "$ip" && echo "added "$ip" to block list") | true ; \
         else \
           etcdctl rm /blackhole/blacklist/"$ip" ; \
         fi \
-WATCHER
-      etcdctl exec-watch --recursive /test/test -- sh -c "echo $WATCHER_PROG | bash"
+WATCHER \
+      etcdctl exec-watch --recursive /test/test -- sh -c "echo $WATCHER_PROG | bash" \
     ) & WATCHER_PID=$! ; \
     \
     \
