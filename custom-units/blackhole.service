@@ -7,14 +7,12 @@ Requires=sshd.service
 ExecStart=/usr/bin/bash -c '\
     set -eo pipefail ; \
     \
-    # Check to see of the process is already running
     if [ -f /var/run/blackhole.pid ] ; then \
       echo "According to /var/run/blackhole.pid, this script is already running. Exiting." 1>&2 ; \
       exit 1 ; \
     fi ; \
     \
     \
-    # Add the fleet machines to a whitelist
     echo $BASHPID > /var/run/blackhole.pid ; \
     ( \
       last --time-format notime -awi | grep pts | cut -c38- ; \
@@ -26,7 +24,6 @@ ExecStart=/usr/bin/bash -c '\
     done ; \
     \
     \
-    # Subprocess: Watch for invalid attempts and add them to the block list
     ( \
       /usr/bin/journalctl -f -o json | grep --line-buffered sshd | grep --line-buffered -e "Disconnecting: Too many authentication failures\|Failed password for" | sed -u -e "s/^.*sshd@.*:22-//" -e "s/:.*$//" | while read ip ; do \
         if ! etcdctl get /blackhole/whitelist/$ip > /dev/null 2>&1 ; then \
@@ -56,7 +53,6 @@ ExecStart=/usr/bin/bash -c '\
     ) ; & WATCHER_PID=$! ; \
     \
     \
-    # Process Manager
     (( BLACKHOLE_PID = $CHILD_PID + 1 )) ; \
     _term() { echo Killing blackhole pid $BLACKHOLE_PID 2>&1 ; \
       kill $BLACKHOLE_PID > /dev/null 2>&1 || true ; \
@@ -65,7 +61,7 @@ ExecStart=/usr/bin/bash -c '\
     } ; \
     trap _term SIGINT SIGTERM EXIT ; \
     echo $BASHPID > /var/run/blackhole.pid ; \
-    wait $CHILD_PID ;\
+    wait $CHILD_PID ; \
     wait $WATCHER_PID \
 '
 ExecStop=/usr/bin/bash -c '\
