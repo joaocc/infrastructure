@@ -1,3 +1,4 @@
+#!/usr/local/env bash
 set -eo pipefail
 
 # Check to see if the program is running, error if it is
@@ -71,12 +72,13 @@ done
 # Blocker Program
 # Watches for new keys in etcd and blocks them
 (
-  etcdctl exec-watch --recursive /blackhole/blacklist -- sh -c '
-    ip=$(echo $ETCD_WATCH_KEY | sed "s/.*\///")
-    if ! is_whitelisted ; then
-      (ip route add blackhole "$ip" && echo "added $ip to block list") | true
-    fi
-  ' & WATCHER_PID=$!
+  read -r -d '' SCRIPT <<-'EOF'
+ip=$(echo "$ETCD_WATCH_KEY" | sed "s/.*\///")
+if ! is_whitelisted ; then
+  (ip route add blackhole "$ip" && echo "added $ip to block list") | true
+fi
+EOF
+  etcdctl exec-watch --recursive /blackhole/blacklist -- sh -c "$SCRIPT" & WATCHER_PID=$!
 
   _term() { echo Killing etdctl pid $WATCHER_PID 2>&1
     kill $WATCHER_PID
