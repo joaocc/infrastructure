@@ -2,10 +2,10 @@
 set -eo pipefail
 
 # Check to see if the program is running, error if it is
-if [ -f /var/run/blackhole.pid ] ; then
-  echo "According to /var/run/blackhole.pid, this script is already running. Exiting." 1>&2 ;
-  exit 1 ;
-fi ;
+# if [ -f /var/run/blackhole.pid ] ; then
+#   echo "According to /var/run/blackhole.pid, this script is already running. Exiting." 1>&2 ;
+#   exit 1 ;
+# fi ;
 
 # Track the process
 echo $BASHPID > /var/run/blackhole.pid ;
@@ -65,9 +65,9 @@ done
     exit 0 ;
   } ;
   trap _term SIGINT SIGTERM EXIT ;
+  wait $JOURNALCTL_PID
   wait $READER_PID
-) & SCANNER_PID=$!+1 ;
-
+) & SCANNER_PID=$! ;
 
 # Blocker Program
 # Watches for new keys in etcd and blocks them
@@ -75,6 +75,7 @@ done
   read -r -d '' SCRIPT <<-'EOF'
 ip=$(echo "$ETCD_WATCH_KEY" | sed "s/.*\///")
 if ! is_whitelisted ; then
+  echo "$ip"
   (ip route add blackhole "$ip" && echo "added $ip to block list") | true
 fi
 EOF
@@ -86,13 +87,14 @@ EOF
   }
   trap _term SIGINT SIGTERM EXIT
   wait $WATCHER_PID
-) & BLOCKER_PID=$!+1
+) & BLOCKER_PID=$!
 
 # Existing Key Blocker
 # Blocks all existing keys in etcd
 for key in $(etcdctl ls /blackhole/blacklist) ; do
   ip=$(echo "$key" | sed "s/.*\///")
-  if ! is_whitelisted ; then
+  if ! is_whitelisted "$ip" ; then
+    echo "$ip"
     (ip route add blackhole "$ip" && echo "added $ip to block list") | true
   fi
 done
