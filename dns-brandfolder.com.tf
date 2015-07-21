@@ -57,6 +57,31 @@ resource "aws_route53_record" "A-go-brandfolder-com" {
   records = ["151.236.219.228"]
 }
 
+resource "aws_route53_record" "CNAME-www-fp-brandfolder-com" {
+  zone_id = "${aws_route53_zone.brandfolder-com.zone_id}"
+  name = "www.fp.brandfolder.com"
+  ttl = 3600
+  type = "CNAME"
+  records = ["CNAMEMUX-BRANDFOLDER-LB-1656571564.us-east-1.elb.amazonaws.com"]
+}
+
+resource "aws_route53_record" "CNAME-api-bf-brandfolder-com" {
+  zone_id = "${aws_route53_zone.brandfolder-com.zone_id}"
+  name = "api.fp.brandfolder.com"
+  ttl = 3600
+  type = "CNAME"
+  records = ["CNAMEMUX-BRANDFOLDER-LB-1656571564.us-east-1.elb.amazonaws.com"]
+}
+
+resource "aws_route53_record" "CNAME-dialog-fp-brandfolder-com" {
+  zone_id = "${aws_route53_zone.brandfolder-com.zone_id}"
+  name = "dialog.fp.brandfolder.com"
+  ttl = 3600
+  type = "CNAME"
+  records = ["CNAMEMUX-BRANDFOLDER-LB-1656571564.us-east-1.elb.amazonaws.com"]
+}
+
+
 resource "aws_route53_record" "CNAME-notify-brandfolder-com" {
   zone_id = "${aws_route53_zone.brandfolder-com.zone_id}"
   name = "notify.brandfolder.com"
