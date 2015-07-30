@@ -226,6 +226,14 @@ resource "aws_route53_record" "CNAME-assets-brandfolder-com" {
   records = ["d21oh8fj97neu1.cloudfront.net."]
 }
 
+resource "aws_route53_record" "CNAME-fonts-brandfolder-com" {
+  zone_id = "${aws_route53_zone.brandfolder-com.zone_id}"
+  name = "fonts.brandfolder.com"
+  ttl = 3600
+  type = "CNAME"
+  records = ["d46za68c53zh8.cloudfront.net."]
+}
+
 resource "aws_route53_record" "CNAME-drive-brandfolder-com" {
   zone_id = "${aws_route53_zone.brandfolder-com.zone_id}"
   name = "drive.brandfolder.com"
@@ -340,7 +348,7 @@ resource "aws_route53_record" "TXT-brandfolder-com" {
     "google-site-verification=Pg2cNGAvmgs9WlWoEA3NbNlKNDKRNGE7RwThK1lVk4s",
     "google-site-verification=uX3oSt2cKp8NJaosqBdUeEgSRwldAjn305U2DHGdEsk",
     "google-site-verification=xUSCk_okRwv1JfD6JNED5jqbSYz-TXIiOHlcDvlFpo4",
-    "v=spf1 a mx include:_spf.google.com include:smtp1.uservoice.com include:spf.mail.intercom.io include:sendgrid.net ~all"    
+    "v=spf1 a mx include:_spf.google.com include:smtp1.uservoice.com include:spf.mail.intercom.io include:sendgrid.net ~all"
   ]
 }
 
