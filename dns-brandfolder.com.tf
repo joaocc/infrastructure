@@ -89,6 +89,14 @@ resource "aws_route53_record" "CNAME-fp-brandfolder-com" {
   records = ["d3bcnng5dpbnbb.cloudfront.net"]
 }
 
+resource "aws_route53_record" "CNAME-cdn-brandfolder-com" {
+  zone_id = "${aws_route53_zone.brandfolder-com.zone_id}"
+  name = "cdn.brandfolder.com"
+  ttl = 3600
+  type = "CNAME"
+  records = ["d21oh8fj97neu1.cloudfront.net"]
+}
+
 resource "aws_route53_record" "CNAME-notify-brandfolder-com" {
   zone_id = "${aws_route53_zone.brandfolder-com.zone_id}"
   name = "notify.brandfolder.com"
