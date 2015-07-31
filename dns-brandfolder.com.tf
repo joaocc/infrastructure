@@ -81,6 +81,13 @@ resource "aws_route53_record" "CNAME-dialog-fp-brandfolder-com" {
   records = ["CNAMEMUX-BRANDFOLDER-LB-1656571564.us-east-1.elb.amazonaws.com"]
 }
 
+resource "aws_route53_record" "CNAME-fp-brandfolder-com" {
+  zone_id = "${aws_route53_zone.brandfolder-com.zone_id}"
+  name = "fp.brandfolder.com"
+  ttl = 3600
+  type = "CNAME"
+  records = ["d3bcnng5dpbnbb.cloudfront.net"]
+}
 
 resource "aws_route53_record" "CNAME-notify-brandfolder-com" {
   zone_id = "${aws_route53_zone.brandfolder-com.zone_id}"
@@ -224,6 +231,14 @@ resource "aws_route53_record" "CNAME-assets-brandfolder-com" {
   ttl = 3600
   type = "CNAME"
   records = ["d21oh8fj97neu1.cloudfront.net."]
+}
+
+resource "aws_route53_record" "CNAME-monitor-assets-brandfolder-com" {
+  zone_id = "${aws_route53_zone.brandfolder-com.zone_id}"
+  name = "monitor-assets.brandfolder.com"
+  ttl = 3600
+  type = "CNAME"
+  records = ["d2zp492cot8ob8.cloudfront.net."]
 }
 
 resource "aws_route53_record" "CNAME-fonts-brandfolder-com" {
