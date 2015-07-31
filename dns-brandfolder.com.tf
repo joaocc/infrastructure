@@ -233,6 +233,14 @@ resource "aws_route53_record" "CNAME-assets-brandfolder-com" {
   records = ["d21oh8fj97neu1.cloudfront.net."]
 }
 
+resource "aws_route53_record" "CNAME-assets-dev-brandfolder-com" {
+  zone_id = "${aws_route53_zone.brandfolder-com.zone_id}"
+  name = "assets-dev.brandfolder.com"
+  ttl = 3600
+  type = "CNAME"
+  records = ["d3owyjhc8k9ogt.cloudfront.net."]
+}
+
 resource "aws_route53_record" "CNAME-monitor-assets-brandfolder-com" {
   zone_id = "${aws_route53_zone.brandfolder-com.zone_id}"
   name = "monitor-assets.brandfolder.com"
