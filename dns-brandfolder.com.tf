@@ -94,7 +94,7 @@ resource "aws_route53_record" "CNAME-cdn-brandfolder-com" {
   name = "cdn.brandfolder.com"
   ttl = 3600
   type = "CNAME"
-  records = ["d21oh8fj97neu1.cloudfront.net."]
+  records = ["d2sdf28wg0skh3.cloudfront.net."]
 }
 
 resource "aws_route53_record" "CNAME-notify-brandfolder-com" {
