@@ -65,6 +65,14 @@ resource "aws_route53_record" "CNAME-www-fp-brandfolder-com" {
   records = ["CNAMEMUX-BRANDFOLDER-LB-1656571564.us-east-1.elb.amazonaws.com"]
 }
 
+resource "aws_route53_record" "CNAME-status-brandfolder-com" {
+  zone_id = "${aws_route53_zone.brandfolder-com.zone_id}"
+  name = "status.brandfolder.com"
+  ttl = 3600
+  type = "CNAME"
+  records = ["reports.statuscake.com"]
+}
+
 resource "aws_route53_record" "CNAME-api-bf-brandfolder-com" {
   zone_id = "${aws_route53_zone.brandfolder-com.zone_id}"
   name = "api.fp.brandfolder.com"
