@@ -44,7 +44,7 @@ resource "aws_autoscaling_group" "deis-production-workers" {
 resource "aws_launch_configuration" "deis-production-worker" {
 
     # General Config
-    image_id = "${lookup(var.amis, "coreos_717_3_0")}"
+    image_id = "${lookup(var.amis, "coreos_723_3_0")}"
     instance_type = "${lookup(var.instance_types, "production_worker")}"
     user_data = "${template_file.deis-production-worker.rendered}"
     key_name = "deis"
