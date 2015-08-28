@@ -105,6 +105,14 @@ resource "aws_route53_record" "CNAME-cdn-brandfolder-com" {
   records = ["d2sdf28wg0skh3.cloudfront.net."]
 }
 
+resource "aws_route53_record" "CNAME-759082-brandfolder-com" {
+  zone_id = "${aws_route53_zone.brandfolder-com.zone_id}"
+  name = "759082.brandfolder.com"
+  ttl = 3600
+  type = "CNAME"
+  records = ["sendgrid.net"]
+}
+
 resource "aws_route53_record" "CNAME-notify-brandfolder-com" {
   zone_id = "${aws_route53_zone.brandfolder-com.zone_id}"
   name = "notify.brandfolder.com"
