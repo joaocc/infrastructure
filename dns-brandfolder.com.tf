@@ -105,6 +105,30 @@ resource "aws_route53_record" "CNAME-cdn-brandfolder-com" {
   records = ["d2sdf28wg0skh3.cloudfront.net."]
 }
 
+resource "aws_route53_record" "CNAME-em-brandfolder-com" {
+  zone_id = "${aws_route53_zone.brandfolder-com.zone_id}"
+  name = "em.brandfolder.com"
+  ttl = 3600
+  type = "CNAME"
+  records = ["u759082.wl.sendgrid.net"]
+}
+
+resource "aws_route53_record" "CNAME-s1-_domainkey-brandfolder-com" {
+  zone_id = "${aws_route53_zone.brandfolder-com.zone_id}"
+  name = "s1._domainkey.brandfolder.com"
+  ttl = 3600
+  type = "CNAME"
+  records = ["s1.domainkey.u759082.wl.sendgrid.net"]
+}
+
+resource "aws_route53_record" "CNAME-s2-_domainkey-brandfolder-com" {
+  zone_id = "${aws_route53_zone.brandfolder-com.zone_id}"
+  name = "s2._domainkey.brandfolder.com"
+  ttl = 3600
+  type = "CNAME"
+  records = ["s2.domainkey.u759082.wl.sendgrid.net"]
+}
+
 resource "aws_route53_record" "CNAME-759082-brandfolder-com" {
   zone_id = "${aws_route53_zone.brandfolder-com.zone_id}"
   name = "759082.brandfolder.com"
@@ -395,7 +419,7 @@ resource "aws_route53_record" "TXT-brandfolder-com" {
     "google-site-verification=Pg2cNGAvmgs9WlWoEA3NbNlKNDKRNGE7RwThK1lVk4s",
     "google-site-verification=uX3oSt2cKp8NJaosqBdUeEgSRwldAjn305U2DHGdEsk",
     "google-site-verification=xUSCk_okRwv1JfD6JNED5jqbSYz-TXIiOHlcDvlFpo4",
-    "v=spf1 a mx include:_spf.google.com include:smtp1.uservoice.com include:spf.mail.intercom.io include:sendgrid.net ~all"
+    "v=spf1 a mx include:_spf.google.com include:smtp1.uservoice.com include:spf.mail.intercom.io v=spf1 include:u759082.wl.sendgrid.net include:sendgrid.net ~all"
   ]
 }
 
