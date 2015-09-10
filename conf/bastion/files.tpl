@@ -11,6 +11,11 @@
     eval `ssh-agent -s`
     ssh-add ~/.ssh/deis
 
+- path: /etc/profile.d/cluster-versions-alias.sh
+  permissions: '0755'
+  content: |
+    alias cluster-versions='echo "" ; for ip in `fleetctl list-machines --no-legend --fields ip` ; do fleetctl list-machines | grep $ip ; ssh -o "StrictHostKeyChecking no" $ip "sh -c \"source /etc/os-release && echo --version=\$VERSION\"" ; echo "" ; done'
+
 - path: /etc/ssh/sshd_config
   permissions: '0600'
   owner: root:root
