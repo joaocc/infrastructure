@@ -225,6 +225,14 @@ resource "aws_route53_record" "CNAME-sites-brandfolder-com" {
   records = ["ghs.googlehosted.com."]
 }
 
+resource "aws_route53_record" "CNAME-jobs-brandfolder-com" {
+  zone_id = "${aws_route53_zone.brandfolder-com.zone_id}"
+  name = "jobs.brandfolder.com"
+  ttl = 3600
+  type = "CNAME"
+  records = ["brandfolder-inc.breezy.hr."]
+}
+
 resource "aws_route53_record" "CNAME-calendar-brandfolder-com" {
   zone_id = "${aws_route53_zone.brandfolder-com.zone_id}"
   name = "calendar.brandfolder.com"
