@@ -153,9 +153,9 @@ resource "aws_route53_record" "CNAME-email-brandfolder-com" {
   records = ["sendgrid.net."]
 }
 
-resource "aws_route53_record" "CNAME-blogs-brandfolder-com" {
+resource "aws_route53_record" "CNAME-blog-brandfolder-com" {
   zone_id = "${aws_route53_zone.brandfolder-com.zone_id}"
-  name = "blogs.brandfolder.com"
+  name = "blog.brandfolder.com"
   ttl = 3600
   type = "CNAME"
   records = ["548041.group41.sites.hubspot.net."]
