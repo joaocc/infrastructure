@@ -50,6 +50,15 @@ resource "aws_route53_record" "prod-redis-brandfolder-host" {
   records = ["default-redis.miqyjj.ng.0001.use1.cache.amazonaws.com"]
 }
 
+# Redis Deis
+resource "aws_route53_record" "deis-redis-brandfolder-host" {
+  zone_id = "${aws_route53_zone.brandfolder-host.zone_id}"
+  name = "deis.redis.brandfolder.host"
+  type = "CNAME"
+  ttl = "300"
+  records = ["deis.miqyjj.ng.0001.use1.cache.amazonaws.com"]
+}
+
 # Service discovery in the core
 # Etcd ELB
 resource "aws_route53_record" "services-brandfolder-host" {
