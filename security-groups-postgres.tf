@@ -11,6 +11,14 @@ resource "aws_security_group" "postgres" {
     cidr_blocks = ["54.68.30.98/32", "54.68.45.3/32", "54.164.204.122/32", "54.172.100.146/32"]
   }
 
+  # Allow Periscope
+  ingress {
+    protocol = "tcp"
+    from_port = 5432
+    to_port = 5432
+    cidr_blocks = ["107.23.195.228", "54.236.224.46"]
+  }
+
   # Allow the workers and the core
   ingress {
     protocol = "tcp"
