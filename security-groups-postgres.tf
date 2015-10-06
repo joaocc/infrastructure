@@ -16,7 +16,7 @@ resource "aws_security_group" "postgres" {
     protocol = "tcp"
     from_port = 5432
     to_port = 5432
-    cidr_blocks = ["107.23.195.228", "54.236.224.46"]
+    cidr_blocks = ["107.23.195.228/32", "54.236.224.46/32"]
   }
 
   # Allow the workers and the core
