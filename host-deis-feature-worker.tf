@@ -44,7 +44,7 @@ resource "aws_autoscaling_group" "deis-feature-workers" {
 resource "aws_launch_configuration" "deis-feature-worker" {
 
     # General Config
-    image_id = "${lookup(var.amis, "coreos_766_3_0")}"
+    image_id = "${lookup(var.amis, "coreos_766_4_0")}"
     instance_type = "${lookup(var.instance_types, "feature_worker")}"
     user_data = "${template_file.deis-feature-worker.rendered}"
     key_name = "deis"
