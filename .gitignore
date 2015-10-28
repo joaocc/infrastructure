@@ -1,0 +1,6 @@
+.terraform
+terraform.tfstate.backup
+crash.log
+terraform.tfstate
+private/
+tmp/*
