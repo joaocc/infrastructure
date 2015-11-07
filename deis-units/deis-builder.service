@@ -17,3 +17,8 @@ RestartSec=5
 
 [Install]
 WantedBy=multi-user.target
+
+[X-Fleet]
+MachineMetadata=type=core
+MachineMetadata=function=deis
+
