@@ -15,7 +15,7 @@ ExecStart=/bin/sh -c '\
   --volume=/var/run/docker.sock:/tmp/docker.sock \
   gliderlabs/logspout \
   syslog://logs2.papertrailapp.com:`etcdctl get /papertrail.com/port`'
-  
+
 ExecStop=/usr/bin/docker stop %p
 Restart=always
 RestartSec=5

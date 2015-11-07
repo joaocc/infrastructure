@@ -15,7 +15,6 @@
     Type=oneshot
     ExecStart=/usr/bin/sh -c 'curl -sSL --retry 5 --retry-delay 2 http://deis.io/deisctl/install.sh | sh -s $DEIS_VERSION'
 
-
 # Pull Latest ssh key retriever
 - name: github-key-retriever.service
   command: start
@@ -74,5 +73,3 @@
 
     [Timer]
     OnCalendar=minutely
-
-${file("conf/shared/robins.yml")}

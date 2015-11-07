@@ -7,5 +7,3 @@
       content: |
         [Service]
         Environment="DEIS_COMPONENTS=router"
-
-${file("conf/shared/robins.yml")}
