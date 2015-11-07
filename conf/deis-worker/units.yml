@@ -6,6 +6,4 @@
     - name: 00-set-deis-components.conf
       content: |
         [Service]
-        Environment="DEIS_COMPONENTS=logspout publisher"
-
-${file("conf/shared/robins.yml")}
+        Environment="DEIS_COMPONENTS=publisher"

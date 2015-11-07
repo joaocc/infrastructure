@@ -14,7 +14,7 @@ resource "template_file" "deis-core" {
 }
 
 resource "template_file" "deis_worker_units" {
-  filename = "${path.cwd}/conf/deis-worker/units.tpl"
+  filename = "${path.cwd}/conf/deis-worker/units.yml"
 }
 
 resource "template_file" "deis-production-worker" {
@@ -48,7 +48,7 @@ resource "template_file" "deis-feature-worker" {
 }
 
 resource "template_file" "deis_router_units" {
-  filename = "${path.cwd}/conf/deis-router/units.tpl"
+  filename = "${path.cwd}/conf/deis-router/units.yml"
 }
 
 resource "template_file" "deis-router" {
