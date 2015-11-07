@@ -1,5 +1,5 @@
 # Deis core instances
-resource "aws_instance" "deis-core-etcd2" {
+resource "aws_instance" "etcd2-core" {
     count = "${lookup(var.counts, "core")}"
     ami = "${lookup(var.amis, "coreos_766_5_0")}" # This can NEVER change
     key_name = "deis"
@@ -12,9 +12,10 @@ resource "aws_instance" "deis-core-etcd2" {
     ]
     user_data = "${template_file.deis-core.rendered}"
     tags {
-        Name = "Deis Core Etcd2 ${count.index + 1}"
+        Name = "Core ${count.index + 1}"
         Type = "Core"
         Function = "Deis"
+        EtcdVersion = "2"
     }
 
     # Storage
@@ -30,8 +31,8 @@ resource "aws_instance" "deis-core-etcd2" {
     }
 }
 
-resource "aws_eip" "deis-core-etcd2" {
+resource "aws_eip" "etcd2-core" {
     count = "${lookup(var.counts, "core")}"
-    instance = "${element(aws_instance.deis-core-etcd2.*.id, count.index)}"
+    instance = "${element(aws_instance.etcd2-core.*.id, count.index)}"
     vpc = true
 }

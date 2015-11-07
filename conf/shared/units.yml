@@ -1,5 +1,7 @@
 # Fleet
 # Distribuited Scheduling Service
+- name: etcd2.service
+  command: start
 - name: fleet.service
   command: start
   drop-ins:
