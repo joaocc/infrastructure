@@ -9,7 +9,7 @@ resource "aws_route53_record" "bastion-brandfolder-host" {
    name = "bastion.brandfolder.host"
    type = "CNAME"
    ttl = "60"
-   records = ["${aws_instance.bastion.public_dns}"]
+   records = ["${aws_instance.bastion-2.public_dns}"]
 }
 
 # Core machines
@@ -19,7 +19,7 @@ resource "aws_route53_record" "core-brandfolder-host" {
   name = "core-${count.index + 1}.brandfolder.host"
   type = "A"
   ttl = "300"
-  records = ["${element(aws_eip.deis-core.*.private_ip, count.index)}"]
+  records = ["${element(aws_eip.etcd2-core.*.private_ip, count.index)}"]
 }
 
 # Core machines
@@ -29,7 +29,7 @@ resource "aws_route53_record" "dns-brandfolder-host" {
   name = "dns-${count.index + 1}.brandfolder.host"
   type = "A"
   ttl = "300"
-  records = ["${element(aws_eip.deis-core.*.public_ip, count.index)}"]
+  records = ["${element(aws_eip.etcd2-core.*.public_ip, count.index)}"]
 }
 
 # Postgres Database
