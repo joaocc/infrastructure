@@ -22,4 +22,4 @@ Restart=always
 
 [X-Fleet]
 Global=true
-MachineMetadata=type=gateway-proxy
+MachineMetadata=type=proxy-gateway

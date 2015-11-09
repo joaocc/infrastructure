@@ -5,12 +5,15 @@ resource "aws_instance" "proxy-gateway" {
     instance_type = "${lookup(var.instance_types, "proxy-gateway")}"
     subnet_id = "${aws_subnet.subnet.1.id}"
     associate_public_ip_address = true
-    security_groups = ["${aws_security_group.postgres.id}"]
+    security_groups = [
+      "${aws_security_group.internal-communication.id}",
+      "${aws_security_group.postgres.id}"
+    ]
     user_data = "${template_file.proxy-gateway.rendered}"
 
     tags {
-        Name = "Bastion 2 (SSH Gateway)"
-        Type = "Bastion"
+        Name = "Proxy Gateway"
+        Type = "Proxy Gateway"
     }
 
     # Storage
