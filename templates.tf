@@ -1,3 +1,4 @@
+# Core Templates
 resource "template_file" "deis-core" {
   filename = "${path.cwd}/conf/user-data.tpl"
 
@@ -13,10 +14,7 @@ resource "template_file" "deis-core" {
 
 }
 
-resource "template_file" "deis_worker_units" {
-  filename = "${path.cwd}/conf/deis-worker/units.yml"
-}
-
+# Production Worker Templates
 resource "template_file" "deis-production-worker" {
   filename = "${path.cwd}/conf/user-data.tpl"
 
@@ -26,12 +24,13 @@ resource "template_file" "deis-production-worker" {
 
   vars {
     fleet_tags = "${lookup(var.fleet_tags, "production_worker")}"
-    units = "${template_file.deis_worker_units.rendered}"
+    units = "${file("conf/deis-worker/units.yml")}"
     files = "${file("conf/deis-worker/files.yml")}"
   }
 
 }
 
+# Feature Worker Templates
 resource "template_file" "deis-feature-worker" {
   filename = "${path.cwd}/conf/user-data.tpl"
 
@@ -41,16 +40,13 @@ resource "template_file" "deis-feature-worker" {
 
   vars {
     fleet_tags = "${lookup(var.fleet_tags, "feature_worker")}"
-    units = "${template_file.deis_worker_units.rendered}"
+    units = "${file("conf/deis-worker/units.yml")}"
     files = "${file("conf/deis-worker/files.yml")}"
   }
 
 }
 
-resource "template_file" "deis_router_units" {
-  filename = "${path.cwd}/conf/deis-router/units.yml"
-}
-
+# Router Templates
 resource "template_file" "deis-router" {
   filename = "${path.cwd}/conf/user-data.tpl"
 
@@ -60,12 +56,13 @@ resource "template_file" "deis-router" {
 
   vars {
     fleet_tags = "${lookup(var.fleet_tags, "router")}"
-    units = "${template_file.deis_router_units.rendered}"
+    units = "${file("conf/deis-router/units.yml")}"
     files = "${file("conf/deis-router/files.yml")}"
   }
 
 }
 
+# Bastion Templates
 resource "template_file" "bastion_files" {
   filename = "${path.cwd}/conf/bastion/files.tpl"
 }
@@ -85,6 +82,22 @@ resource "template_file" "bastion" {
     fleet_tags = "${lookup(var.fleet_tags, "bastion")}"
     units = "${template_file.bastion_units.rendered}"
     files = "${template_file.bastion_files.rendered}"
+  }
+
+}
+
+# Proxy Gateway Templates
+resource "template_file" "proxy-gateway" {
+  filename = "${path.cwd}/conf/user-data.tpl"
+
+  provisioner "local-exec" {
+    command = "mkdir -p ./tmp/proxy-gateway && cat <<'__USERDATA__' > ./tmp/proxy-gateway/user_data.yml\n${template_file.proxy-gateway.rendered}\n__USERDATA__"
+  }
+
+  vars {
+    fleet_tags = "${lookup(var.fleet_tags, "proxy-gateway")}"
+    units = "${file("conf/proxy-gateway/units.yml")}"
+    files = "${file("conf/proxy-gateway/files.yml")}"
   }
 
 }

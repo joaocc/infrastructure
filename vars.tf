@@ -21,6 +21,7 @@ variable "instance_types" {
       database = "db.r3.xlarge"
       redis = "cache.m3.large"
       router = "c3.large"
+      proxy-gateway = "t2.small"
     }
 }
 
@@ -31,6 +32,7 @@ variable "fleet_tags" {
     feature_worker = "type=worker,environment=feature,function=deis,dataPlane=true"
     bastion = "type=bastion"
     router = "type=router,function=deis,routerMesh=true"
+    proxy-gateway = "type=proxy-gateway,function=proxy"
   }
 }
 
