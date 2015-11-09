@@ -1,6 +1,3 @@
-- name: etcd.service
-  mask: true
-
 # Deis ctl
 # Used to install and manage deis
 - name: install-deisctl.service
