@@ -17,3 +17,5 @@ RestartSec=5
 
 [Install]
 WantedBy=multi-user.target
+MachineMetadata=type=core
+MachineMetadata=function=deis
