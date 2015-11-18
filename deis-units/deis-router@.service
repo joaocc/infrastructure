@@ -1,4 +1,4 @@
-[Unit]
+  [Unit]
 Description=deis-router
 
 [Service]
@@ -18,4 +18,3 @@ WantedBy=multi-user.target
 [X-Fleet]
 Conflicts=deis-router@*.service
 MachineMetadata=type=router
-MachineMetadata=function=deis
