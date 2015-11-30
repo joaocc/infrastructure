@@ -4,7 +4,7 @@ Wants=docker.service
 
 [Service]
 ExecStartPre=/usr/bin/docker pull martin/docker-cleanup-volumes
-ExecStart=/usr/bin/docker run -v /var/run/docker.sock:/var/run/docker.sock -v /var/lib/docker:/var/lib/docker --rm martin/docker-cleanup-volumes
+ExecStart=/usr/bin/docker run -v /var/run/docker.sock:/var/run/docker.sock -v /var/lib/docker:/var/lib/docker --rm --cpu-quota 20000 martin/docker-cleanup-volumes
 
 [X-Fleet]
 Global=true
