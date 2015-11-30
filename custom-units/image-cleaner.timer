@@ -1,8 +1,0 @@
-[Unit]
-Description=image-cleaner-timer
-
-[Timer]
-OnCalendar=daily
-
-[X-Fleet]
-Global=true
