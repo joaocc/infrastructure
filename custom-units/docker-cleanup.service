@@ -3,6 +3,7 @@ Description=Cleanup unused docker volumes
 Wants=docker.service
 
 [Service]
+Type=oneshot
 ExecStartPre=/usr/bin/docker pull martin/docker-cleanup-volumes
 ExecStartPre=/usr/bin/docker pull bobrik/image-cleaner
 ExecStart=/usr/bin/docker run --cpu-quota 20000 --rm -v /var/run/docker.sock:/var/run/docker.sock bobrik/image-cleaner
