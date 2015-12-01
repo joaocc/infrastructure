@@ -1,8 +1,0 @@
-[Unit]
-Description=do a daily docker cleanup
-
-[Timer]
-OnCalendar=daily
-
-[X-Fleet]
-Global=true

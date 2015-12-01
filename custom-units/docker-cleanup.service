@@ -3,11 +3,16 @@ Description=Cleanup unused docker volumes
 Wants=docker.service
 
 [Service]
-Type=oneshot
-ExecStartPre=/usr/bin/docker pull martin/docker-cleanup-volumes
-ExecStartPre=/usr/bin/docker pull bobrik/image-cleaner
-ExecStart=/usr/bin/docker run --cpu-quota 20000 --rm -v /var/run/docker.sock:/var/run/docker.sock bobrik/image-cleaner
-ExecStart=/usr/bin/docker run -v /var/run/docker.sock:/var/run/docker.sock -v /var/lib/docker:/var/lib/docker --rm --cpu-quota 20000 martin/docker-cleanup-volumes --verbose
+ExecStartPre=/usr/bin/docker pull tutum/cleanup
+ExecStart=/usr/bin/docker run -d \
+  --privileged \
+  --cpu-quota 20000 \
+  -v /var/run:/var/run:rw \
+  -v /var/lib/docker:/var/lib/docker:rw \
+  -e IMAGE_CLEAN_INTERVAL=1 \
+  -e IMAGE_CLEAN_DELAYED=1800 \
+  -e VOLUME_CLEAN_INTERVAL=1800 \
+  tutum/cleanup
 
 [X-Fleet]
 Global=true
