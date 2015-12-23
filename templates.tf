@@ -1,6 +1,6 @@
 # Core Templates
 resource "template_file" "deis-core" {
-  filename = "${path.cwd}/conf/user-data.tpl"
+  template = "${path.cwd}/conf/user-data.tpl"
 
   provisioner "local-exec" {
     command = "mkdir -p ./tmp/deis-core && cat <<'__USERDATA__' > ./tmp/deis-core/user_data.yml\n${template_file.deis-core.rendered}\n__USERDATA__"
@@ -16,7 +16,7 @@ resource "template_file" "deis-core" {
 
 # Production Worker Templates
 resource "template_file" "deis-production-worker" {
-  filename = "${path.cwd}/conf/user-data.tpl"
+  template = "${path.cwd}/conf/user-data.tpl"
 
   provisioner "local-exec" {
     command = "mkdir -p ./tmp/deis-production-worker && cat <<'__USERDATA__' > ./tmp/deis-production-worker/user_data.yml\n${template_file.deis-production-worker.rendered}\n__USERDATA__"
@@ -32,7 +32,7 @@ resource "template_file" "deis-production-worker" {
 
 # Feature Worker Templates
 resource "template_file" "deis-feature-worker" {
-  filename = "${path.cwd}/conf/user-data.tpl"
+  template = "${path.cwd}/conf/user-data.tpl"
 
   provisioner "local-exec" {
     command = "mkdir -p ./tmp/deis-feature-worker && cat <<'__USERDATA__' > ./tmp/deis-feature-worker/user_data.yml\n${template_file.deis-feature-worker.rendered}\n__USERDATA__"
@@ -48,7 +48,7 @@ resource "template_file" "deis-feature-worker" {
 
 # Router Templates
 resource "template_file" "deis-router" {
-  filename = "${path.cwd}/conf/user-data.tpl"
+  template = "${path.cwd}/conf/user-data.tpl"
 
   provisioner "local-exec" {
     command = "mkdir -p ./tmp/deis-router && cat <<'__USERDATA__' > ./tmp/deis-router/user_data.yml\n${template_file.deis-router.rendered}\n__USERDATA__"
@@ -64,15 +64,15 @@ resource "template_file" "deis-router" {
 
 # Bastion Templates
 resource "template_file" "bastion_files" {
-  filename = "${path.cwd}/conf/bastion/files.tpl"
+  template = "${path.cwd}/conf/bastion/files.tpl"
 }
 
 resource "template_file" "bastion_units" {
-  filename = "${path.cwd}/conf/bastion/units.tpl"
+  template = "${path.cwd}/conf/bastion/units.tpl"
 }
 
 resource "template_file" "bastion" {
-  filename = "${path.cwd}/conf/user-data.tpl"
+  template = "${path.cwd}/conf/user-data.tpl"
 
   provisioner "local-exec" {
     command = "mkdir -p ./tmp/bastion && cat <<'__USERDATA__' > ./tmp/bastion/user_data.yml\n${template_file.bastion.rendered}\n__USERDATA__"
@@ -88,7 +88,7 @@ resource "template_file" "bastion" {
 
 # Proxy Gateway Templates
 resource "template_file" "proxy-gateway" {
-  filename = "${path.cwd}/conf/user-data.tpl"
+  template = "${path.cwd}/conf/user-data.tpl"
 
   provisioner "local-exec" {
     command = "mkdir -p ./tmp/proxy-gateway && cat <<'__USERDATA__' > ./tmp/proxy-gateway/user_data.yml\n${template_file.proxy-gateway.rendered}\n__USERDATA__"
