@@ -2,6 +2,7 @@
 # Distribuited Scheduling Service
 - name: etcd2.service
   command: start
+
 - name: fleet.service
   command: start
   drop-ins:
@@ -28,24 +29,6 @@
         [Service]
         ExecStartPre=/usr/bin/etcdctl set /coreos.com/network/config '{ "Network": "10.22.0.0/16" }'
 
-# NTP Time Server Configuration
-- name: ntpdate.service
-  command: start
-
-- name: timedate-ntp-synchronization.service
-  command: start
-  content: |
-    [Unit]
-    Description=Synchronize system clock
-    After=ntpdate.service
-
-    [Service]
-    ExecStart=/usr/bin/timedatectl set-timezone UTC
-    ExecStart=/usr/bin/timedatectl set-ntp true
-    ExecStart=/sbin/hwclock --systohc --utc
-    RemainAfterExit=yes
-    Type=oneshot
-
 # Preseed Docker Images on boot
 - name: deis-preseed.service
   command: start
@@ -68,45 +51,6 @@
     RemainAfterExit=yes
     Type=oneshot
 
-# Pull latest services on boot
-- name: load-infrastructure.service
-  command: start
-  content: |
-    [Unit]
-    Wants=network-online.target
-    After=network-online.target
-    Description=Load infrastructure
-    ConditionPathExists=!/var/lib/infrastructure
-
-    [Service]
-    ExecStart=/bin/sh -c "git clone https://github.com/brandfolder/infrastructure.git /var/lib/infrastructure"
-    RemainAfterExit=yes
-    Type=oneshot
-
-# Pull latest services on boot
-- name: refresh-infrastructure.service
-  command: start
-  content: |
-    [Unit]
-    Description=Refresh Infrastructure
-    After=load-infrastructure.service
-    Requires=load-infrastructure.service
-
-    [Service]
-    ExecStart=/bin/sh -c "cd /var/lib/infrastructure && git pull"
-
-# Pull latest services on boot
-- name: refresh-infrastructure.timer
-  command: start
-  content: |
-    [Unit]
-    Description=Refresh Infrastructure Timer
-    After=load-infrastructure.service
-    Requires=load-infrastructure.service
-
-    [Timer]
-    OnCalendar=minutely
-
 # Increase number of connections
 - name: increase-nf_conntrack-connections.service
   command: start
@@ -119,6 +63,7 @@
     ExecStartPre=/usr/sbin/modprobe nf_conntrack
     ExecStart=/bin/sh -c "sysctl -w net.netfilter.nf_conntrack_max=262144"
 
+# Wait on Docker Mount
 - name: docker.service
   drop-ins:
     - name: 00-require-var-lib-docker-mount.conf

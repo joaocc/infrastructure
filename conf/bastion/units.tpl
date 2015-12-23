@@ -70,3 +70,42 @@
 
     [Timer]
     OnCalendar=minutely
+
+# Pull latest services on boot
+- name: load-infrastructure.service
+  command: start
+  content: |
+    [Unit]
+    Wants=network-online.target
+    After=network-online.target
+    Description=Load infrastructure
+    ConditionPathExists=!/var/lib/infrastructure
+
+    [Service]
+    ExecStart=/bin/sh -c "git clone https://github.com/brandfolder/infrastructure.git /var/lib/infrastructure"
+    RemainAfterExit=yes
+    Type=oneshot
+
+# Pull latest services on boot
+- name: refresh-infrastructure.service
+  command: start
+  content: |
+    [Unit]
+    Description=Refresh Infrastructure
+    After=load-infrastructure.service
+    Requires=load-infrastructure.service
+
+    [Service]
+    ExecStart=/bin/sh -c "cd /var/lib/infrastructure && git pull"
+
+# Pull latest services on boot
+- name: refresh-infrastructure.timer
+  command: start
+  content: |
+    [Unit]
+    Description=Refresh Infrastructure Timer
+    After=load-infrastructure.service
+    Requires=load-infrastructure.service
+
+    [Timer]
+    OnCalendar=minutely
