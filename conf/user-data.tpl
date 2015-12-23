@@ -3,18 +3,13 @@ coreos:
   fleet:
     public-ip: $private_ipv4
     metadata: "${fleet_tags}"
-    etcd_request_timeout: 3.0
+    engine-reconcile-interval: 10
+    etcd-request-timeout: 5.0
+    agent-ttl: 120s
 
   update:
     reboot-strategy: best-effort
     group: stable
-
-  etcd:
-    discovery: ${file("private/etcd/discovery-url")}
-    addr: $private_ipv4:4001
-    peer-addr: $private_ipv4:7001
-    peer-election-timeout: 4000
-    peer-heartbeat-interval: 1000
 
   etcd2:
     discovery: ${file("private/etcd/discovery-url")}
