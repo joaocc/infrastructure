@@ -67,6 +67,7 @@ ExecStartPre=/bin/bash -c '\
 
 # Start elasticsearch
 ExecStart=/bin/bash -c '\
+    echo "starting elasticsearch..." && \
     docker run \
     --name %p-%i-server \
     --volumes-from %p-%i-volumes \
