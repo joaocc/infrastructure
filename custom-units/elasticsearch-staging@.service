@@ -32,7 +32,7 @@ ExecStartPre=/bin/bash -c '\
 
 # Copy base logging.yml to etcd
 ExecStartPre=/bin/bash -c '\
-  etcdctl get /services/%p/logging.yml 2> /dev/null || \
+  etcdctl get /services/%p/logging.yml &> /dev/null || \
   echo "copying default logging.yml to etcd..." && \
   docker run --rm brandfolder/elasticsearch:latest \
   cat /usr/share/elasticsearch/config/logging.yml | \
@@ -41,7 +41,7 @@ ExecStartPre=/bin/bash -c '\
 
 # Copy base elasticsearch.yml to etcd
 ExecStartPre=/bin/bash -c '\
-  etcdctl get /services/%p/elasticsearch.yml 2> /dev/null || \
+  etcdctl get /services/%p/elasticsearch.yml &> /dev/null || \
   echo "copying default elasticsearch.yml to etcd..." && \
   docker run --rm brandfolder/elasticsearch:latest \
   cat /usr/share/elasticsearch/config/elasticsearch.yml | \
