@@ -8,8 +8,8 @@ TimeoutSec=180
 EnvironmentFile=/etc/environment
 
 # Cleanup previous containers
-ExecStartPre=-/bin/sh -c "docker rm -f %p"
-ExecStartPre=-/bin/sh -c "docker rm -f %p-volumes"
+ExecStartPre=-/bin/sh -c "docker rm -f %p-%i-server"
+ExecStartPre=-/bin/sh -c "docker rm -f %p-%i-volumes"
 
 # Pull latest images
 ExecStartPre=/usr/bin/docker pull brandfolder/elasticsearch:latest
@@ -53,7 +53,7 @@ ExecStartPre=/bin/bash -c '\
     echo "reading elasticsearch.yml from etcd..." ;\
     etcdctl get /services/%p/elasticsearch.yml 2> /dev/null | base64 -d | docker run \
     --rm \
-    --volumes-from %p-volumes \
+    --volumes-from %p-%i-volumes \
     alpine:latest \
     sh -c "cat > /usr/share/elasticsearch/config/elasticsearch.yml"'
 
@@ -61,28 +61,26 @@ ExecStartPre=/bin/bash -c '\
     echo "reading logging.yml from etcd..." ;\
     etcdctl get /services/%p/logging.yml | base64 -d | docker run \
     --rm \
-    --volumes-from %p-volumes \
+    --volumes-from %p-%i-volumes \
     alpine:latest \
     sh -c "cat > /usr/share/elasticsearch/config/logging.yml"'
 
 # Start elasticsearch
 ExecStart=/bin/bash -c '\
     docker run \
-    --name %p \
+    --name %p-%i-server \
     --volumes-from %p-volumes \
     --rm \
     --env "SERVICE_NAME=%p" \
     --env "CLUSTER_NAME=%p" \
-    --env "NODE_NAME=%n" \
+    --env "NODE_NAME=%p-%i-server" \
     --env "SERVICE_TAGS=core" \
     brandfolder/elasticsearch:latest \
     elasticsearch \
-    --node.name=%p \
-    --cluster.name="%p" \
     --discovery.zen.ping.multicast.enabled=true \
     --discovery.zen.ping.unicast.hosts=$(docker run --rm brandfolder/shovel dig %p.internal.services.brandfolder.host -p 9300 -Wei)'
 
-ExecStop=-/usr/bin/docker stop %p
+ExecStop=-/usr/bin/docker stop %p-%i-server
 RestartSec=5
 Restart=on-failure
 
