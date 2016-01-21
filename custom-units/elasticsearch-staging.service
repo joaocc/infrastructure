@@ -18,7 +18,7 @@ ExecStartPre=/usr/bin/docker pull brandfolder/shovel:latest
 # Set up the volumes for this container
 ExecStartPre=/bin/bash -c '\
     docker run \
-    --name %p-volumes \
+    --name elasticsearch-volumes \
     --volume /usr/share/elasticsearch/data \
     --volume /usr/share/elasticsearch/config \
     alpine:latest \
@@ -28,7 +28,7 @@ ExecStartPre=/bin/bash -c '\
 ExecStartPre=/bin/bash -c '\
   echo "copying default config to volume..." ;\
   docker run --rm brandfolder/elasticsearch:latest tar -c usr/share/elasticsearch/config | \
-  docker run --rm -i --volumes-from %p-volumes alpine:latest tar -xC /'
+  docker run --rm -i --volumes-from elasticsearch-volumes alpine:latest tar -xC /'
 
 # Copy base logging.yml to etcd
 ExecStartPre=/bin/bash -c '\
@@ -79,8 +79,8 @@ ExecStart=/bin/bash -c '\
     elasticsearch \
     --node.name=%p \
     --cluster.name="%p" \
-    --discovery.zen.ping.multicast.enabled=false \
-    --discovery.zen.ping.unicast.hosts=$(docker run --rm brandfolder/shovel dig %p.internal.services.brandfolder.host -p 9300 -WeiT 65)'
+    --discovery.zen.ping.multicast.enabled=true \
+    --discovery.zen.ping.unicast.hosts=$(docker run --rm brandfolder/shovel dig %p.internal.services.brandfolder.host -p 9300 -Wei)'
 
 ExecStop=-/usr/bin/docker stop %p
 RestartSec=5
