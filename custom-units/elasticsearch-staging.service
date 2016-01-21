@@ -26,12 +26,14 @@ ExecStartPre=/bin/bash -c '\
 
 # Copy default configuration to volume
 ExecStartPre=/bin/bash -c '\
+  echo "copying default config to volume..." ;\
   docker run --rm brandfolder/elasticsearch:latest tar -c usr/share/elasticsearch/config | \
   docker run --rm -i --volumes-from %p-volumes alpine:latest tar -xC /'
 
 # Copy base logging.yml to etcd
 ExecStartPre=/bin/bash -c '\
   etcdctl get /services/%p/logging.yml 2> /dev/null || \
+  echo "copying default logging.yml to etcd..." && \
   docker run --rm brandfolder/elasticsearch:latest \
   cat /usr/share/elasticsearch/config/logging.yml | \
   base64 | \
@@ -40,6 +42,7 @@ ExecStartPre=/bin/bash -c '\
 # Copy base elasticsearch.yml to etcd
 ExecStartPre=/bin/bash -c '\
   etcdctl get /services/%p/elasticsearch.yml 2> /dev/null || \
+  echo "copying default elasticsearch.yml to etcd..." && \
   docker run --rm brandfolder/elasticsearch:latest \
   cat /usr/share/elasticsearch/config/elasticsearch.yml | \
   base64 | \
@@ -47,6 +50,7 @@ ExecStartPre=/bin/bash -c '\
 
 # Read configuration from etcd and apply it to elasticsearch
 ExecStartPre=/bin/bash -c '\
+    echo "reading elasticsearch.yml from etcd..." ;\
     etcdctl get /services/%p/elasticsearch.yml 2> /dev/null | base64 -d | docker run \
     --rm \
     --volumes-from %p-volumes \
@@ -54,6 +58,7 @@ ExecStartPre=/bin/bash -c '\
     sh -c "cat > /usr/share/elasticsearch/config/elasticsearch.yml"'
 
 ExecStartPre=/bin/bash -c '\
+    echo "reading logging.yml from etcd..." ;\
     etcdctl get /services/%p/logging.yml | base64 -d | docker run \
     --rm \
     --volumes-from %p-volumes \
