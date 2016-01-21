@@ -26,8 +26,8 @@ ExecStartPre=/bin/bash -c '\
 
 # Copy the base configuration
 ExecStartPre=/bin/bash -c '\
-  docker run --rm elasticsearch:latest tar -cvz /usr/share/elasticsearch/config | \
-  docker run --rm --volumes-from %p-volumes alpine:latest tar -xvzf /usr/share/elasticsearch/config'
+  docker run --rm elasticsearch:latest tar -c usr/share/elasticsearch/config | \
+  docker run --rm -i --volumes-from %p-volumes alpine:latest tar -xC /'
 
 # Read configuration from etcd and apply it to elasticsearch
 ExecStartPre=/bin/bash -c '\
