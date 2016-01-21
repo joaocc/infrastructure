@@ -12,7 +12,7 @@ ExecStartPre=-/bin/sh -c "docker rm -f %p"
 ExecStartPre=-/bin/sh -c "docker rm -f %p-volumes"
 
 # Pull latest images
-ExecStartPre=/usr/bin/docker pull elasticsearch:latest
+ExecStartPre=/usr/bin/docker pull brandfolder/elasticsearch:latest
 ExecStartPre=/usr/bin/docker pull brandfolder/shovel:latest
 
 # Set up the volumes for this container
@@ -24,10 +24,26 @@ ExecStartPre=/bin/bash -c '\
     alpine:latest \
     /bin/true'
 
-# Copy the base configuration
+# Copy default configuration to volume
 ExecStartPre=/bin/bash -c '\
-  docker run --rm elasticsearch:latest tar -c usr/share/elasticsearch/config | \
+  docker run --rm brandfolder/elasticsearch:latest tar -c usr/share/elasticsearch/config | \
   docker run --rm -i --volumes-from %p-volumes alpine:latest tar -xC /'
+
+# Copy base logging.yml to etcd
+ExecStartPre=/bin/bash -c '\
+  etcdctl get /services/%p/logging.yml 2> /dev/null || \
+  docker run --rm brandfolder/elasticsearch:latest \
+  cat /usr/share/elasticsearch/config/logging.yml | \
+  base64 | \
+  etcdctl set /services/%p/logging.yml'
+
+# Copy base elasticsearch.yml to etcd
+ExecStartPre=/bin/bash -c '\
+  etcdctl get /services/%p/elasticsearch.yml 2> /dev/null || \
+  docker run --rm brandfolder/elasticsearch:latest \
+  cat /usr/share/elasticsearch/config/elasticsearch.yml | \
+  base64 | \
+  etcdctl set /services/%p/elasticsearch.yml'
 
 # Read configuration from etcd and apply it to elasticsearch
 ExecStartPre=/bin/bash -c '\
@@ -52,7 +68,7 @@ ExecStart=/bin/bash -c '\
     --rm \
     --env "SERVICE_NAME=%p" \
     --env "SERVICE_TAGS=core" \
-    elasticsearch:latest \
+    brandfolder/elasticsearch:latest \
     elasticsearch \
     --node.name=%p \
     --cluster.name="%p" \
