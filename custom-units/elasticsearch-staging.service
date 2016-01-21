@@ -67,6 +67,8 @@ ExecStart=/bin/bash -c '\
     --volumes-from %p-volumes \
     --rm \
     --env "SERVICE_NAME=%p" \
+    --env "CLUSTER_NAME=%p" \
+    --env "NODE_NAME=%n" \
     --env "SERVICE_TAGS=core" \
     brandfolder/elasticsearch:latest \
     elasticsearch \
