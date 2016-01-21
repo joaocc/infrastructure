@@ -18,7 +18,7 @@ ExecStartPre=/usr/bin/docker pull brandfolder/shovel:latest
 # Set up the volumes for this container
 ExecStartPre=/bin/bash -c '\
     docker run \
-    --name elasticsearch-volumes \
+    --name %p-%i-volumes \
     --volume /usr/share/elasticsearch/data \
     --volume /usr/share/elasticsearch/config \
     alpine:latest \
@@ -28,7 +28,7 @@ ExecStartPre=/bin/bash -c '\
 ExecStartPre=/bin/bash -c '\
   echo "copying default config to volume..." ;\
   docker run --rm brandfolder/elasticsearch:latest tar -c usr/share/elasticsearch/config | \
-  docker run --rm -i --volumes-from elasticsearch-volumes alpine:latest tar -xC /'
+  docker run --rm -i --volumes-from %p-%i-volumes alpine:latest tar -xC /'
 
 # Copy base logging.yml to etcd
 ExecStartPre=/bin/bash -c '\
@@ -69,7 +69,7 @@ ExecStartPre=/bin/bash -c '\
 ExecStart=/bin/bash -c '\
     docker run \
     --name %p-%i-server \
-    --volumes-from %p-volumes \
+    --volumes-from %p-%i-volumes \
     --rm \
     --env "SERVICE_NAME=%p" \
     --env "CLUSTER_NAME=%p" \
