@@ -78,7 +78,7 @@ ExecStart=/bin/bash -c '\
     brandfolder/elasticsearch:latest \
     elasticsearch \
     --discovery.zen.ping.multicast.enabled=true \
-    --discovery.zen.ping.unicast.hosts=$(docker run --rm brandfolder/shovel dig %p.internal.services.brandfolder.host -p 9300 -Wei)'
+    --discovery.zen.ping.unicast.hosts=$(docker run --rm brandfolder/shovel dig %p.internal.services.brandfolder.host -p 9300 -We)'
 
 ExecStop=-/usr/bin/docker stop %p-%i-server
 RestartSec=5
