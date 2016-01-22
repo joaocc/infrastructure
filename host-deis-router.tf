@@ -6,7 +6,8 @@ resource "aws_autoscaling_group" "deis-router" {
   vpc_zone_identifier = ["${aws_subnet.subnet.*.id}"]
   load_balancers = [
     "${aws_elb.brandfolder-com.id}",
-    "${aws_elb.brandfolder-ninja.id}"
+    "${aws_elb.brandfolder-ninja.id}",
+    "${aws_elb.bf-staging-com.id}"
   ]
 
   # Cluster Size

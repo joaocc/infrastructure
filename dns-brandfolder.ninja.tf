@@ -3,20 +3,11 @@ resource "aws_route53_zone" "brandfolder-ninja" {
    name = "brandfolder.ninja"
 }
 
-# SSL into to brandfolder.ninja
-resource "aws_route53_record" "ssl-brandfolder-ninja" {
-   zone_id = "${aws_route53_zone.brandfolder-ninja.zone_id}"
-   name = "ssl.brandfolder.ninja"
-   type = "CNAME"
-   ttl = "300"
-   records = ["${aws_elb.brandfolder-com.dns_name}"]
-}
-
 # Subdomains to brandfolder.ninja
 resource "aws_route53_record" "STAR-brandfolder-ninja" {
    zone_id = "${aws_route53_zone.brandfolder-ninja.zone_id}"
    name = "*.brandfolder.ninja"
    type = "CNAME"
    ttl = "300"
-   records = ["${aws_elb.brandfolder-ninja.dns_name}"]
+   records = ["${aws_elb.brandfolder-all.dns_name}"]
 }

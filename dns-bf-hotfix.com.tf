@@ -10,8 +10,8 @@ resource "aws_route53_record" "A-bf-hotfix-com" {
    type = "A"
 
    alias {
-     name = "${aws_elb.brandfolder-com.dns_name}"
-     zone_id = "${aws_elb.brandfolder-com.zone_id}"
+     name = "${aws_elb.brandfolder-all.dns_name}"
+     zone_id = "${aws_elb.brandfolder-all.zone_id}"
      evaluate_target_health = true
     }
 }
