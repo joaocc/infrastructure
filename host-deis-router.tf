@@ -7,7 +7,7 @@ resource "aws_autoscaling_group" "deis-router" {
   load_balancers = [
     "${aws_elb.brandfolder-com.id}",
     "${aws_elb.brandfolder-ninja.id}",
-    "${aws_elb.bf-staging-com.id}"
+    "${aws_elb.brandfolder-all.id}"
   ]
 
   # Cluster Size
