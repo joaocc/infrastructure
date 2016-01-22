@@ -78,8 +78,6 @@ ExecStart=/bin/bash -c '\
     --env "SERVICE_TAGS=core" \
     brandfolder/elasticsearch:latest \
     elasticsearch \
-    --network.bind_host=_non_loopback_ \
-    --discovery.zen.ping.multicast.enabled=true \
     --discovery.zen.ping.unicast.hosts=$(docker run --rm brandfolder/shovel dig %p.internal.services.brandfolder.host -p 9300 -We)'
 
 ExecStop=-/usr/bin/docker stop %p-%i-server
