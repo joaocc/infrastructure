@@ -30,6 +30,15 @@ resource "aws_security_group" "router" {
       self = true
   }
 
+  # Allow healthcheck
+  ingress {
+      from_port = 9090
+      to_port = 9090
+      protocol = "tcp"
+      cidr_blocks = ["0.0.0.0/0"]
+      self = true
+  }
+
   lifecycle { create_before_destroy = true }
 
 }
