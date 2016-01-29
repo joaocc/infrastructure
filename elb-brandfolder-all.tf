@@ -28,12 +28,20 @@ resource "aws_elb" "brandfolder-all" {
     lb_protocol = "http"
   }
 
+  # Listen for deployments
+  listener {
+    lb_port = 2222
+    lb_protocol = "tcp"
+    instance_port = 2222
+    instance_protocol = "tcp"
+  }
+
   # Healthcheck against port 80
   health_check {
     healthy_threshold = 4
     unhealthy_threshold = 2
     timeout = 5
-    target = "HTTP:80/health-check"
+    target = "HTTP:9090/health-check"
     interval = 15
   }
 

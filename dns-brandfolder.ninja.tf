@@ -1,4 +1,4 @@
-# brandfolder.ninja is our deis cluster
+  # brandfolder.ninja is our deis cluster
 resource "aws_route53_zone" "brandfolder-ninja" {
    name = "brandfolder.ninja"
 }
