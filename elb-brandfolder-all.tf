@@ -9,7 +9,7 @@ resource "aws_elb" "brandfolder-all" {
     "${aws_security_group.internal-communication.id}"
   ]
   subnets = ["${aws_subnet.subnet.*.id}"]
-  idle_timeout = 1800
+  idle_timeout = 300
 
   # Listen for inbound HTTPS Connections
   listener {
