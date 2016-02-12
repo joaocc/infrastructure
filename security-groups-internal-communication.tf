@@ -28,6 +28,13 @@ resource "aws_security_group" "internal-communication" {
       cidr_blocks = ["${aws_vpc.main.cidr_block}"]
   }
 
+  ingress {
+      from_port = 2379
+      to_port = 2379
+      protocol = "tcp"
+      cidr_blocks = ["${aws_vpc.main.cidr_block}"]
+  }
+
   # Allow all internal communication, and communication from the routers
   # This should be deprecated when all the traffic can go over flannel
   ingress {

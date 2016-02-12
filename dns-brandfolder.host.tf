@@ -9,7 +9,7 @@ resource "aws_route53_record" "bastion-brandfolder-host" {
    name = "bastion.brandfolder.host"
    type = "CNAME"
    ttl = "60"
-   records = ["${aws_instance.bastion-2.public_dns}"]
+   records = ["${aws_instance.bastion.public_dns}"]
 }
 
 # Core machines

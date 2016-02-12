@@ -1,6 +1,6 @@
 # Bastion instance for remote ssh access
 resource "aws_instance" "proxy-gateway" {
-    ami = "${lookup(var.amis, "coreos_766_5_0")}"
+    ami = "${lookup(var.amis, "coreos_835_12_0")}"
     key_name = "deis"
     instance_type = "${lookup(var.instance_types, "proxy-gateway")}"
     subnet_id = "${aws_subnet.subnet.1.id}"
