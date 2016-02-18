@@ -46,6 +46,22 @@ resource "template_file" "deis-feature-worker" {
 
 }
 
+# Feature Worker Templates
+resource "template_file" "deis-services" {
+  template = "${path.cwd}/conf/user-data.tpl"
+
+  provisioner "local-exec" {
+    command = "mkdir -p ./tmp/deis-services && cat <<'__USERDATA__' > ./tmp/deis-services/user_data.yml\n${template_file.deis-services.rendered}\n__USERDATA__"
+  }
+
+  vars {
+    fleet_tags = "${lookup(var.fleet_tags, "deis-services")}"
+    units = "${file("conf/deis-worker/units.yml")}"
+    files = "${file("conf/deis-worker/files.yml")}"
+  }
+
+}
+
 # Router Templates
 resource "template_file" "deis-router" {
   template = "${path.cwd}/conf/user-data.tpl"

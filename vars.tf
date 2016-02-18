@@ -16,6 +16,7 @@ variable "instance_types" {
     default = {
       bastion = "t2.small"
       production_worker = "r3.xlarge"
+      deis-services = "m4.large"
       feature_worker = "r3.large"
       core = "r3.large"
       database = "db.r3.xlarge"
@@ -27,11 +28,12 @@ variable "instance_types" {
 
 variable "fleet_tags" {
   default = {
-    core = "type=core,function=deis,controlPlane=true"
+    core = "type=core,function=deis,controlPlane=true" # TODO: Remove control plane
     production_worker = "type=worker,environment=production,function=deis,dataPlane=true"
     feature_worker = "type=worker,environment=feature,function=deis,dataPlane=true"
     bastion = "type=bastion"
     router = "type=router,function=deis,routerMesh=true"
+    deis-services = "type=services,function=deis,controlPlane=true"
     proxy-gateway = "type=proxy-gateway,function=proxy"
   }
 }

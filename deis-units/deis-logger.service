@@ -17,4 +17,5 @@ RestartSec=5
 WantedBy=multi-user.target
 
 [X-Fleet]
-MachineMetadata=type=core
+MachineMetadata=function=deis
+MachineMetadata=type=services
