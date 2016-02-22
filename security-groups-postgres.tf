@@ -33,8 +33,8 @@ resource "aws_security_group" "postgres" {
     to_port = 5432
     protocol = "tcp"
     cidr_blocks = [
-      "${file("private/misc/office-ip")}/32",
-      "${file("private/misc/office-ip-2")}/32"
+      "${trimspace(file("private/misc/office-ip"))}/32",
+      "${trimspace(file("private/misc/office-ip-2"))}/32"
     ]
   }
 

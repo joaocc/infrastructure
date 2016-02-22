@@ -18,8 +18,8 @@ resource "aws_security_group" "core" {
       to_port = 9200
       protocol = "tcp"
       cidr_blocks = [
-        "${file("private/misc/office-ip")}/32",
-        "${file("private/misc/office-ip-2")}/32"
+        "${trimspace(file("private/misc/office-ip"))}/32",
+        "${trimspace(file("private/misc/office-ip-2"))}/32"
       ]
   }
 
