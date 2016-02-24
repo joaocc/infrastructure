@@ -42,7 +42,7 @@ variable "fleet_tags" {
 variable "amis" {
     default = {
       coreos_766_5_0 = "ami-37bdc15d" # Keep for the core machines
-      coreos_835_12_0 = "ami-dfb699b5" # Latest core-os stable distribution
+      coreos_835_13_0 = "ami-7f3a0b15" # Latest core-os stable distribution
     }
 }
 

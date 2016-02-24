@@ -38,7 +38,7 @@ resource "aws_autoscaling_group" "deis-services" {
 resource "aws_launch_configuration" "deis-services" {
 
     # General Config
-    image_id = "${lookup(var.amis, "coreos_835_12_0")}"
+    image_id = "${lookup(var.amis, "coreos_835_13_0")}"
     instance_type = "${lookup(var.instance_types, "deis-services")}"
     user_data = "${template_file.deis-services.rendered}"
     key_name = "deis"
