@@ -89,6 +89,14 @@ resource "aws_route53_record" "CNAME-dialog-fp-brandfolder-com" {
   records = ["CNAMEMUX-BRANDFOLDER-LB-1656571564.us-east-1.elb.amazonaws.com"]
 }
 
+resource "aws_route53_record" "CNAME-process-fp-brandfolder-com" {
+  zone_id = "${aws_route53_zone.brandfolder-com.zone_id}"
+  name = "process.fp.brandfolder.com"
+  ttl = 3600
+  type = "CNAME"
+  records = ["CNAMEMUX-BRANDFOLDER-LB-1656571564.us-east-1.elb.amazonaws.com"]
+}
+
 resource "aws_route53_record" "CNAME-fp-brandfolder-com" {
   zone_id = "${aws_route53_zone.brandfolder-com.zone_id}"
   name = "fp.brandfolder.com"
