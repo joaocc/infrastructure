@@ -2,7 +2,7 @@
   owner: core
   permissions: '0400'
   content: |
-    ${join("\n    ", split("\n", file("private/.ssh/deis")))}}
+    ${join("\n    ", split("\n", module.private.deis_ssh_key))}}
 
 - path: /home/core/.bash_profile
   owner: core
@@ -44,7 +44,7 @@
     user=$1
 
     # Capture keys
-    keys=`DOCKER_HOST=unix:///var/run/early-docker.sock docker run --net host --rm brandfolder/github-keys:latest --token ${trimspace(file("private/misc/github-token"))} brandfolder bastion user-keys $user`
+    keys=`DOCKER_HOST=unix:///var/run/early-docker.sock docker run --net host --rm brandfolder/github-keys:latest --token ${module.private.github_token} brandfolder bastion user-keys $user`
     if [ $? -ne 0 ] ; then
       echo "cannot authenticate $user" >> /var/log/authorized-keys.log
       exit 22

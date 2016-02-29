@@ -12,7 +12,7 @@ coreos:
     group: stable
 
   etcd2:
-    discovery: ${file("private/etcd/discovery-url")}
+    discovery: ${module.private.etcd_discovery_url}
     advertise-client-urls: "http://$private_ipv4:2379"
     initial-advertise-peer-urls: "http://$private_ipv4:2380"
     listen-client-urls: "http://0.0.0.0:2379,http://0.0.0.0:4001"

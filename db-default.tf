@@ -24,8 +24,8 @@ resource "aws_db_instance" "default" {
     ]
 
     # DB Config
-    username = "${file("private/db/pguser")}"
-    password = "${file("private/db/pgpass")}"
+    username = "${module.private.database_user}"
+    password = "${module.private.database_password}"
 
     # AWS config
     backup_window = "05:00-08:30"
