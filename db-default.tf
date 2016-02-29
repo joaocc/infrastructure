@@ -32,6 +32,10 @@ resource "aws_db_instance" "default" {
     maintenance_window = "sat:09:30-sat:22:00"
     backup_retention_period = 30
 
+    lifecycle {
+      prevent_destroy
+    }
+
 }
 
 # Subnet Group
