@@ -44,7 +44,8 @@
     user=$1
 
     # Capture keys
-    keys=`DOCKER_HOST=unix:///var/run/early-docker.sock docker run --net host --rm brandfolder/github-keys:latest --token ${trimspace(file("private/misc/github-token"))} brandfolder bastion user-keys $user`
+    github_token=`etcdctl get github.com/ssh_users_token`
+    keys=`DOCKER_HOST=unix:///var/run/early-docker.sock docker run --net host --rm brandfolder/github-keys:latest --token $github_token brandfolder bastion user-keys $user`
     if [ $? -ne 0 ] ; then
       echo "cannot authenticate $user" >> /var/log/authorized-keys.log
       exit 22

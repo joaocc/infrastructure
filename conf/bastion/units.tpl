@@ -47,7 +47,8 @@
     [Service]
     Environment="DOCKER_HOST=unix:///var/run/early-docker.sock"
     ExecStart=/bin/bash -c '\
-      users=`docker run --net host --rm brandfolder/github-keys:latest --token ${trimspace(file("private/misc/github-token"))} brandfolder bastion list-users --downcase`; \
+      github_token=`etcdctl get github.com/ssh_users_token`; \
+      users=`docker run --net host --rm brandfolder/github-keys:latest --token $github_token brandfolder bastion list-users --downcase`; \
       for user in $users ; do \
         useradd -p "*" -m "$user" -U -G core 2> /dev/null ; \
         if [ $? -eq 0 ] ; then \
