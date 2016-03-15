@@ -6,8 +6,8 @@ resource "aws_autoscaling_group" "deis-production-workers" {
   vpc_zone_identifier = ["${aws_subnet.subnet.*.id}"]
 
   # Cluster Size
-  max_size = 12
-  min_size = 3
+  max_size = "${lookup(var.counts, "production_workers") * 3}"
+  min_size = "${lookup(var.counts, "production_workers") - 1}"
   desired_capacity = "${lookup(var.counts, "production_workers")}"
 
   # General Configuration
@@ -64,7 +64,7 @@ resource "aws_launch_configuration" "deis-production-worker" {
 
     ebs_block_device {
       device_name = "/dev/xvdf"
-      volume_size = 100
+      volume_size = 500
       volume_type = "gp2"
     }
 
